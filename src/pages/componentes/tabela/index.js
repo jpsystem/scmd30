@@ -3,15 +3,15 @@ import styles from './index.module.css'
 import Linha from './linha'
 
 export default function Tabela({children, ...props}){
-    console.log(props.defTable.largura_Cabecalho);
+    const itens = props.defTable.colunas;
     return(
         <>
         <div>
             {/* cabeçalho */}
             <div>
-                <Linha cabecalho="true" style={{"background-color": "#00F", color: "#FFF", width: `${props.defTable.largura_Cabecalho}`}} >
-                    {props.defTable.cabecalhos.map( (item) => 
-                        <Coluna width={item.largura} align={item.align}>{item.nome}</Coluna>
+                <Linha cabecalho="true" style={{backgroundColor: "#00F", color: "#FFF", width: `${props.defTable.largura_Cabecalho}`}} >
+                    {itens.map( (item) => 
+                        <Coluna key={item.nome} width={item.largura} align={item.align}>{item.nome}</Coluna>
                     )}  
                 </Linha>
             </div>

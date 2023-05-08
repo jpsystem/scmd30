@@ -1,8 +1,8 @@
-import Navbar from '../navbar/index'
+import Navbar from '../../navbar/index'
 import Link from "next/link";
 import Image from "next/image";
 import Style from './index.module.css'
-import Perfil from '../perfil/index';
+import Perfil from '../../perfil/index';
 
 
 export default function Header(){

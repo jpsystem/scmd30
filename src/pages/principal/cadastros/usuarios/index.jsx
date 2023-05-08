@@ -4,8 +4,11 @@ import Tabela from "../../../componentes/tabela";
 import styles from '../../../../styles/login.module.css'
 import Coluna from "../../../componentes/tabela/coluna";
 import Linha from "../../../componentes/tabela/linha";
-import Formulario from "./formulario"
-import * as yup from "yup";
+import Button from '@/pages/componentes/button';
+import { useState } from 'react';
+import Modal2 from "../../../componentes/modal/modal2";
+import Formulario from './formulario';
+
 
 
 
@@ -31,75 +34,52 @@ export default function CadUsuarios() {
     return response;
   })
 
-
   const dados={
+    key: 0,
     id: 1,
     largura_Cabecalho:  "1470px",
     largura_Corpo:      "1500px",
-    altura:  "450px",
-    cabecalhos: [
-      { 
-        id: "id",
+    altura:  "450px", 
+    colunas: [
+      { key: 1,
         nome: "ID",
         largura: "100px",
-        type: "text",
-        exibir: false,
+        align: "",
       },
-      { 
-        id: "login",
+      { key: 2,
         nome: "Login",
         largura: "200px",
-        type: "text",
-        exibir: true,
+        align: "",
       },
-      { 
-        id: "nome",
+      { key: 3,
         nome: "Nome",
         largura: "300px",
-        type: "text",
-        exibir: true,
+        align: "",
       },
-      { 
-        id:"email",
+      { key: 4,
         nome: "E-mail",
         largura: "400px",
-        type: "email",
-        exibir: true,
+        align: "",
       },
-      { 
-        id: "cargo",
+      { key: 5,
         nome: "Cargo",
         largura: "200px",
-        type: "text",
-        exibir: true,
+        align: "",
       },   
-      { 
-        id: "senha",
+      { key: 6,
         nome: "Senha",
         largura: "200px",
-        type: "text",
-        exibir: true,
+        align: "",
       },
-      { 
-        id: "admin",
+      { key: 7,
         nome: "Admin",
         largura: "100px",
         align: "center",
-        type: "text",
-        exibir: true,
       },         
-    ]  
+    ],
   }
 
-  const Validacoes = {
-    login: yup.string().required("O Login é obrigatório!").max(15,"Muito grande! Maximo de 15 caracteres"),
-    nome: yup.string().required("O Nome é obrigatório!"),
-    email: yup.string().required("O E-mail é obrigatório!").email("É necessário um email valido!"),
-    cargo: yup.string().required("O Cargo é obrigatório!"),
-    senha: yup.string().required("A Senha é obrigatória!"),
-    admin: yup.string(),
-  }
-
+  const [openModal, setOpenModal] = useState(false)
 
   if( isLoading) {
     return <div className="loading">
@@ -108,15 +88,17 @@ export default function CadUsuarios() {
     }
 
   return (
-    <LayoutPagina largura="1600px">
-      
-      <h2 className={styles.title}>Cadastro de Usuários</h2>
-      
+    <LayoutPagina largura="1700px">
+      <div className={styles.barraTitulo}>
+        <h2 className={styles.title}>Cadastro de Usuários</h2>
+        <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>
+      </div>
       <Tabela defTable={dados}>
         {   
           data?.map( (item) => 
           (
-            <Linha regID={item.id} corpoForm={<Formulario dados={dados} validacoes={Validacoes}/>}>
+            // corpoForm={<Formulario dados={dados}/>}
+            <Linha key={item.id} reg={item}>
               <Coluna width="100px">{item.id}</Coluna>
               <Coluna width="200px">{item.login}</Coluna>
               <Coluna width="300px">{item.nome}</Coluna>
@@ -129,7 +111,14 @@ export default function CadUsuarios() {
           )
         }   
         </Tabela>
-      
+        <Modal2 
+          isOpen={openModal} 
+          setModalOpen={()=> setOpenModal(!openModal)}
+          titulo="Novo usuário"
+        >
+          <Formulario/>
+        </Modal2>  
     </LayoutPagina>
+    
   )
 }

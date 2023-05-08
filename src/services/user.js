@@ -61,7 +61,7 @@ export async function lerUsuarios(){
     let tb_usuarios = [{}];
     try {
         tb_usuarios = await query({
-            query: "SELECT id, login, nome, eMail, cargo, senha, administrador as admin FROM tb_usuarios",
+            query: "SELECT id as 'key', id, login, nome, eMail, cargo, senha, administrador as admin FROM tb_usuarios",
             values: [],
         });
         if (!tb_usuarios) throw new Error('Tabela vasia..')       

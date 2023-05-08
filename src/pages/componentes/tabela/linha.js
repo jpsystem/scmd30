@@ -3,10 +3,11 @@ import Coluna from './coluna'
 import styles from './index.module.css'
 import { useState } from 'react';
 import Modal from '../modal';
+import Formulario from "../../principal/cadastros/usuarios/formulario"
 
 
 
-export default function Linha({children, ...props}){
+export default function Linha({children, reg, ...props}){
     //style={{width: `${dados.tamanho}`}}
 
     const [openModal, setOpenModal] = useState(false)
@@ -23,12 +24,6 @@ export default function Linha({children, ...props}){
                                 <a onClick={() => setOpenModal(true)}>
                                     <FaRegEdit/>  
                                 </a>                                 
-                                <Modal 
-                                    isOpen={openModal} 
-                                    setModalOpen={()=> setOpenModal(!openModal)}
-                                >
-                                    {props.corpoForm}
-                                </Modal>
                             </Coluna>
                             <Coluna width= "5%" align= "center"><FaRegTrashAlt/></Coluna>
                         </>
@@ -43,6 +38,18 @@ export default function Linha({children, ...props}){
                     )
                 }           
             </div>
+
+            <Modal 
+                isOpen={openModal} 
+                setModalOpen={()=> setOpenModal(!openModal)}
+            >
+            {/* {
+                props.nomeFormulario === "<Formulario/>" && 
+                <Formulario/>
+            } */}
+                <Formulario campos={reg}/>
+            </Modal>
+        
          </>
     )
 }

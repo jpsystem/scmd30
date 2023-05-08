@@ -50,7 +50,7 @@ export default function Login() {
     }
 
     return(
-    <LayoutPagina>
+    <LayoutPagina largura="600px">
         <h2 className={styles.title}>Login</h2>
            <form className={styles.form} onSubmit={handleForm}>
              <Input  type="text" 

@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import Footer from "../footer/index";
+import Footer from "./footer/index";
 
-import Header from "../header/index";
+import Header from "./header/index";
 import { PerfilContext } from "../../contexts/perfilContext";
 
 export default function Layout({children}){
