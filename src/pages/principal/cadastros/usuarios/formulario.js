@@ -1,9 +1,8 @@
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FaPaperPlane } from 'react-icons/fa'
 
 import styles from "../../../../styles/login.module.css"
 import LocalStyle from "../../../../styles/formulario.module.css";
-import Input from "../../../componentes/input/index"
 import Button from "../../../componentes/button/index"
 import { useState } from "react";
 

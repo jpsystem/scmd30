@@ -10,12 +10,12 @@ html{
 }
 
 .main-container {
-  min-height: 85vh;
+  min-height: 75vh;
   background-color: #F2F2F2;
 }
 
 .rodape {
-  min-height: 15vh;
+  min-height: 10vh;
   color: #000;
   background-color: #FD8008;
 }

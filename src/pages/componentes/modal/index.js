@@ -2,7 +2,7 @@ import styles2 from './index.module.css'
 import styles from "../../../styles/login.module.css"
 import { FaRegWindowClose } from 'react-icons/fa'
 
-export default function Modal({isOpen, setModalOpen, children}, props){
+export default function Modal({isOpen, setModalOpen, titulo, children}){
 
 
   if(isOpen){
@@ -10,7 +10,7 @@ export default function Modal({isOpen, setModalOpen, children}, props){
       <div className={styles2.fundo}>
         <div className={styles2.modal}>
           <div className={styles2.cabeca}>
-            <h1 className={styles.tituloCadastro}>Formulário Usuários</h1>
+            <h1 className={styles.tituloCadastro}>{titulo}</h1>
             <a onClick={(setModalOpen)}>
               <FaRegWindowClose className={styles.tituloBotao}/> 
             </a>  

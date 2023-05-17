@@ -1,4 +1,5 @@
 import LayoutPagina from "./componentes/layoutPagina"
+import styles from './componentes/layoutPagina/index.module.css'
 
 export const getServerSidePropos = async ({req, res}) => {
   try {
@@ -24,11 +25,18 @@ export const getServerSidePropos = async ({req, res}) => {
 
 
 export default function Home(props) {
-  return (
-    <LayoutPagina>
-    <div>
-      Página Segura -{props.nome} Perfil do Usuário (index.js)
+  // return (
+  //   <LayoutPagina>
+  //   <div>
+  //     Página Segura -{props.nome} Perfil do Usuário (index.js)
+  //   </div>
+  //   </LayoutPagina>
+  // )
+  return(
+    <div className={styles.container}>
+      <div className={styles.containerPag}>
+        
+      </div>
     </div>
-    </LayoutPagina>
   )
 }

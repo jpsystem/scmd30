@@ -7,20 +7,20 @@ import Linha from "../../../componentes/tabela/linha";
 import Button from '@/pages/componentes/button';
 import { useState } from 'react';
 import Modal from "../../../componentes/modal";
-import Formulario from './formulario';
+import FormFamilia from './formulario';
 
-export default function CadUsuarios() {
+export default function CadFamilias() {
 
-  async function retUsuarios() {
+  async function retFamilias() {
     
     let json = [{}]
     
     try {
-      const response = await fetch('/api/user/usuarios')
+      const response = await fetch('/api/familia/listaFamilias')
       
       json = await response.json()
       if (response.status !== 200) {
-        throw new Error("Não foi possivel listar os usuários!")
+        throw new Error("Não foi possivel listar as familias!")
       } 
     } catch (error) {
       throw new Error(error.message)
@@ -28,53 +28,43 @@ export default function CadUsuarios() {
     return json
   }
 
-  const { data, isLoading } = useQuery( "tb_usuarios", async () => {
-    const response = await retUsuarios();
+  const { data, isLoading } = useQuery( "tb_familias", async () => {
+    const response = await retFamilias();
     return response;
   })
 
   const dados={
     key: 0,
     id: 1,
-    largura_Cabecalho:  "1670px",
-    largura_Corpo:      "1700px",
+    largura_Cabecalho:  "1170px",
+    largura_Corpo:      "1200px",
     altura:  "450px", 
     colunas: [
       { key: 1,
         nome: "ID",
-        largura: "50px",
+        largura: "100px",
         align: "",
       },
       { key: 2,
-        nome: "Login",
+        nome: "Encomenda",
         largura: "200px",
         align: "",
       },
       { key: 3,
-        nome: "Nome",
-        largura: "350px",
+        nome: "Familia",
+        largura: "250px",
         align: "",
       },
       { key: 4,
-        nome: "E-mail",
+        nome: "Especificação",
         largura: "450px",
         align: "",
       },
       { key: 5,
-        nome: "Cargo",
-        largura: "400px",
+        nome: "Cod_ERP",
+        largura: "200px",
         align: "",
-      },   
-      { key: 6,
-        nome: "Senha",
-        largura: "150px",
-        align: "",
-      },
-      { key: 7,
-        nome: "Admin",
-        largura: "100px",
-        align: "center",
-      },         
+      },            
     ],
   }
 
@@ -87,9 +77,9 @@ export default function CadUsuarios() {
     }
 
   return (
-    <LayoutPagina largura="1900px">
+    <LayoutPagina largura="1400px">
       <div className={styles.barraTitulo}>
-        <h2 className={styles.title}>Cadastro de Usuários</h2>
+        <h2 className={styles.title}>Cadastro de Familias</h2>
         <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>
       </div>
       <Tabela defTable={dados}>
@@ -97,14 +87,12 @@ export default function CadUsuarios() {
           data?.map( (item) => 
           (
             // corpoForm={<Formulario dados={dados}/>}
-            <Linha key={item.id} nomeForme="Usuario" reg={item}>
-              <Coluna width="50px">{item.id}</Coluna>
-              <Coluna width="200px">{item.login}</Coluna>
-              <Coluna width="350px">{item.nome}</Coluna>
-              <Coluna width="450px">{item.eMail}</Coluna>
-              <Coluna width="400px">{item.cargo}</Coluna>
-              <Coluna width="150px">{item.senha}</Coluna>
-              <Coluna width="100px" align="center">{item.admin}</Coluna>
+            <Linha key={item.id} nomeForme="Familia" reg={item}>
+              <Coluna width="100px">{item.id}</Coluna>
+              <Coluna width="200px">{item.codEncomenda}</Coluna>
+              <Coluna width="250px">{item.familia}</Coluna>
+              <Coluna width="450px">{item.espcificacao}</Coluna>
+              <Coluna width="200px">{item.cod_erp}</Coluna>
             </Linha>
           )
           )
@@ -113,9 +101,9 @@ export default function CadUsuarios() {
         <Modal 
           isOpen={openModal} 
           setModalOpen={()=> setOpenModal(!openModal)}
-          titulo="Novo usuário"
+          titulo="Nova familia"
         >
-          <Formulario/>
+          <FormFamilia/>
         </Modal>  
     </LayoutPagina>
     

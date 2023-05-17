@@ -1,0 +1,63 @@
+.item{
+    color: blue
+}
+.listItem{
+    margin-top: 10px;
+    margin-left: 50px;
+    width: 1000px;
+    font-size: 1rem;
+}
+
+
+
+.teste {
+    padding:  10px 30px;
+    border: 0;
+    background-color:#FD8008;
+    color: #000;
+    font-size: inherit;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.azul{
+    background-color: aqua;
+}
+.linha {
+    display: flex;
+}
+.coluna {
+    flex: auto ;
+    /* width: 15%; */
+    border-bottom: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-top: none;
+    border-right: none;
+    overflow: hidden;
+    padding: 0 5px 0 5px;
+    font-size: 1rem;
+}
+
+.scrollContainer {
+    overflow-x: auto;
+    overflow-y: auto;
+    /* scroll-behavior: auto; */
+
+
+    flex: auto ;
+    /* width: 15%; */
+    border-bottom: 5px solid #808080;
+    border-left: 5px solid #808080;
+    border-top: 5px solid #808080;
+    border-right: 5px solid #808080;
+    padding: 50px 5px 5px 50px;
+}
+.scroll-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* height: 100%; */
+    /* font-size: 5em; */
+}

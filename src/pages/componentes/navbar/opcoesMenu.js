@@ -43,7 +43,11 @@ export const opcoesMenu = [
             },
             {
                 title: "Estrutura de Controle",
-                page: "/#",
+                page: "/engenharia/estruturaControle",
+            },
+            {
+                title: "Importar Lista",
+                page: "/engenharia/estruturaControle/importar",
             },
             {
                 title: "ETCs",

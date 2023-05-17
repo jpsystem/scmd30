@@ -1,0 +1,36 @@
+.footerContainer{
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas: 
+        'esquerda   direita'
+        'centro     centro';
+    background-color: rgb(253, 128, 8 );
+    color: #000;
+    gap: 10px;
+    padding: 5px; 
+    /* justify-items: center; */
+}
+
+.item1{
+    display: flex;
+    flex-direction: column;
+    grid-area: esquerda;
+    max-width: 100%; 
+    align-items: left;
+}
+
+.item2{
+    display: flex;
+    flex-direction: column;
+    grid-area: direita;
+    align-items: right;
+    max-width: 100%;
+}
+
+.item3{
+    display: flex;
+    flex-direction: column;
+    grid-area: centro;
+    align-items: center;
+    max-width: 100%;
+}

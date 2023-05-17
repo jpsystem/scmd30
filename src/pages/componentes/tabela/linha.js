@@ -3,11 +3,12 @@ import Coluna from './coluna'
 import styles from './index.module.css'
 import { useState } from 'react';
 import Modal from '../modal';
-import Formulario from "../../principal/cadastros/usuarios/formulario"
+import FormUsuario from "../../principal/cadastros/usuarios/formulario"
+import FormFamilia from "../../principal/cadastros/familias/formulario"
 
 
 
-export default function Linha({children, reg, ...props}){
+export default function Linha({children, reg, nomeForme, ...props}){
     //style={{width: `${dados.tamanho}`}}
 
     const [openModal, setOpenModal] = useState(false)
@@ -42,12 +43,10 @@ export default function Linha({children, reg, ...props}){
             <Modal 
                 isOpen={openModal} 
                 setModalOpen={()=> setOpenModal(!openModal)}
+                titulo="Alterar o registro"
             >
-            {/* {
-                props.nomeFormulario === "<Formulario/>" && 
-                <Formulario/>
-            } */}
-                <Formulario campos={reg}/>
+                {nomeForme ==="Usuario" && <FormUsuario campos={reg}/>}
+                {nomeForme ==="Familia" && <FormFamilia campos={reg}/>}
             </Modal>
         
          </>

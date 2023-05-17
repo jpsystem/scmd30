@@ -91,3 +91,11 @@
     flex-direction: column;
     align-content: space-around;
 }
+
+.corpoEC{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-direction: row;
+    align-content: space-around;
+}
