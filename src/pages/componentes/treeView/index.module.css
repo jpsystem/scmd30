@@ -1,11 +1,25 @@
 .item{
-    color: blue
+    color: #000;
+    
+}
+
+.item:hover{
+    background-color: #c0c0c0;
+}
+
+.item::selection{
+    background-color: #c0c0c0;
+}
+
+.red{
+    color: #F00;
 }
 .listItem{
     margin-top: 10px;
-    margin-left: 50px;
-    width: 1000px;
-    font-size: 1rem;
+    /* margin-left: 50px; */
+    padding-left: 50px;
+    /* width: 1000px; */
+    font-size: 1rem; 
 }
 
 

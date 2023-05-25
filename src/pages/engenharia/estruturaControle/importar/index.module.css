@@ -1,22 +1,78 @@
-.inputHide {
-    display:none;
+.corpo{
+    display: flex;
+    border: 5px solid #F7B577;
+    padding: 5px;
+    height: 600px;
+    align-content: space-around;
+    
+}
+.ladoE{
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 70%;
+    /* border: 1px solid red;
+    padding: 5px; */
+    border-right: 5px solid #F7B577;
+}
+.ladoD{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 1 30%;
+    /* border: 1px solid red;
+    padding: 5px; */
+    justify-content: space-around;
 }
 
-.botaoFile{
-    padding: 20px 10px;
-    width: 200px;
-    background: #333;
-    color: #fff;
-    /* text-transform: uppercase; */
-    display: block;
-    margin-top: 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: .5s;
-    border: 1px solid #333;
+.emLinha{
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+}
+.flexItem1{
+    flex: 1;
 }
 
-.botaoFile:hover{
-    color: #333;
-    background: #fff;
+.label{
+    font-weight: bold;
+    /* display: flex; */
+    margin-bottom: 5px;
+}
+.input{
+    /* display: block; */
+    width: 100%;
+    padding: 3px 6px;
+    font-size: 1em;
+    height: 40px;
+    line-height: 1.42857143;
+    color: #000;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+.comentario{
+    width: 100%;
+    padding: 3px 6px;
+    font-size: 1em;
+    height: 120px;
+    line-height: 1.42857143;
+    color: #000;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px; 
+}
+.controle{
+    height: 15%;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;    
+    justify-content: space-between;
+}
+.etapas{
+    padding: 10px;
+    height: 85%;
 }

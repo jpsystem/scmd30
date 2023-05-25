@@ -9,7 +9,7 @@ export default function Tabela({children, ...props}){
         <div>
             {/* cabeçalho */}
             <div>
-                <Linha cabecalho="true" style={{backgroundColor: "#00F", color: "#FFF", width: `${props.defTable.largura_Cabecalho}`}} >
+                <Linha cabecalho="true" style={{backgroundColor: "#FD8008", color: "#000", width: `${props.defTable.largura_Cabecalho}`}} >
                     {itens.map( (item) => 
                         <Coluna key={item.nome} width={item.largura} align={item.align}>{item.nome}</Coluna>
                     )}  

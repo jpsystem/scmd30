@@ -85,17 +85,11 @@
 
 .barraTitulo{
     display: flex;
-    margin-bottom: 100px;
+    /* margin-bottom: 100px; */
     padding: 20px 0 20px 0;
     height: 100px;
-    flex-direction: column;
-    align-content: space-around;
+    flex-direction: row;
+    justify-content: space-between;
+    /* align-content: space-between; */
 }
 
-.corpoEC{
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    flex-direction: row;
-    align-content: space-around;
-}
