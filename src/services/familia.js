@@ -27,3 +27,27 @@ export async function listaFamilias() {
     }
     return fams
 }
+
+export async function retFamilias(body){
+    let fams = [];
+    console.log(body)
+    try { 
+        fams = await query({
+            query:  " SELECT "
+                    +"  id as idFamilia, "
+                    +"  Familia "
+                    +" FROM scmd3.tb_familias"
+                    +" WHERE idEncomenda = ?"
+                    +" ORDER BY Familia",
+            values: [body.idEncomenda],
+        });
+        if (!fams){
+            throw new Error('Não tem familias cadastradas!')
+        } 
+
+    } catch (error) {
+        // "Não foi possivel pesquisar as familias!"
+        throw new Error(error);
+    }
+    return fams
+}

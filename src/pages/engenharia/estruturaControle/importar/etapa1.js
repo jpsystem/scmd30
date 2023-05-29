@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import myStyle from "./etapas.module.css"
 
 import {CSVContext} from "../../../contexts/csvContext"
@@ -44,6 +44,10 @@ export default function Etapa1(){
 					Peso: 0,
 					PesoTot: 0,
                     Tipo: "",
+                    Unidade: "",
+                    Obs: "",
+                    Familia: "",
+                    TipoEle: "",
 				}
 				id ++;
 				let dadoLinha = [];

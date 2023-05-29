@@ -4,14 +4,26 @@ export const PerfilContext = createContext();
 
 export default function PerfilProvider({children}){
     const [auth, setAuth] = useState(false)
-    const [name, setName] = useState("JPSystem")
+    const [usuario, setUsuario] = useState({
+        nome: "Desconectado",
+        login: "",
+        id: 0,
+        administrador: false,
+    })
+    const [encomendaAtiva, setEncomendaAtiva] = useState({
+        idEncomenda: 1,
+        codEncomenda: "00154",
+        cliente: "YARA Brasil Fertilizantes",
+    })
     
     return(
         <PerfilContext.Provider value={{
             auth,
             setAuth,
-            name,
-            setName,
+            usuario,
+            setUsuario,
+            encomendaAtiva,
+            setEncomendaAtiva,
         }}>
             {children}
         </PerfilContext.Provider>

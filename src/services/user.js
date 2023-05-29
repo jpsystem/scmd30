@@ -70,3 +70,34 @@ export async function lerUsuarios(){
     }
     return tb_usuarios;
 }
+
+export async function cadastro(body){
+    let retorno = 0;
+    try {    
+        const usuario = await query({
+            query:  "CALL insert_Usuario(?,?,?,?,?,?)",
+            values: [   
+                        body.login, 
+                        body.nome,
+                        body.eMail,
+                        body.cargo,
+                        body.senha,
+                        body.administrador
+                    ]
+        });
+
+        if (!usuario) throw new Error('Usuário não cadastrado')
+        else{ 
+            if (usuario === 0)
+            {
+                throw new Error('Erro, o usuário já está cadatrado!')
+            }else{
+                retorno = usuario;
+            }
+        }   
+    } catch (error) {
+        
+        throw new Error("Erro inesperado! " + error.description);
+    }
+    return retorno;
+}

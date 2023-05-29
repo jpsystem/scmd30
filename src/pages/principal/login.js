@@ -20,7 +20,7 @@ export default function Login() {
     const [error, setError] = useState("")
     const router = useRouter()
 
-    const {setName, setAuth} = useContext(PerfilContext)
+    const {setUsuario, setAuth} = useContext(PerfilContext)
 
     const handleFormEdit = (event, name) => {
         setFormData({

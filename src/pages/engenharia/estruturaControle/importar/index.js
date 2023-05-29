@@ -1,16 +1,30 @@
-import { useState } from 'react'
+import {useContext, useState } from 'react'
 import styles from '../../../../styles/login.module.css'
 import myStyle from "./index.module.css"
 import LayoutPagina from '../../../componentes/layoutPagina'
 import Button from '../../../componentes/button'
 import Select from '../../../componentes/select'
 import Etapa1 from "./etapa1"
+import Etapa2 from "./etapa2"
+
+import Modal from "../../../componentes/modal";
+import Formulario from './formulario';
+
+import {CSVContext} from "../../../contexts/csvContext"
 
 
 
 export default function ImportaLista() {
-    const dados = [];
 
+    // const dados = [];
+    const {dadosCSV} = useContext(CSVContext)
+    let qtdDados = dadosCSV?.length;
+    if(qtdDados === undefined) {qtdDados = 0}
+
+    const [etapa, setEtapa] = useState(1)
+    
+    const [openModal, setOpenModal] = useState(false)
+    
        return (
         <LayoutPagina largura="2000px">     
           <>            
@@ -20,11 +34,27 @@ export default function ImportaLista() {
             <div className={myStyle.corpo}>
               <div className={myStyle.ladoE}>
                 <div className={myStyle.etapas}>
-                  <Etapa1/>
+                  {etapa === 1 ?
+                    (<Etapa1/>):
+                    (<Etapa2/>)
+                  }
                 </div>
                 <div className={myStyle.controle}>
-                      <Button  fontSize={"1em"} width={"40%"}>Primeira Etapa</Button>
-                      <Button  disabled fontSize={"1em"} width={"40%"}>Segunda Etapa</Button>
+                      <Button  
+                        fontSize={"1em"} 
+                        width={"40%"} 
+                        onClick={() => setEtapa(1)}
+                      >
+                        Primeira Etapa
+                      </Button>
+                      <Button  
+                        fontSize={"1em"} 
+                        width={"40%"} 
+                        disabled={qtdDados > 0 ? (false):(true)}
+                        onClick={() => setEtapa(2)}
+                      >
+                        Segunda Etapa
+                      </Button>
                 </div>
               </div>
               <div className={myStyle.ladoD}>    
@@ -96,6 +126,14 @@ export default function ImportaLista() {
               </div>
             </div>
           </> 
+            {/* MODAL PARA O FORMLÁRIO */}
+            <Modal 
+              isOpen={openModal} 
+              setModalOpen={()=> setOpenModal(!openModal)}
+              titulo="Edição do Item"
+            >
+              <Formulario/>
+          </Modal>  
         </LayoutPagina>
       )
 }

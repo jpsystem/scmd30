@@ -38,7 +38,11 @@ export default function SelEncomendas() {
         <LayoutPagina>
            <h2 className={styles.title}>Selecione a Encomenda</h2>
              <form className={styles.form}>
-               <Select name="encomenda_id" text="Selecione uma encomenda" >
+               <Select 
+                name="encomenda_id" 
+                text="Selecione uma encomenda"
+                 
+              >
                 <option key="0">Selecione a encomenda...</option>
                  {data?.map( (item ) => 
                      (

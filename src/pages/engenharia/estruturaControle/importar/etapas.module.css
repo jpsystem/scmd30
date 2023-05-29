@@ -9,6 +9,12 @@
     overflow-y: none;
     /* scroll-behavior: auto; */
 }
+.itensLista{
+    height: 500px;
+    overflow-x: scroll;
+    overflow-y: none;
+    /* scroll-behavior: auto; */
+}
 .arquivo{
     display:flex;
     position: row;
