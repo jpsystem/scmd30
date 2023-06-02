@@ -1,16 +1,22 @@
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import LayoutPagina from "../../../componentes/layoutPagina";
 import Tabela from "../../../componentes/tabela";
 import styles from '../../../../styles/login.module.css'
 import Coluna from "../../../componentes/tabela/coluna";
 import Linha from "../../../componentes/tabela/linha";
 import Button from '@/pages/componentes/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from "../../../componentes/modal";
 import Formulario from './formulario';
+import Alerta from "../../../componentes/alerta/alerta";
+
 
 export default function CadUsuarios() {
 
+  const queryClient = useQueryClient();
+
+  //Função para retornar os dados dos
+  //usuarios da api "/api/user/usuarios"
   async function retUsuarios() {
     
     let json = [{}]
@@ -28,11 +34,15 @@ export default function CadUsuarios() {
     return json
   }
 
+  //Criação e execução do HOOK
+  // useQuery
   const { data, isLoading } = useQuery( "tb_usuarios", async () => {
     const response = await retUsuarios();
     return response;
   })
 
+  //Dados para montagem da tabela
+  //com os cabeçalhos
   const dados={
     key: 0,
     id: 1,
@@ -78,18 +88,39 @@ export default function CadUsuarios() {
     ],
   }
 
+  //Variavel de Estado para controle
+  // do formulario Modal
   const [openModal, setOpenModal] = useState(false)
 
+  //Variavel de estado para exibição
+  //do aviso de execução
+  const [dadosAviso, setDadosAviso] = useState({
+    tipo: "",
+    texto: "",
+    id: 0
+  })
+
+  //Função para receber o retorno de
+  //componente filho
+  const retornoFilho = (childdata) => {
+    setDadosAviso(childdata)
+    queryClient.invalidateQueries("tb_usuarios")
+  }
+
+  //Retorno de ReactJS para exibição
+  //de Carregando... Enconto estiver em execução da Query
   if( isLoading) {
     return <div className="loading">
                     <h1>Carregando…</h1>
                 </div>
-    }
+  }
 
   return (
     <LayoutPagina largura="1900px">
       <div className={styles.barraTitulo}>
         <h2 className={styles.title}>Cadastro de Usuários</h2>
+        {/* LINHA AVISO */}
+        <Alerta tipo={dadosAviso.tipo} texto={dadosAviso.texto} id={dadosAviso.id}/>
         <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>
       </div>
       <Tabela defTable={dados}>
@@ -97,7 +128,11 @@ export default function CadUsuarios() {
           data?.map( (item) => 
           (
             // corpoForm={<Formulario dados={dados}/>}
-            <Linha key={item.id} nomeForme="Usuario" reg={item}>
+            <Linha key={item.id} 
+                  nomeForme="Usuario" 
+                  reg={item}
+                  retornoFilho={retornoFilho}
+            >
               <Coluna width="50px">{item.id}</Coluna>
               <Coluna width="200px">{item.login}</Coluna>
               <Coluna width="350px">{item.nome}</Coluna>
@@ -115,8 +150,13 @@ export default function CadUsuarios() {
           setModalOpen={()=> setOpenModal(!openModal)}
           titulo="Novo usuário"
         >
-          <Formulario/>
-        </Modal>  
+          <Formulario 
+            setModalOpen={()=> setOpenModal(!openModal)} 
+            tipo={"inclusao"}
+            retornoFilho={retornoFilho}
+          />
+        </Modal>
+ 
     </LayoutPagina>
     
   )

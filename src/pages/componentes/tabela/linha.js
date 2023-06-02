@@ -1,20 +1,42 @@
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
 import Coluna from './coluna'
 import styles from './index.module.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '../modal';
 import FormUsuario from "../../principal/cadastros/usuarios/formulario"
 import FormFamilia from "../../principal/cadastros/familias/formulario"
 
 
 
-export default function Linha({children, reg, nomeForme, ...props}){
+export default function Linha({children, reg, nomeForme, retornoFilho, ...props}){
     //style={{width: `${dados.tamanho}`}}
 
     const [openModal, setOpenModal] = useState(false)
 
+    const [tipoForme, setTipoForm] = useState("")
+
     const cabeca = props.cabecalho;
 
+    // let  myOpcao = 0
+
+    const controle =(opcao)=> {
+        // myOpcao = opcao
+        if(opcao === 1){
+            setTipoForm("edicao")
+            setOpenModal(true)
+        }
+        if(opcao === 2){
+            setTipoForm("exclusao")
+            setOpenModal(true)
+        }
+        // alert(JSON.stringify(opcao))
+        return null
+    }
+
+    // useEffect(()=> {
+    //     setOpenModal(true)
+    // },[myOpcao])
+    
     return(
         <>
             <div className={styles['linha']} style={{width: `${props.tamanho}`}}  {...props}>
@@ -22,19 +44,23 @@ export default function Linha({children, reg, nomeForme, ...props}){
                 {!cabeca && (
                         <>
                             <Coluna width= "5%" align= "center" cursor="pointer">
-                                <a onClick={() => setOpenModal(true)}>
+                                <a onClick={() =>  controle(1)}>
                                     <FaRegEdit/>  
                                 </a>                                 
                             </Coluna>
-                            <Coluna width= "5%" align= "center"><FaRegTrashAlt/></Coluna>
+                            <Coluna width= "5%" align= "center" cursor="pointer">
+                                <a  onClick={() =>  controle(2)}>
+                                    <FaRegTrashAlt/>
+                                </a>
+                            </Coluna>
                         </>
                     ) 
                 }
                 {cabeca &&
                     (
                         <>
-                            <Coluna width= "5%" align= "center" ></Coluna>
-                            <Coluna width= "5%" align= "center" ></Coluna>
+                            <Coluna width= "5%" align= "center" >E</Coluna>
+                            <Coluna width= "5%" align= "center" >A</Coluna>
                         </>
                     )
                 }           
@@ -43,10 +69,18 @@ export default function Linha({children, reg, nomeForme, ...props}){
             <Modal 
                 isOpen={openModal} 
                 setModalOpen={()=> setOpenModal(!openModal)}
-                titulo="Alterar o registro"
+                titulo={tipoForme==="edicao" ? "Alterar o registro":"Excluir Registro"}
+                // titulo={tipoForme}
             >
-                {nomeForme ==="Usuario" && <FormUsuario campos={reg}/>}
-                {nomeForme ==="Familia" && <FormFamilia campos={reg}/>}
+                {nomeForme ==="Usuario" &&
+                    <FormUsuario 
+                        campos={reg} 
+                        tipo={JSON.stringify(tipoForme)} 
+                        setModalOpen={()=> setOpenModal(!openModal)}
+                        retornoFilho={retornoFilho}
+                    />
+                }
+                {nomeForme ==="Familia" && <FormFamilia campos={reg} setModalOpen={()=> setOpenModal(!openModal)}/>}
             </Modal>
         
          </>

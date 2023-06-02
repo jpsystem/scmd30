@@ -3,8 +3,52 @@
     width: 500px;
     /* height: 100px; */
     display: flex;
+    margin-top: 20px;
 }
 
 .iconeBotao{
     margin-left: 30px;
 }
+
+.boxMenssageS{
+    border: 5px solid #ccc;
+    height: 400px;
+    padding: 40px;
+    border-radius: 50px;
+    box-shadow: 3px 3px green, -1em 0 0.4em olive;
+    color: green;
+}
+
+.boxMenssageF{
+    border: 5px solid #ccc;
+    height: 400px;
+    padding: 40px;
+    border-radius: 50px;
+    box-shadow: 3px 3px red, -1em 0 0.4em rgb(247, 99, 124);
+    color: red;
+}
+
+.tituloMenssage{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 100px;
+}
+.iconeMenssage{
+    align-items: center;
+    font-size: 2rem;
+    text-align:  center;
+}
+.iconeFalha{
+    align-items: center;
+    color: red;
+    font-size: 2rem;
+    text-align:  center;
+}
+
+.textoMenssage{
+    font-size: 1.2rem;
+    color: #000;
+    text-align:  center;
+}
+
+

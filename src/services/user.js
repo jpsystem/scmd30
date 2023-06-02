@@ -73,7 +73,8 @@ export async function lerUsuarios(){
 
 export async function cadastro(body){
     let retorno = 0;
-    try {    
+    try {
+        let admin = (body.administrador ? 1: 0);
         const usuario = await query({
             query:  "CALL insert_Usuario(?,?,?,?,?,?)",
             values: [   
@@ -82,7 +83,7 @@ export async function cadastro(body){
                         body.eMail,
                         body.cargo,
                         body.senha,
-                        body.administrador
+                        admin
                     ]
         });
 
@@ -97,6 +98,60 @@ export async function cadastro(body){
         }   
     } catch (error) {
         
+        throw new Error("Erro inesperado! " + error.description);
+    }
+    return retorno;
+}
+
+export async function edicao(body){
+    let retorno = 0;
+    try {
+        let admin = (body.administrador ? 1: 0);
+        const usuario = await query({
+            query:  "CALL update_Usuario(?,?,?,?,?,?,?)",
+            values: [   
+                        body.id,
+                        body.login, 
+                        body.nome,
+                        body.eMail,
+                        body.cargo,
+                        body.senha,
+                        admin
+                    ]
+        });
+
+        if (!usuario) throw new Error('Não foi possivel alterar usuário')
+        else{ 
+            if (usuario === 0)
+            {
+                throw new Error('Erro, login ou email já pertence a outro usuário!')
+            }else{
+                retorno = usuario;
+            }
+        }   
+    } catch (error) {
+        
+        throw new Error("Erro inesperado! " + error.description);
+    }
+    return retorno;
+}
+
+export async function exclusao(codigo){
+    let retorno = 0;
+    try {
+        const usuario = await query({
+            query:  "DELETE FROM tb_Usuarios WHERE id = ?",
+            values: [   
+                        codigo
+                    ]
+        });
+        if(usuario.affectedRows > 0){
+            retorno = usuario.affectedRows;
+        }
+        else{
+            throw new Error('Não foi possivel excluir o usuário')
+        }
+    } catch (error) {
         throw new Error("Erro inesperado! " + error.description);
     }
     return retorno;
