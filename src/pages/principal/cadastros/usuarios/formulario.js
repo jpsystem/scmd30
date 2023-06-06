@@ -197,8 +197,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     /> 
                     {/* BOTÃO ENVIAR */}
                     <div className={LocalStyle.barraBotoes}>
-                        <Button onClick={() => handleSubmit(onSubmit)()}>Enviar<FaPaperPlane className={LocalStyle.iconeBotao} /></Button>
+                        <Button onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="80%">Enviar<FaPaperPlane className={LocalStyle.iconeBotao} /></Button>
+                        <Button onClick={() => setModalOpen(false)} fontsize="1em" width="80%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                     </div>
+                    {/* BOTÃO Cancelar */}
+                    {/* <div className={LocalStyle.barraBotoes}>
+                        <Button onClick={() => setModalOpen(false)}>Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
+                    </div> */}
                 </div>
             </div>     
             </>
@@ -214,8 +219,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                             <p className={styles.destaqueExclusao} >CONFIRMA A EXCLUSÃO?</p>
                         </div>
                         {/* BOTÃO ENVIAR */}
-                        <div className={styles.botoesExclusao}>
-                            <Button  onClick={() => handleSubmit(onSubmit)()} >Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
+                        <div className={LocalStyle.barraBotoes}>
+                            <Button  onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
+                            <Button onClick={() => setModalOpen(false)} fontsize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                             {/* <Button onClick={setModalOpen(false)} >Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button> */}
                         </div>
                     </div>

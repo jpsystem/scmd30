@@ -1,9 +1,10 @@
 
 .barraBotoes{
-    width: 500px;
+    width: 100%;
     /* height: 100px; */
     display: flex;
-    margin-top: 20px;
+    /* margin-top: 20px;
+    margin-left: 20px; */
 }
 
 .iconeBotao{

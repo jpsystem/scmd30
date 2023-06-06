@@ -11,6 +11,7 @@
     cursor: pointer;
     width: 100%;
     transition-duration: 500ms;
+    margin-left: 10px;
 }
 
 .button:hover {

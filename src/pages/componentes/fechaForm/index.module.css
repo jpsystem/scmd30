@@ -1,0 +1,9 @@
+.botao{
+    display: flex;
+    margin-bottom: 10px;
+    height: 50px;
+    font-size: 2em;
+    color: #FD8008;
+    padding: 0;
+    cursor: pointer;
+}

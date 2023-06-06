@@ -93,6 +93,13 @@
     align-content: center;
     /* align-content: space-between; */
 }
+.barraFecha{
+    display: flex;
+    margin-top: -40px;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-content: center;
+}
 
 .boxExclusao{
     display: flex;

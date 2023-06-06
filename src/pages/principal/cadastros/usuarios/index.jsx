@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import Modal from "../../../componentes/modal";
 import Formulario from './formulario';
 import Alerta from "../../../componentes/alerta/alerta";
+import FechaForm from '@/pages/componentes/fechaForm';
 
 
 export default function CadUsuarios() {
@@ -117,6 +118,10 @@ export default function CadUsuarios() {
 
   return (
     <LayoutPagina largura="1900px">
+      <div className={styles.barraFecha}>
+        <FechaForm/>
+      </div>
+
       <div className={styles.barraTitulo}>
         <h2 className={styles.title}>Cadastro de Usuários</h2>
         {/* LINHA AVISO */}

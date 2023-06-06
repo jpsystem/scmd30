@@ -1,5 +1,5 @@
-//Rota para API alterar usuário
-//Recebe um Body com os dados do usuário
+//Rota para API excluir usuário
+//Recebe o codigo do usuário
 
 import { exclusao } from "../../../../services/user"
 

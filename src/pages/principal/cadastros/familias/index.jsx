@@ -8,16 +8,24 @@ import Button from '@/pages/componentes/button';
 import { useState } from 'react';
 import Modal from "../../../componentes/modal";
 import FormFamilia from './formulario';
+import FechaForm from '@/pages/componentes/fechaForm';
 
 export default function CadFamilias() {
 
-  async function retFamilias() {
+  async function retFamilias(codEncomenda) {
     
     let json = [{}]
     
     try {
-      const response = await fetch('/api/familia/listaFamilias')
-      
+      const response = await fetch ('/api/familia/listaFamilias', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idEncomenda: codEncomenda,
+        })
+      });
       json = await response.json()
       if (response.status !== 200) {
         throw new Error("Não foi possivel listar as familias!")
@@ -29,7 +37,8 @@ export default function CadFamilias() {
   }
 
   const { data, isLoading } = useQuery( "tb_familias", async () => {
-    const response = await retFamilias();
+    const response = await retFamilias("1");
+    console.log("DATA", data)
     return response;
   })
 
@@ -78,6 +87,9 @@ export default function CadFamilias() {
 
   return (
     <LayoutPagina largura="1400px">
+      <div className={styles.barraFecha}>
+        <FechaForm/>
+      </div>
       <div className={styles.barraTitulo}>
         <h2 className={styles.title}>Cadastro de Familias</h2>
         <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>

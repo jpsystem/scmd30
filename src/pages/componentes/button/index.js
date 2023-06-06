@@ -7,7 +7,7 @@ export default function Button({children, ...props}){
                             width: `${props.width}`,
                             height: `${props.heigth}`,
                             padding: `${props.padding}`,
-                            fontsize: `${props.fontsize}`,
+                            fontSize: `${props.fontsize}`,
                         }}
                 {...props} 
         >
