@@ -3,8 +3,8 @@ import {setCookie} from "cookies-next"
 import {useRouter} from "next/router"
 
 import styles from '../../styles/login.module.css'
-import Input from '../componentes/input/index'
-import Button from '../componentes/button/index'
+import Input from '../../componentes/input/index'
+import Button from '../../componentes/button/index'
 import { PerfilContext } from "../contexts/perfilContext"
 
 import {signIn} from 'next-auth/react'

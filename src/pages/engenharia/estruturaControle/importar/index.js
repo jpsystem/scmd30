@@ -2,12 +2,12 @@ import {useContext, useState } from 'react'
 import styles from '../../../../styles/login.module.css'
 import myStyle from "./index.module.css"
 import LayoutPagina from '../../../componentes/layoutPagina'
-import Button from '../../../componentes/button'
-import Select from '../../../componentes/select'
+import Button from '../../../../componentes/button'
+import Select from '../../../../componentes/select'
 import Etapa1 from "./etapa1"
 import Etapa2 from "./etapa2"
 
-import Modal from "../../../componentes/modal";
+import Modal from "../../../../componentes/modal";
 import Formulario from './formulario';
 
 import {CSVContext} from "../../../contexts/csvContext"

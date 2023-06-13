@@ -30,8 +30,8 @@ export async function listaFamilias(body) {
                     + "     A.idEncomenda, "
                     + "     B.codEncomenda, "
                     + "     A.familia, "
-                    + "     A.espcificacao, "
-                    + "     A.cod_erp "
+                    + "     A.espcificacao As especificacao , "
+                    + "     A.cod_erp As cod_Erp "
                     + "FROM "
                     + " scmd3.tb_familias A Left Join scmd3.tb_encomenda B "
                     + " ON A.idEncomenda = B.id"
@@ -113,7 +113,7 @@ export async function edicao(body){
                     + "WHERE id = ?",     
             values: [   
                         body.especificacao,
-                        body.cod_erp, 
+                        body.cod_Erp, 
                         body.id,
                     ]
         });

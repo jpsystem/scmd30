@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query'
-import TreeView from '../../componentes/treeView'
+import TreeView from '../../../componentes/treeView'
 import styles from './index.module.css'
 import LayoutPagina from '../../componentes/layoutPagina'
-import Button from '../../componentes/button'
+import Button from '../../../componentes/button'
 import {  FaRegWindowClose } from 'react-icons/fa'
 
 export default function EstControle() {

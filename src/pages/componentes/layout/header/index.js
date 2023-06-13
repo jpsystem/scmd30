@@ -1,8 +1,8 @@
-import Navbar from '../../navbar/index'
+import Navbar from '../../../../componentes/navbar/index'
 import Link from "next/link";
 import Image from "next/image";
 import Style from './index.module.css'
-import Perfil from '../../perfil/index';
+import Perfil from '../../../../componentes/perfil/index';
 
 import {PerfilContext} from "../../../contexts/perfilContext"
 import { useContext } from 'react';
@@ -18,7 +18,7 @@ export default function Header(){
             <div className={Style.flexContainer}>
                 <div className={Style.headE}>
                     <Link href='/#'>
-                        <Image src="/images/LogoTMSA_Site.jpg" width="200" height="60" alt="Logo TMSA"/>
+                        <Image src="/images/Logo_SCMD.png" width="200" height="80" alt="Logo TMSA"/>
                     </Link>
                     <Perfil/>
                 </div>

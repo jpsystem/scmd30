@@ -19,7 +19,7 @@ export default function TreeItem({Elemento, Descricao, ETC, Filhos}){
     }, [])
     
 
-    const eUmPai = Filhos.length;
+    const eUmPai = Filhos?.length;
     return(
         <>       
             <div className={styles.item} style={{color: corETC}}>
@@ -31,7 +31,7 @@ export default function TreeItem({Elemento, Descricao, ETC, Filhos}){
             </div>
             <div className={styles.listItem}>
             {   open &&
-                Filhos[0].map( (item, i) =>(
+                Filhos[0]?.map( (item, i) =>(
                     <TreeItem key={i} {...item}/>
                 ))
             }

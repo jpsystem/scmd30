@@ -1,35 +1,36 @@
 import { useForm } from "react-hook-form";
-import { FaPaperPlane, FaThumbsUp, FaTimesCircle, FaRegWindowClose } from 'react-icons/fa'
+import { FaPaperPlane, FaThumbsUp, FaRegWindowClose } from 'react-icons/fa'
 
 import styles from "../../../../styles/login.module.css"
 import LocalStyle from "../../../../styles/formulario.module.css";
-import Button from "../../../componentes/button/index"
-import { useState } from "react";
+import Button from "../../../../componentes/button/index"
+
 
 
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
-    let tipoFormulario = tipo.replace('"', '');
-    tipoFormulario = tipoFormulario.replace('"', '');
+    //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
-
     const { register, handleSubmit, formState: {errors} } = form;
 
+    //Função para ser executada na submissão do formulario
+    //quando o mesmo estiver sido validado pelo HOOK UseForm
     const onSubmit = async (data) =>{
-        if(tipoFormulario==="inclusao"){
+        if(tipo==="inclusao"){
             await inclusao(data);
             setModalOpen(false);
         }
-        if(tipoFormulario==="edicao"){
+        if(tipo==="edicao"){
             await edicao(data);
             setModalOpen(false);
         }
-        if(tipoFormulario==="exclusao"){
+        if(tipo==="exclusao"){
             await exclusao(data);
             setModalOpen(false);
         }
     }
     
-
+    //Função para a inclusão do usuário através
+    //da API '/api/user/cadastro'
     async function  inclusao (data){
         try {
             const resposta = await fetch ('/api/user/cadastro', {
@@ -64,6 +65,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         }
     }
 
+    //Função para a alteração do usuário através
+    // da API '/api/user/edicao'
     async function  edicao (data){
         try {
             const resposta = await fetch ('/api/user/edicao', {
@@ -98,6 +101,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         }
     }
 
+    //Função para excluir o usuário através
+    // da API /api/user/exclusao/${data.id}
     async function  exclusao (data){
         try {
             const resposta = await fetch (`/api/user/exclusao/${data.id}`, {
@@ -105,13 +110,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                 headers: {
                     "Content-Type": "application/json"
                 },
-                // body: JSON.stringify({
-                //     id: data.id,
-                // })
             });
             const json = await resposta.json();
-            // console.log("JSON", json)
-            // console.log("RESPOSTA", resposta)
             if(resposta.status === 200){
                 if(json > 0)
                 {
@@ -126,13 +126,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
             retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
         }
     }
+    
     return(
-        ( tipoFormulario !== "exclusao" ? 
+        ( tipo !== "exclusao" ? 
         
             (
             <>
             {/* FORMULÁRIO */}
-            <p>{JSON.stringify(tipoFormulario !== "exclusao")}</p>
             <div className={styles.form}>   
                 <div className={styles.corpoCadastro}>
                     {/* Login */}
@@ -200,10 +200,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                         <Button onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="80%">Enviar<FaPaperPlane className={LocalStyle.iconeBotao} /></Button>
                         <Button onClick={() => setModalOpen(false)} fontsize="1em" width="80%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                     </div>
-                    {/* BOTÃO Cancelar */}
-                    {/* <div className={LocalStyle.barraBotoes}>
-                        <Button onClick={() => setModalOpen(false)}>Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
-                    </div> */}
                 </div>
             </div>     
             </>

@@ -146,3 +146,13 @@
     align-items: center;
 }
 
+.select{
+    padding:  30px 30px;
+    border: none;
+    background-color: #FD8008;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 320px;
+}
+
+

@@ -3,8 +3,8 @@ import Coluna from './coluna'
 import styles from './index.module.css'
 import { useEffect, useState } from 'react';
 import Modal from '../modal';
-import FormUsuario from "../../principal/cadastros/usuarios/formulario"
-import FormFamilia from "../../principal/cadastros/familias/formulario"
+import FormUsuario from "../../pages/principal/cadastros/usuarios/formulario"
+import FormFamilia from "../../pages/principal/cadastros/familias/formulario"
 
 
 
@@ -75,12 +75,20 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
                 {nomeForme ==="Usuario" &&
                     <FormUsuario 
                         campos={reg} 
-                        tipo={JSON.stringify(tipoForme)} 
+                        // tipo={JSON.stringify(tipoForme)} 
+                        tipo={tipoForme}
                         setModalOpen={()=> setOpenModal(!openModal)}
                         retornoFilho={retornoFilho}
                     />
                 }
-                {nomeForme ==="Familia" && <FormFamilia campos={reg} setModalOpen={()=> setOpenModal(!openModal)}/>}
+                {nomeForme ==="Familia" && 
+                    <FormFamilia 
+                        campos={reg}
+                        tipo={tipoForme} 
+                        setModalOpen={()=> setOpenModal(!openModal)}
+                        retornoFilho={retornoFilho}
+                    />
+                }
             </Modal>
         
          </>

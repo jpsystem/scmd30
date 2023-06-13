@@ -3,7 +3,7 @@ import { FaPaperPlane } from 'react-icons/fa'
 
 import styles from "../../../../styles/login.module.css"
 import LocalStyle from "../../../../styles/formulario.module.css";
-import Button from "../../../componentes/button/index"
+import Button from "../../../../componentes/button/index"
 import { useState } from "react";
 
 export default function Formulario({campos}){

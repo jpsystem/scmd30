@@ -14,7 +14,7 @@ export default function TreeView({tree}){
             {/* corpo */}
             <div className={styles.scrollContainer} style={{ height: "800px"}} >
                 {
-                    tree.map( (item, i) =>(
+                    tree?.map( (item, i) =>(
                         <TreeItem key={i} {...item}/>
                     ))
                 }

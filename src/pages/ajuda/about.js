@@ -1,4 +1,4 @@
-import FormUsuarios from "../componentes/formularios/formUsuarios";
+import FormUsuarios from "../../componentes/formularios/formUsuarios";
 import LayoutPagina from "../componentes/layoutPagina";
 import Formulario from "../principal/cadastros/usuarios/formulario";
 

@@ -1,9 +1,8 @@
-//Lista das opções dos menus
-//=============================
-//Retorna um Array com todas as
-//descrições dos menus e seus
-//respectivos links
-export const opcoesMenu = [
+// import OpcoesMenu  from "./opcoesMenu";
+import MenuItems from "./menuItens";
+
+
+const OpcoesMenu = [
 	{
         title: "Principal",
         submenu: [
@@ -77,3 +76,24 @@ export const opcoesMenu = [
         ],
     },
 ];
+
+
+
+export default function Navbar() {
+    return ( 
+		<nav>
+			<ul className="menus"> 
+				{	OpcoesMenu?.map((menu, index) => {
+							const depthLevel = 0; 
+							return <MenuItems 
+											items = {menu} 
+											key = {index}  
+											depthLevel = {depthLevel} 
+										/>;
+						}
+					) 
+				} 
+			</ul> 
+		</nav>
+	);
+}

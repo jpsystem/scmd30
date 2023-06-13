@@ -1,19 +1,65 @@
 import { useQuery, useQueryClient } from 'react-query'
 import LayoutPagina from "../../../componentes/layoutPagina";
-import Tabela from "../../../componentes/tabela";
+import Tabela from "../../../../componentes/tabela";
 import styles from '../../../../styles/login.module.css'
-import Coluna from "../../../componentes/tabela/coluna";
-import Linha from "../../../componentes/tabela/linha";
-import Button from '@/pages/componentes/button';
-import { useEffect, useState } from 'react';
-import Modal from "../../../componentes/modal";
+import Coluna from "../../../../componentes/tabela/coluna";
+import Linha from "../../../../componentes/tabela/linha";
+import Button from '@/componentes/button';
+import { useState } from 'react';
+import Modal from "../../../../componentes/modal";
 import Formulario from './formulario';
-import Alerta from "../../../componentes/alerta/alerta";
-import FechaForm from '@/pages/componentes/fechaForm';
+import Alerta from "../../../../componentes/alerta/alerta";
+import FechaForm from '@/componentes/fechaForm';
 
+//Coleção de dados para cabecalho da tabela
+const dados={
+  key: 0,
+  id: 1,
+  largura_Cabecalho:  "1670px",
+  largura_Corpo:      "1700px",
+  altura:  "450px", 
+  colunas: [
+    { key: 1,
+      nome: "ID",
+      largura: "50px",
+      align: "",
+    },
+    { key: 2,
+      nome: "Login",
+      largura: "200px",
+      align: "",
+    },
+    { key: 3,
+      nome: "Nome",
+      largura: "350px",
+      align: "",
+    },
+    { key: 4,
+      nome: "E-mail",
+      largura: "450px",
+      align: "",
+    },
+    { key: 5,
+      nome: "Cargo",
+      largura: "400px",
+      align: "",
+    },   
+    { key: 6,
+      nome: "Senha",
+      largura: "150px",
+      align: "",
+    },
+    { key: 7,
+      nome: "Admin",
+      largura: "100px",
+      align: "center",
+    },         
+  ],
+}
 
 export default function CadUsuarios() {
-
+  //HOOK para atualizar e redenrizar os
+  //dados do usuário na página
   const queryClient = useQueryClient();
 
   //Função para retornar os dados dos
@@ -35,62 +81,13 @@ export default function CadUsuarios() {
     return json
   }
 
-  //Criação e execução do HOOK
-  // useQuery
+  //Criação e execução do HOOK useQuery
   const { data, isLoading } = useQuery( "tb_usuarios", async () => {
     const response = await retUsuarios();
     return response;
   })
 
-  //Dados para montagem da tabela
-  //com os cabeçalhos
-  const dados={
-    key: 0,
-    id: 1,
-    largura_Cabecalho:  "1670px",
-    largura_Corpo:      "1700px",
-    altura:  "450px", 
-    colunas: [
-      { key: 1,
-        nome: "ID",
-        largura: "50px",
-        align: "",
-      },
-      { key: 2,
-        nome: "Login",
-        largura: "200px",
-        align: "",
-      },
-      { key: 3,
-        nome: "Nome",
-        largura: "350px",
-        align: "",
-      },
-      { key: 4,
-        nome: "E-mail",
-        largura: "450px",
-        align: "",
-      },
-      { key: 5,
-        nome: "Cargo",
-        largura: "400px",
-        align: "",
-      },   
-      { key: 6,
-        nome: "Senha",
-        largura: "150px",
-        align: "",
-      },
-      { key: 7,
-        nome: "Admin",
-        largura: "100px",
-        align: "center",
-      },         
-    ],
-  }
-
-  //Variavel de Estado para controle
-  // do formulario Modal
+  //Variavel de Estado para controle do formulario Modal
   const [openModal, setOpenModal] = useState(false)
 
   //Variavel de estado para exibição
@@ -101,19 +98,19 @@ export default function CadUsuarios() {
     id: 0
   })
 
-  //Função para receber o retorno de
-  //componente filho
+  //Função para receber o retorno do componente filho
+  //e atualizar os dados na Tela
   const retornoFilho = (childdata) => {
     setDadosAviso(childdata)
     queryClient.invalidateQueries("tb_usuarios")
   }
 
-  //Retorno de ReactJS para exibição
-  //de Carregando... Enconto estiver em execução da Query
+  //Tratamento para exibição de menssagem de espera
+  //enquanto estiver processando a consulta do UseQuery
   if( isLoading) {
     return <div className="loading">
-                    <h1>Carregando…</h1>
-                </div>
+              <h1>Carregando…</h1>
+            </div>
   }
 
   return (

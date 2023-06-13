@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import styles from './index.module.css'
-import { PerfilContext } from '../../contexts/perfilContext'
+import { PerfilContext } from '../../pages/contexts/perfilContext'
 
 export default function Perfil() {
     const {auth, name} = useContext(PerfilContext)

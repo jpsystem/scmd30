@@ -1,11 +1,50 @@
 
 import styles from '../../styles/login.module.css'
-import Select from '../componentes/select/index'
-import Button from '../componentes/button/index'
+// import Select from '../componentes/select/index'
+import Button from '../../componentes/button/index'
 import { useQuery } from 'react-query'
 import LayoutPagina from '../componentes/layoutPagina'
-export default function SelEncomendas() {
+import { useContext, useState } from 'react'
+import { PerfilContext } from '../contexts/perfilContext'
+import Select from 'react-select';
+import {useRouter} from "next/router"
 
+export default function SelEncomendas() {
+      //Ler os dados da Encomenda Ativo do Contexto Atual
+      const {setEncomendaAtiva} = useContext(PerfilContext)  
+
+      const options = [];
+
+      const router = useRouter()
+
+      const  carregaOptions= (dados)=>{
+        dados.forEach(item => {
+          options.push({
+            value: item.id,
+            label: item.encomenda,
+            tag: item.codEncomenda,
+          })
+        });
+      }
+      const Selecionar = (e) =>{
+        setSelectedOption(e)
+      }
+
+      const [selectedOption, setSelectedOption] = useState(null);
+
+
+    //Função para ser executada na submissão do formulario
+    //quando o mesmo estiver sido validado pelo HOOK UseForm
+    const onSubmit = () => {
+      setEncomendaAtiva(
+        {
+          idEncomenda: selectedOption.value,
+          codEncomenda: selectedOption.tag,
+          cliente: selectedOption.label,
+        }
+      )
+      router.push('/')
+  }
   async function retEncomendas() {
     let json = [{}]
     try {
@@ -19,11 +58,13 @@ export default function SelEncomendas() {
     } catch (error) {
       throw new Error(error.message)
     }
+    carregaOptions(json);
     return json
   }
 
   const { data, isLoading } = useQuery( "grid", async () => {
     const response = await retEncomendas();
+    
     return response;
   })
  
@@ -31,28 +72,25 @@ export default function SelEncomendas() {
   return <div className="loading">
                   <h1>Carregando…</h1>
               </div>
+  }else{
+    carregaOptions(data);
   }
 
-    return (
+  return (
+    <LayoutPagina largura="800px" altura="500px">
+        <h2 className={styles.title}>Selecione a Encomenda</h2>
+        <div className={styles.form}>
+          <div>
 
-        <LayoutPagina>
-           <h2 className={styles.title}>Selecione a Encomenda</h2>
-             <form className={styles.form}>
-               <Select 
-                name="encomenda_id" 
-                text="Selecione uma encomenda"
-                 
-              >
-                <option key="0">Selecione a encomenda...</option>
-                 {data?.map( (item ) => 
-                     (
-                       <option key={item.id}>{item.encomenda}</option>
-                     )
-                   )
-                 }
-               </Select>
-               <Button>Entrar</Button>
-             </form>
-        </LayoutPagina>
-      )
+            <Select
+            className={styles.select}
+            defaultValue={selectedOption}
+            onChange={(e)=>Selecionar(e)}
+            options={options}
+          />
+          </div>
+            <Button  onClick={() => onSubmit()}>Selecionar</Button>
+        </div>
+    </LayoutPagina>
+  )
 }

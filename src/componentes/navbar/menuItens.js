@@ -11,7 +11,7 @@ const MenuItems = (	{items, depthLevel	} ) => {
 
     useEffect( () => {
         const handler = (event) => {
-            if (dropdown && ref.current && !ref.current.contains(event.target)) {
+            if (dropdown && ref?.current && !ref?.current?.contains(event?.target)) {
                 setDropdown(false);
             }
         };
@@ -39,7 +39,7 @@ const MenuItems = (	{items, depthLevel	} ) => {
 			onMouseEnter = {onMouseEnter}
 			onMouseLeave = {onMouseLeave} 
 		>
-			{	items.submenu ? 
+			{	items?.submenu ? 
 				( 
 					<>
 						<button 
@@ -48,18 +48,18 @@ const MenuItems = (	{items, depthLevel	} ) => {
 							aria-expanded = {dropdown ? "true" : "false"}
 							onClick = { () => setDropdown((prev) => !prev)} 
                         >
-                            { items.title } { " " } { depthLevel > 0 ? <span> &raquo; </span> : <span className="arrow" />} 
+                            { items?.title } { " " } { depthLevel > 0 ? <span> &raquo; </span> : <span className="arrow" />} 
 						</button> 
 						<Dropdown 
 							depthLevel = {depthLevel}
-							submenus = {items.submenu}
+							submenus = {items?.submenu}
 							dropdown = {dropdown}
 						/> 
 					</>
 				) : 
 				( 
-					<Link href={items.page}> 
-						{items.title} 
+					<Link href={items?.page}> 
+						{items?.title} 
 					</Link>
 				)
 			} 
