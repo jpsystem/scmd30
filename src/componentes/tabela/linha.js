@@ -4,7 +4,7 @@ import styles from './index.module.css'
 import { useEffect, useState } from 'react';
 import Modal from '../modal';
 import FormUsuario from "../../pages/principal/cadastros/usuarios/formulario"
-import FormFamilia from "../../pages/principal/cadastros/familias/formulario"
+import FormFamilia from "../../pages/principal/cadastros/familias/formulario.jsx"
 
 
 

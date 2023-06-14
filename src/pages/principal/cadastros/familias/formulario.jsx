@@ -193,7 +193,10 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     />
                     {/* BOTÃO ENVIAR */}                              
                     <div className={LocalStyle.barraBotoes}>
-                        <Button onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="80%">Enviar<FaPaperPlane className={LocalStyle.iconeBotao} /></Button>
+                        <Button onClick={() => handleSubmit(onSubmit)()} 
+                            fontsize="1em" width="80%">
+                                Enviar<FaPaperPlane className={LocalStyle.iconeBotao} />
+                        </Button>
                         <Button onClick={() => setModalOpen(false)} fontsize="1em" width="80%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                     </div>
                 </div>

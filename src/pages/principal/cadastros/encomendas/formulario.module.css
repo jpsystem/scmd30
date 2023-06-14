@@ -1,0 +1,99 @@
+.corpoCadastro{
+    border: 5px solid #ccc;
+    max-height: 65vh;
+    padding: 40px;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 50px;
+    
+}
+
+.form{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-direction: column;
+    align-content: space-around;
+}
+
+.label{
+    font-weight: bold;
+    display: flex;
+    margin-bottom: 5px;
+}
+.input{
+    display: block;
+    width: 1000px;
+    padding: 6px 12px;
+    font-size: 1em;
+    height: 40px;
+    line-height: 1.42857143;
+    color: #000;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.text{
+    display: block;
+    width: 1300px;
+    padding: 6px 12px;
+    font-size: 1em;
+    height: 120px;
+    line-height: 1.42857143;
+    color: #000;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.grupoC{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-direction: column;
+    align-content: space-around;
+}
+.grupoR{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-direction: row;
+    align-content: space-between;
+}
+.grupoSC{
+    display: flex;
+    gap: 10px;
+    width: 640px;
+    flex-direction: column;
+    align-content: space-around;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.grupoSR{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-direction: row;
+    align-content: space-around;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.titleGroupS{
+    margin-top: -18px;
+    margin-left: 100px;
+    font-weight: bold;
+    display: flex;
+    margin-bottom: 5px;
+    background-color: #fff;
+    width: 180px;
+    padding-left: 20px;
+}
