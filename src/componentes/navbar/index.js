@@ -18,10 +18,6 @@ const OpcoesMenu = [
                         page: "/principal/cadastros/encomendas",
                     },
                     {
-                        title: "Familias",
-                        page: "/principal/cadastros/familias",
-                    },
-                    {
                         title: "Usuários",
                         page: "/principal/cadastros/usuarios",
                     },
@@ -36,21 +32,30 @@ const OpcoesMenu = [
     {
         title: "Engenharia",
         submenu: [
-			{
-                title: "Cadastro de Tags",
-                page: "/#",
-            },
             {
                 title: "Estrutura de Controle",
                 page: "/engenharia/estruturaControle",
             },
             {
-                title: "Importar Lista",
-                page: "/engenharia/estruturaControle/importar",
-            },
-            {
                 title: "ETCs",
                 page: "/#",
+            },
+            {
+                title: "Cadastros",
+                submenu: [
+                    {
+                        title: "TAGs",
+                        page: "/engenharia/cadastros/tags",
+                    },
+                    {
+                        title: "Familias",
+                        page: "/engenharia/cadastros/familias",
+                    },
+                    {
+                        title: "Importar Lista",
+                        page: "/engenharia/estruturaControle/importar",
+                    },
+                ]
             },
             {
                 title: "Relatórios",

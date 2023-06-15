@@ -3,15 +3,26 @@ import {query} from "/db.js"
 async function podeExcluir(codigo){
     let retorno = false;
     try {
-        const familia = await query({
+        const ec = await query({
             query:  "SELECT * FROM tb_estcontrole WHERE idEncomenda = ?",
             values: [   
                         codigo,
                     ]
         });
-        if(familia.affectedRows > 0){
+        if(ec.affectedRows > 0){
             retorno = false;
         }else{
+            const familia = await query({
+                query:  "SELECT * FROM tbfamilias WHERE idEncomenda = ?",
+                values: [   
+                            codigo,
+                        ]
+            })
+            if(familia.affectedRows > 0){
+                retorno = false;
+            }else{
+                retorno = true;
+            }
             retorno = true;
         }
     } catch (error) {
@@ -123,15 +134,78 @@ export async function cadastro(body){
     return retorno;
 }
 
-
 export async function edicao(body){
     let retorno = 0;
+    try {
+        const encomenda = await query({
+            query:  "CALL update_Encomenda(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            values: [   
+                        body.id,
+                        body.cliente,
+                        body.razao,
+                        body.endereco,
+                        body.localObra,
+                        body.localSetor,
+                        body.ref_cliente,
+                        body.descricao,
+                        body.dt_pedido,
+                        body.dt_entrega,
+                        body.contatoETC,
+                        body.deptoETC,
+                        body.contato_cml,
+                        body.contato_tec,
+                        body.coord_proj,
+                        body.coord_eng,
+                        body.sepaTMSA,
+                        body.sepaCRet,
+                        body.sepaCEmi,
+                        body.prazoTMSA,
+                        body.prazoCli,
+                        body.prazoFor,
+                        body.pastaDoc,
+                        body.pastaDes,
+                        body.pastaGuias
+                    ]
+        });
 
+        if (!encomenda) throw new Error('Não foi possivel alterar a encomenda')
+        else{ 
+            if (encomenda === 0)
+            {
+                throw new Error('Erro, não foi possivel alterar a encomenda')
+            }else{
+                retorno = encomenda;
+            }
+        }   
+    } catch (error) {
+        
+        throw new Error("Erro inesperado! " + error.description);
+    }
     return retorno;
 }
 
 export async function exclusao(codigo){
     let retorno = 0;
-    
+    try {
+        if(podeExcluir(codigo)){
+            const encomenda = await query({
+                query:  "DELETE FROM tb_Encomenda WHERE id = ?",
+                values: [   
+                            codigo
+                        ]
+            });
+            if(encomenda.affectedRows > 0){
+                retorno = encomenda.affectedRows;
+            }
+            else{
+                throw new Error('Não foi possivel excluir a encomenda')
+            }
+        }
+        else{
+            throw new Error('Essa encomenda não pode ser excluida!')
+        }
+    } catch (error) {
+        throw new Error("Erro inesperado! " + error.description);
+    }   
     return retorno;
 }

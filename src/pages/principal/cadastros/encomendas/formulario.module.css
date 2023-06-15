@@ -16,6 +16,11 @@
     align-content: space-around;
 }
 
+.error{
+    color: red;
+    font-style: bold;
+}
+
 .label{
     font-weight: bold;
     display: flex;
