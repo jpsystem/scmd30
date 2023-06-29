@@ -12,6 +12,7 @@
     width: 100%;
     transition-duration: 500ms;
     margin-left: 10px;
+    vertical-align: middle; 
 }
 
 .button:hover {

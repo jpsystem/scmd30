@@ -57,7 +57,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                 }
                 // setModalOpen(false);
             } else{
-                retornoFilho({tipo:"falha", texto:resposta.error, id: Math.random()})
+                retornoFilho({tipo:"falha", texto: json, id: Math.random()})
             }
 
         } catch (error) {
@@ -94,7 +94,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     retornoFilho( {tipo:"falha", texto:"Não é possivel alterar, os dados já pertence a outro usuário!", id: Math.random()})
                 }
             } else{
-                retornoFilho( {tipo:"falha", texto: resposta.error, id: Math.random()})
+                retornoFilho( {tipo:"falha", texto: json, id: Math.random()})
             }
         } catch (error) {
             retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
@@ -120,7 +120,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     retornoFilho( {tipo:"falha", texto:"Não é possivel excluir o usuário!", id: Math.random()})
                 }
             } else{
-                retornoFilho( {tipo:"falha", texto: resposta.error, id: Math.random()})
+                retornoFilho( {tipo:"falha", texto: json, id: Math.random()})
             }
         } catch (error) {
             retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
@@ -197,8 +197,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     /> 
                     {/* BOTÃO ENVIAR */}
                     <div className={LocalStyle.barraBotoes}>
-                        <Button onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="80%">Enviar<FaPaperPlane className={LocalStyle.iconeBotao} /></Button>
-                        <Button onClick={() => setModalOpen(false)} fontsize="1em" width="80%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
+                        <Button onClick={() => handleSubmit(onSubmit)()} fontSize="1em" width="80%">Enviar<FaPaperPlane className={LocalStyle.iconeBotao} /></Button>
+                        <Button onClick={() => setModalOpen(false)} fontSize="1em" width="80%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                     </div>
                 </div>
             </div>     
@@ -216,8 +216,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                         </div>
                         {/* BOTÃO ENVIAR */}
                         <div className={LocalStyle.barraBotoes}>
-                            <Button  onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
-                            <Button onClick={() => setModalOpen(false)} fontsize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
+                            <Button  onClick={() => handleSubmit(onSubmit)()} fontSize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
+                            <Button onClick={() => setModalOpen(false)} fontSize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                             {/* <Button onClick={setModalOpen(false)} >Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button> */}
                         </div>
                     </div>

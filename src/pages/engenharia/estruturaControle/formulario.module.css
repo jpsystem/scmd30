@@ -55,6 +55,21 @@
     margin-bottom: 20px;
 }
 
+.select{
+    display: block;
+    width: 1000px;
+    padding: 6px 12px;
+    font-size: 1em;
+    height: 50px;
+    line-height: 1.42857143;
+    color: #000;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+
 .grupoC{
     display: flex;
     gap: 10px;

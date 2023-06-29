@@ -51,7 +51,7 @@ export async function login(body) {
         }   
     } catch (error) {
         
-        throw new Error("Não foi possivel pesquisar o usuário!");
+        throw Error(error.message);
     }
 
     return token
@@ -66,7 +66,7 @@ export async function lerUsuarios(){
         });
         if (!tb_usuarios) throw new Error('Tabela vasia..')       
     } catch (error) {
-        throw new Error("Não foi possivel pesquisar os usuários!");
+        throw Error(error.message);
     }
     return tb_usuarios;
 }
@@ -98,7 +98,7 @@ export async function cadastro(body){
         }   
     } catch (error) {
         
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }
@@ -131,7 +131,8 @@ export async function edicao(body){
         }   
     } catch (error) {
         
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
+
     }
     return retorno;
 }
@@ -152,7 +153,7 @@ export async function exclusao(codigo){
             throw new Error('Não foi possivel excluir o usuário')
         }
     } catch (error) {
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }

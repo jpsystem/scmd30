@@ -45,6 +45,9 @@ export default function SelEncomendas() {
       )
       router.push('/')
   }
+
+  //Execução da API "/api/encomenda/listaEncomenda" para 
+  //retornar os dados das encomendas cadastradas.
   async function retEncomendas() {
     let json = [{}]
     try {

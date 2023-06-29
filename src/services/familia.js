@@ -15,7 +15,7 @@ async function podeExcluir(codigo){
             retorno = true;
         }
     } catch (error) {
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }
@@ -44,8 +44,7 @@ export async function listaFamilias(body) {
             throw new Error('Não tem familias cadastradas!')
         }  
     } catch (error) {
-        
-        throw new Error("Não foi possivel pesquisar as familias!");
+        throw Error(error.message);
     }
     return fams
 }
@@ -68,8 +67,7 @@ export async function retFamilias(body){
         } 
 
     } catch (error) {
-        // "Não foi possivel pesquisar as familias!"
-        throw new Error(error);
+        throw Error(error.message);
     }
     return fams
 }
@@ -98,7 +96,7 @@ export async function cadastro(body){
             }
         }   
     } catch (error) {
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }
@@ -125,8 +123,7 @@ export async function edicao(body){
             throw new Error('Não foi possivel alterar a familia')
         } 
     } catch (error) {
-        
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }
@@ -153,7 +150,7 @@ export async function exclusao(codigo){
             throw new Error('Essa familia não pode ser excluida!')
         }
     } catch (error) {
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }

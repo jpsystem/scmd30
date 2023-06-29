@@ -14,7 +14,8 @@ export async function treeViewEC(body) {
         }  
     } catch (error) {
         
-        throw new Error(error.message);
+        throw Error(error.message);
+
     }
     return ecs
 }

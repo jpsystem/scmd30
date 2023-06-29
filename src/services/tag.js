@@ -19,7 +19,8 @@ export async function listaTags() {
         }  
     } catch (error) {
         
-        throw new Error("Não foi possivel pesquisar os Tags!");
+        throw Error(error.message);
+
     }
     return tags
 }

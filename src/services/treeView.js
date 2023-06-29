@@ -10,7 +10,8 @@ export async function treeView(body) {
         }  
     } catch (error) {
         
-        throw new Error(error.message);
+        throw Error(error.message);
+
     }
 
     const tree = [];
@@ -19,7 +20,6 @@ export async function treeView(body) {
 
     const primeiroNivel = temp[0].filter(item => item.Pai === 0)
     const pegaPrimeirosFilhos = primeiroNivel.map(buildTreeView)
-    console.log("PrimeirosFilhos",pegaPrimeirosFilhos)
     
     pegaPrimeirosFilhos.forEach( linha => dado.push(linha))
 
@@ -28,6 +28,21 @@ export async function treeView(body) {
             Elemento: item.Elemento,
             Descricao: item.Descricao,
             ETC: item.ETC,
+            Pai: item.Pai,
+            id: item.id,
+            Tipo: item.tipo,
+            IdTag: item.idTag,
+            Tag: item.tag,
+            IdFamilia: item.idFamilia,
+            Familia: item.familia,
+            Qtd: item.qtd,
+            Unid: item.unid,
+            Peso_Unit: item.peso_unit,
+            Peso_Total: item.peso_total,
+            Desenho: item.desenho,
+            GrPos: item.grpos,
+            Codigo: item.codigo,
+            Especificacao: item.esp,
             Filhos: [
 
             ],
@@ -65,7 +80,8 @@ async function retDados(encomenda) {
         }  
     } catch (error) {
         
-        throw new Error(error.message);
+        throw Error(error.message);
+
     }
     return ecs
 }

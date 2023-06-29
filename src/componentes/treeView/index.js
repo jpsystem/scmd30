@@ -3,7 +3,6 @@ import styles from './index.module.css'
 import TreeItem from './treeItem'
 
 export default function TreeView({tree}){
-    console.log("Tree",tree)
     return(
         <>
             {/* cabeçalho */}
@@ -12,10 +11,15 @@ export default function TreeView({tree}){
             </div>
             {/* style={{width: "800px", height: "800px"}} */}
             {/* corpo */}
-            <div className={styles.scrollContainer} style={{ height: "800px"}} >
+            <div className={styles.scrollContainer} style={{ height: "600px"}} >
                 {
                     tree?.map( (item, i) =>(
-                        <TreeItem key={i} {...item}/>
+                        <TreeItem 
+                            key={i}
+                            Recuo={0} 
+                            reg={item} 
+                            {...item} 
+                        />
                     ))
                 }
             </div>

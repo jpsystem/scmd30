@@ -9,7 +9,6 @@ import Button from "../../../../componentes/button/index"
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
-    console.log(campos)
     const { register, handleSubmit, formState: {errors} } = form;
 
     //Função para ser executada na submissão do formulario
@@ -29,8 +28,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         }
     }
 
-    //Função para a inclusão da familia através
-    //da API '/api/user/cadastro'
+    //Função para a inclusão da encomenda através
+    //da API '/api/encomenda/cadastro'
     async function  inclusao (data){
         try {
             const resposta = await fetch ('/api/encomenda/cadastro', {
@@ -43,27 +42,27 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     cliente: data.cliente,
                     razao: data.razao,
                     endereco: data.endereco,
-                    localObra: data.local,
-                    localSetor: data.contato_tec_cargo,
+                    localObra: data.localObra,
+                    localSetor: data.localSetor,
                     ref_cliente: data.ref_cliente,
                     descricao: data.descricao,
                     dt_pedido: data.dt_pedido,
                     dt_entrega: data.dt_entrega,
-                    contatoETC: data.atencao_etc,
-                    deptoETC: data.loc_set_etc,
+                    contatoETC: data.contatoETC,
+                    deptoETC: data.deptoETC,
                     contato_cml: data.contato_cml,
                     contato_tec: data.contato_tec,
                     coord_proj: data.coord_proj,
                     coord_eng: data.coord_eng,
-                    sepaTMSA: data.separador_g,
-                    sepaCRet: data.separador_cr,
-                    sepaCEmi: data.separador_c,
-                    prazoTMSA: data.prazo_gra,
-                    prazoCli: data.prazo_cli,
-                    prazoFor: data.prazo_for,
-                    pastaDoc: data.pasta_enc,
-                    pastaDes: data.pasta_eng,
-                    pastaGuias: data.pasta_guias,
+                    sepaTMSA: data.sepaTMSA,
+                    sepaCRet: data.sepaCRet,
+                    sepaCEmi: data.sepaCEmi,
+                    prazoTMSA: data.prazoTMSA,
+                    prazoCli: data.prazoCli,
+                    prazoFor: data.prazoFor,
+                    pastaDoc: data.pastaDoc,
+                    pastaDes: data.pastaDes,
+                    pastaGuias: data.pastaGuias,
                 })
             });
             const json = await resposta.json();
@@ -75,7 +74,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     retornoFilho( {tipo:"falha", texto:"Não é possivel incluir encomenda com mesmo codigo!", id: Math.random()})
                 }
             } else{
-                retornoFilho({tipo:"falha", texto:resposta.error, id: Math.random()})
+                retornoFilho({tipo:"falha", texto: json, id: Math.random()})
             }
 
         } catch (error) {
@@ -83,7 +82,85 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         }
     } 
 
+    //Função para a alteração da encomenda através
+    // da API '/api/encomenda/edicao'
+    async function  edicao (data){
+        try {
+            const resposta = await fetch ('/api/encomenda/edicao', {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: data.id,
+                    cliente: data.cliente,
+                    razao: data.razao,
+                    endereco: data.endereco,
+                    localObra: data.localObra,
+                    localSetor: data.localSetor,
+                    ref_cliente: data.ref_cliente,
+                    descricao: data.descricao,
+                    dt_pedido: data.dt_pedido,
+                    dt_entrega: data.dt_entrega,
+                    contatoETC: data.contatoETC,
+                    deptoETC: data.deptoETC,
+                    contato_cml: data.contato_cml,
+                    contato_tec: data.contato_tec,
+                    coord_proj: data.coord_proj,
+                    coord_eng: data.coord_eng,
+                    sepaTMSA: data.sepaTMSA,
+                    sepaCRet: data.sepaCRet,
+                    sepaCEmi: data.sepaCEmi,
+                    prazoTMSA: data.prazoTMSA,
+                    prazoCli: data.prazoCli,
+                    prazoFor: data.prazoFor,
+                    pastaDoc: data.pastaDoc,
+                    pastaDes: data.pastaDes,
+                    pastaGuias: data.pastaGuias,
+                })
+            });
+            const json = await resposta.json();
+            retornoFilho({tipo: "",texto: ""});
+            if(resposta.status === 201){
+                if(json[0][0].idEncomenda > 0)
+                {
+                    retornoFilho( {tipo:"sucesso", texto:"Os dados da encomenda foram alterados com sucesso!", id: Math.random()})
+                }else{
+                    retornoFilho( {tipo:"falha", texto:"Não é possivel alterar, os dados já pertence a outra encomenda!", id: Math.random()})
+                }
+            } else{
+                retornoFilho( {tipo:"falha", texto: json, id: Math.random()})
+            }
+        } catch (error) {
+            retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
+        }
+    }
 
+    //Função para excluir a encomenda através
+    // da API /api/encomenda/exclusao/${data.id}
+    async function  exclusao (data){
+        try {
+            const resposta = await fetch (`/api/encomenda/exclusao/${data.id}`, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            });
+            const json = await resposta.json();
+            if(resposta.status === 200){
+                if(json > 0)
+                {
+                    retornoFilho( {tipo:"sucesso", texto:"Encomenda excluida!", id: Math.random()})
+                }else{
+                    retornoFilho( {tipo:"falha", texto:"Não é possivel excluir a encomenda!", id: Math.random()})
+                }
+            } else{
+                retornoFilho( {tipo:"falha", texto: json, id: Math.random()})
+            }
+        } catch (error) {
+            retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
+        }
+    }   
 
     return(
         ( tipo !== "exclusao" ? 
@@ -451,13 +528,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     <div className={styles.grupoR} style={{marginTop: "30px"}}>
                         <Button 
                             onClick={() => handleSubmit(onSubmit)()} 
-                            fontsize="1em" width="80%"
+                            fontSize="1em" width="80%"
                         >
                             Enviar<FaPaperPlane className={LocalStyle.iconeBotao} />
                         </Button>
                         <Button  
                             onClick={() => setModalOpen(false)}
-                            fontsize="1em" width="80%"
+                            fontSize="1em" width="80%"
                         >
                             Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} />
                         </Button>
@@ -478,8 +555,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                             </div>
                             {/* BOTÃO ENVIAR */}
                             <div className={LocalStyle.barraBotoes}>
-                                <Button  onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
-                                <Button onClick={() => setModalOpen(false)} fontsize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
+                                <Button  onClick={() => handleSubmit(onSubmit)()} fontSize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
+                                <Button onClick={() => setModalOpen(false)} fontSize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                                 {/* <Button onClick={setModalOpen(false)} >Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button> */}
                             </div>
                         </div>

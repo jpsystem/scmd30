@@ -18,16 +18,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
     const { register, handleSubmit, formState: {errors} } = form;
-
-    // console.log(campos)
-    // const [valores, setValores] = useState(campos)
-    // console.log(valores)
-
-    // console.log({errors})
-    // const onSubmit = (data) =>{
-    //     console.log(data);
-    //     //alert(JSON.stringify(data));
-    // };
     
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
@@ -194,10 +184,10 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     {/* BOTÃO ENVIAR */}                              
                     <div className={LocalStyle.barraBotoes}>
                         <Button onClick={() => handleSubmit(onSubmit)()} 
-                            fontsize="1em" width="80%">
+                            fontSize="1em" width="80%">
                                 Enviar<FaPaperPlane className={LocalStyle.iconeBotao} />
                         </Button>
-                        <Button onClick={() => setModalOpen(false)} fontsize="1em" width="80%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
+                        <Button onClick={() => setModalOpen(false)} fontSize="1em" width="80%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                     </div>
                 </div>
             </div> 
@@ -215,8 +205,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                         </div>
                         {/* BOTÃO ENVIAR */}
                         <div className={LocalStyle.barraBotoes}>
-                            <Button  onClick={() => handleSubmit(onSubmit)()} fontsize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
-                            <Button onClick={() => setModalOpen(false)} fontsize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
+                            <Button  onClick={() => handleSubmit(onSubmit)()} fontSize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
+                            <Button onClick={() => setModalOpen(false)} fontSize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
                             {/* <Button onClick={setModalOpen(false)} >Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button> */}
                         </div>
                     </div>

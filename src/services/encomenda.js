@@ -4,29 +4,18 @@ async function podeExcluir(codigo){
     let retorno = false;
     try {
         const ec = await query({
-            query:  "SELECT * FROM tb_estcontrole WHERE idEncomenda = ?",
+            query:  "CALL encomendaEmUso(?)",
             values: [   
                         codigo,
                     ]
         });
-        if(ec.affectedRows > 0){
+        if(ec[0][0].Qtde > 0){
             retorno = false;
-        }else{
-            const familia = await query({
-                query:  "SELECT * FROM tbfamilias WHERE idEncomenda = ?",
-                values: [   
-                            codigo,
-                        ]
-            })
-            if(familia.affectedRows > 0){
-                retorno = false;
-            }else{
-                retorno = true;
-            }
+        }else{ 
             retorno = true;
         }
     } catch (error) {
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }
@@ -42,7 +31,8 @@ export async function encomendas() {
         if (!encs) throw new Error('Não tem encomendas cadastradas!') 
     } catch (error) {
         
-        throw new Error("Não foi possivel pesquisar as encomendas!");
+        throw Error(error.message);
+
     }
 
     return encs
@@ -59,7 +49,8 @@ export async function encomenda(codigo) {
         if (!encs) throw new Error('Encomenda não encontrada') 
     } catch (error) {
         
-        throw new Error("Não foi possivel pesquisar a encomenda!");
+        throw Error(error.message);
+
     }
 
     return encs
@@ -80,7 +71,8 @@ export async function listaEncomendas() {
         }  
     } catch (error) {
         
-        throw new Error("Não foi possivel pesquisar as encomendas!");
+        throw Error(error.message);
+
     }
     return encs
 }
@@ -129,7 +121,7 @@ export async function cadastro(body){
             }
         }   
     } catch (error) {
-        throw new Error("Erro inesperado! " + error.description);
+        throw Error(error.message);
     }
     return retorno;
 }
@@ -177,17 +169,18 @@ export async function edicao(body){
                 retorno = encomenda;
             }
         }   
-    } catch (error) {
-        
-        throw new Error("Erro inesperado! " + error.description);
+    } catch (error) {   
+        throw Error(error.message);
     }
     return retorno;
 }
 
 export async function exclusao(codigo){
     let retorno = 0;
+    const teste = await podeExcluir(codigo);
     try {
-        if(podeExcluir(codigo)){
+        if(teste)
+        {
             const encomenda = await query({
                 query:  "DELETE FROM tb_Encomenda WHERE id = ?",
                 values: [   
@@ -195,17 +188,18 @@ export async function exclusao(codigo){
                         ]
             });
             if(encomenda.affectedRows > 0){
-                retorno = encomenda.affectedRows;
+                retorno = encomenda.affectedRows;       
             }
             else{
-                throw new Error('Não foi possivel excluir a encomenda')
+                throw new Error('Não foi possivel excluir a encomenda');
             }
         }
-        else{
-            throw new Error('Essa encomenda não pode ser excluida!')
+        else
+        {
+            throw new Error('Essa encomenda não pode ser excluida!');
         }
     } catch (error) {
-        throw new Error("Erro inesperado! " + error.description);
-    }   
-    return retorno;
+        throw Error(error.message);
+    }
+    return retorno;   
 }
