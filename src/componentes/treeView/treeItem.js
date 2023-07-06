@@ -1,6 +1,7 @@
-
 import { useEffect, useState } from 'react'
+
 import styles from './index.module.css'
+
 import { 
             FaRegEdit,              //Icone Edicao
             FaRegTrashAlt,          //Icone Exclusão
@@ -8,8 +9,16 @@ import {
             FaArrowAltCircleDown,   //Icone seta pra baixo
             FaCircle                //Icone circulo cheio
         } from 'react-icons/fa'
-import Modal from '../modal';
+
+import {    BiAddToQueue,           //Duplicar ItemIrmao
+            BiSubdirectoryRight     //ItemFilho
+        } from "react-icons/bi";
+
+import Modal from '../modal'
+import ModImporta from '../modImporta'
+
 import Formulario from "../../pages/engenharia/estruturaControle/formulario.jsx"
+import ImportaLista from "../../pages/engenharia/estruturaControle/importar/index.js"
 
 
 export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao, ETC, Filhos}){
@@ -19,7 +28,11 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
 
     const [openModal, setOpenModal] = useState(false)
 
+    const [openModal2, setOpenModal2] = useState(false)
+
     const [tipoForme, setTipoForm] = useState("")
+
+    const [titulo, setTitulo] = useState("");
 
     function toggle(){
         setOpen(!open)
@@ -34,15 +47,38 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
     }, [])
 
     const controle =(opcao)=> {
-        // myOpcao = opcao
+        // Novo Elemento Irmão
         if(opcao === 1){
+            setTitulo("Novo Elemento [irmão]")
+            setTipoForm("irmao")
+            setOpenModal(true)
+        }
+        // Novo Elemento Filho
+        if(opcao === 2){
+            setTitulo("Novo Elemento [filho]")
+            setTipoForm("filho")
+            setOpenModal(true)
+        }
+        // Alterar elemento
+        if(opcao === 3){
+            setTitulo("Alterar Elemento")
             setTipoForm("edicao")
             setOpenModal(true)
         }
-        if(opcao === 2){
+        // Excluir o elemento
+        if(opcao === 4){
+            setTitulo("Excluir Elemento")
             setTipoForm("exclusao")
             setOpenModal(true)
         }
+
+        // IMPORTAÇÃO
+        if(opcao === 5){
+            // setTitulo("Excluir Elemento")
+            // setTipoForm("exclusao")
+            setOpenModal2(true)
+        }
+
         // alert(JSON.stringify(opcao))
         return null
     }
@@ -59,12 +95,28 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
             <div className={styles.item}>
                 <div className={styles.controles} >
                     <a onClick={() =>  controle(1)} >
-                        <FaRegEdit className={styles.iconeEdicao}/>  
+                        <BiAddToQueue className={styles.iconeIrmao}/>  
                     </a> 
-                    <a onClick={() =>  controle(2)} >
-                        <FaRegTrashAlt className={styles.iconeExclusao}/>  
+                    <a onClick={() =>  controle(2)}
+                        className={ETC > 0 && styles.desabilitado}
+                    >
+                        <BiSubdirectoryRight className={styles.iconeFilho} />  
                     </a> 
-    
+                    <a onClick={() =>  controle(3)}   
+                        className={ETC > 0 && styles.desabilitado}
+                    >
+                        <FaRegEdit className={styles.iconeEdicao}  />  
+                    </a> 
+                    <a onClick={() =>  controle(4)} 
+                         className={ETC > 0 && styles.desabilitado}
+                    >
+                        <FaRegTrashAlt className={styles.iconeExclusao}  />  
+                    </a> 
+                    <a onClick={() =>  controle(5)} 
+                         className={ETC > 0 && styles.desabilitado}
+                    >
+                        <BiAddToQueue className={styles.iconeIrmao}/>   
+                    </a> 
                 </div>
                 <div 
                     className={styles.listItem} 
@@ -86,7 +138,7 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
                         }
                 </div> 
                 <div 
-                    onClick={() =>  selecionaItem()} 
+                    //onClick={() =>  selecionaItem()} 
                     className={styles.descricao}
                     style={{color: corETC}}
                 >
@@ -98,6 +150,7 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
                     <TreeItem 
                         key={i}
                         Recuo={Recuo+50} 
+                        retornoFilho={retornoFilho}
                         reg={item}
                         {...item}
                     />
@@ -106,17 +159,22 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
             <Modal 
                 isOpen={openModal} 
                 setModalOpen={()=> setOpenModal(!openModal)}
-                titulo={tipoForme==="edicao" ? "Alterar o registro":"Excluir Registro"}
-                // titulo={tipoForme}
+                titulo={titulo}
             >
                 <Formulario 
                     campos={reg} 
-                    // tipo={JSON.stringify(tipoForme)} 
                     tipo={tipoForme}
                     setModalOpen={()=> setOpenModal(!openModal)}
                     retornoFilho={retornoFilho}
                 />
             </Modal>
+            <ModImporta 
+                isOpen={openModal2} 
+                setModalOpen={()=> setOpenModal2(!openModal2)}
+                titulo={titulo}
+            >
+                <ImportaLista />
+            </ModImporta>
         </>
     )
 }

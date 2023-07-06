@@ -10,7 +10,7 @@ import useApiListas from "@/hooks/useApiListas";
 
 
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
-   
+
 
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
@@ -27,6 +27,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         //     setValues(response);
         // }
     })
+
     const [carregarTags, tagsInfo] = useApiListas({
         url: `/api/combos/tags/${encomendaAtiva.idEncomenda}`,
     })
@@ -36,12 +37,22 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         carregarTags();
     },[])
 
+    //Estados para controle das opções dos selects
+    const [opFamilia, setOpFamilia] = useState(campos.IdFamilia? campos.IdFamilia: 1);
+    const [opTag, setOpTag] = useState(campos?.IdTag? campos.IdTag: 1);
+
+    const Selecionar = e => {
+        if(e.target.id === "IdFamilia") 
+            setOpFamilia(e.target.value)
+        
+        if(e.target.id === "IdTag")
+            setOpTag(e.target.value)
+    }
 
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
     const onSubmit = async (data) =>{
-        console.log("DATA",data)
-        if(tipo==="inclusao"){
+        if(tipo==="irmao" || tipo==="filho" || tipo==="inclusao"){
             await inclusao(data);
             setModalOpen(false);
         }
@@ -58,19 +69,119 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     //Função para a inclusão do elemento através
     //da API '/api/estruturaControle/cadastro'
     async function  inclusao (data){
+        try {
+            let novoPai = 0;
+            if(tipo === "filho"){
+                novoPai = campos.Elemento
+            }else{
+                novoPai = data.Pai
+            }
+            const resposta = await fetch ('/api/estruturaControle/cadastro', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    idEncomenda: encomendaAtiva.idEncomenda,
+                    idTag:          (opTag===1 ? null: opTag),
+                    pai:            novoPai,
+                    desenho:        data.Desenho,
+                    grpos:          data.GrPos,
+                    idFamilia:      (opFamilia===1 ? null: opFamilia),
+                    esp:            data.Especificacao,  
+                    qtd:            data.Qtd, 
+                    unid:           data.Unid,
+                    peso_unit:      data.Peso_Unit, 
+                    peso_total:     data.Peso_Total, 
+                    tipo:           data.Tipo,
+                    codigo:         data.Codigo
+                })
+            });
+            const json = await resposta.json();
+            if(resposta.status === 201){
+                if(json[0][0].novoElemento > 0)
+                {
+                    retornoFilho( {tipo:"sucesso", texto:`Elemento ${json[0][0].novoElemento}, incluida com sucesso!`, id: Math.random()})
+                }else{
+                    retornoFilho( {tipo:"falha", texto:"Não é possivel incluir o elemento!", id: Math.random()})
+                }
+            } else{
+                retornoFilho({tipo:"falha", texto:resposta.error, id: Math.random()})
+            }
 
+        } catch (error) {
+            retornoFilho({tipo:"falha", texto:error.message, id: Math.random()})
+        }
     }
 
     //Função para a alteração do elemento através
     //da API '/api/estruturaControle/edicao'
     async function  edicao (data){
-
+        try {
+            let novoPai = 0;
+            if(tipo === "filho"){
+                novoPai = campos.Elemento
+            }else{
+                novoPai = data.Pai
+            }
+            const resposta = await fetch ('/api/estruturaControle/edicao', {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id:             data.id,
+                    idTag:          (opTag===1 ? null: opTag),
+                    pai:            novoPai,
+                    desenho:        data.Desenho,
+                    grpos:          data.GrPos,
+                    idFamilia:      (opFamilia===1 ? null: opFamilia),
+                    esp:            data.Especificacao,  
+                    qtd:            data.Qtd, 
+                    unid:           data.Unid,
+                    peso_unit:      data.Peso_Unit, 
+                    peso_total:     data.Peso_Total, 
+                    tipo:           data.Tipo,
+                    codigo:         data.Codigo
+                })
+            });
+            const json = await resposta.json();
+            retornoFilho({tipo: "",texto: ""});
+            if(resposta.status === 201){
+                retornoFilho( {tipo:"sucesso", texto:"Os dados do elemento foram alterados com sucesso!", id: Math.random()})
+            } else{
+                retornoFilho( {tipo:"falha", texto: resposta.error, id: Math.random()})
+            }
+        } catch (error) {
+            retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
+        }
     }
 
     //Função para a excluir o elemento através
     //da API '/api/estruturaControle/exclusao/${data.id}'
     async function  exclusao (data){
-
+        console.log("ID",data.id)
+        try {
+            const resposta = await fetch (`/api/estruturaControle/exclusao/${data.id}`, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            });
+            const json = await resposta.json();
+            if(resposta.status === 200){
+                if(json > 0)
+                {
+                    retornoFilho( {tipo:"sucesso", texto:"Elemento excluido!", id: Math.random()})
+                }else{
+                    retornoFilho( {tipo:"falha", texto:"Não é possivel excluir o elemento!", id: Math.random()})
+                }
+            } else{
+                retornoFilho( {tipo:"falha", texto: JSON.stringify(json), id: Math.random()})
+            }
+        } catch (error) {
+            retornoFilho( {tipo:"falha", texto:error.message, id: Math.random()})
+        }
     }
 
     return(
@@ -90,16 +201,18 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             style={{width: "400px"}}
                                             type="text"
                                             id="Elemento" 
-                                            value={campos?.Elemento}
+                                            disabled={true}
                                             className={styles.input}
-                                            {...register("Elemento", {required: true})}
+                                            {...register("Elemento")}
                                         />):
                                         (<input
                                             style={{width: "400px"}}
                                             type="text"
-                                            id="Elemento" 
+                                            id="Elemento"
+                                            disabled={true}
+                                            value={0} 
                                             className={styles.input}
-                                            {...register("Elemento", {required: true})}
+                                            {...register("Elemento")}
                                         />)
                                     }   
                                     {errors?.elemento?.type === "required" && 
@@ -113,7 +226,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                     <input
                                         style={{width: "400px"}}
                                         type="text"
-                                        id="Pai" 
+                                        id="Pai"
+                                        value={ tipo ==="filho" ? campos.Elemento : campos.Pai }
+                                        disabled={tipo ==="inclusao" ? false : true}
                                         className={styles.input}
                                         {...register("Pai")}
                                     />
@@ -140,8 +255,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                     <select 
                                         className={styles.select}
                                         style={{width: "600px"}}
-                                        id="Familia"
-                                        {...register("Familia", {required: true})}
+                                        id="IdFamilia"
+                                        value={opFamilia}
+                                        onChange={Selecionar}
                                     >
 
                                     {
@@ -166,10 +282,10 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                                         familiasInfo?.data?.map( (item, i) =>
                                                                 <option 
                                                                     key={i+1} 
-                                                                    value={item.value}
+                                                                    value={item?.value}
                                                                     
                                                                 >
-                                                                    {item.label}
+                                                                    {item?.label}
                                                                 </option>
                                                         )
                                                     }
@@ -187,8 +303,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                     <select 
                                         className={styles.select}
                                         style={{width: "600px"}}
-                                        id="Tag"
-                                        {...register("Tag", {required: true})}
+                                        id="IdTag"
+                                        value={opTag}
+                                        onChange={Selecionar}
                                     >
 
                                     {
@@ -213,9 +330,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                                         tagsInfo?.data?.map( (item, i) =>
                                                                 <option 
                                                                     key={i+1} 
-                                                                    value={item.value}
+                                                                    value={item?.value}
                                                                 >
-                                                                    {item.label}
+                                                                    {item?.label}
                                                                 </option>
                                                         )
                                                     }
@@ -238,7 +355,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             type="text"
                                             id="Qtd" 
                                             className={styles.input}
-                                            {...register("Qtd", {required: true})}
+                                            {...register("Qtd")}
                                     />
                                 </div>
                                 <div className={styles.grupoC}>
@@ -262,7 +379,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             type="text"
                                             id="Peso_Unit" 
                                             className={styles.input}
-                                            {...register("Peso_Unit", {required: true})}
+                                            {...register("Peso_Unit")}
                                     />
                                 </div>
                                 <div className={styles.grupoC}>
@@ -289,7 +406,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             type="text"
                                             id="Desenho" 
                                             className={styles.input}
-                                            {...register("Desenho", {required: true})}
+                                            {...register("Desenho")}
                                     />
                                 </div>
                                 <div className={styles.grupoC}>
@@ -313,7 +430,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             type="text"
                                             id="Codigo" 
                                             className={styles.input}
-                                            {...register("Codigo", {required: true})}
+                                            {...register("Codigo")}
                                     />
                                 </div>
                             </div>
@@ -351,6 +468,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
             ):
             (
                 <>
+                {/* Formulário de Exclusão */}
                 <div className={LoginStyle.boxExclusao}>   
                     <div className={LoginStyle.corpoExclusão}>
                         <div className={LoginStyle.textExclusao}>
@@ -363,7 +481,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                         <div className={LocalStyle.barraBotoes}>
                             <Button  onClick={() => handleSubmit(onSubmit)()} fontSize="1em" width="50%">Confirmar<FaThumbsUp className={LocalStyle.iconeBotao} /></Button>
                             <Button onClick={() => setModalOpen(false)} fontSize="1em" width="50%">Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button>
-                            {/* <Button onClick={setModalOpen(false)} >Cancelar<FaRegWindowClose className={LocalStyle.iconeBotao} /></Button> */}
                         </div>
                     </div>
                 </div>                

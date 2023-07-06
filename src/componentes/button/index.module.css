@@ -1,5 +1,5 @@
 .button {
-    padding: 10px 30px;
+    padding: 5px 30px 5px 5px;
     border: 0;
     /* background-color:#FD8008;
     color: #000; */
@@ -21,6 +21,6 @@
 }
 
 .button:disabled {
-    background-color:#4C4C4C;
-    color: #F2F2F2;
+    background-color:#9C9C9C;
+    color: #C9C9C9;
 }

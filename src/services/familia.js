@@ -1,5 +1,6 @@
 import {query} from "/db.js"
 
+//Regra para validar se a familia pode ser excluida
 async function podeExcluir(codigo){
     let retorno = false;
     try {
@@ -20,6 +21,7 @@ async function podeExcluir(codigo){
     return retorno;
 }
 
+//Função para retornar os itens das Familias da Encomenda
 export async function listaFamilias(body) {
     let fams = [];
     try {    
@@ -49,29 +51,7 @@ export async function listaFamilias(body) {
     return fams
 }
 
-export async function retFamilias(body){
-    let fams = [];
-    console.log(body)
-    try { 
-        fams = await query({
-            query:  " SELECT "
-                    +"  id as idFamilia, "
-                    +"  Familia "
-                    +" FROM scmd3.tb_familias"
-                    +" WHERE idEncomenda = ?"
-                    +" ORDER BY Familia",
-            values: [body.idEncomenda],
-        });
-        if (!fams){
-            throw new Error('Não tem familias cadastradas!')
-        } 
-
-    } catch (error) {
-        throw Error(error.message);
-    }
-    return fams
-}
-
+//Função para incluir uma nova Familia na Encomenda
 export async function cadastro(body){
     let retorno = 0;
     try {
@@ -101,6 +81,7 @@ export async function cadastro(body){
     return retorno;
 }
 
+//Função para editar uma familia
 export async function edicao(body){
     let retorno = 0;
     try {
@@ -128,6 +109,7 @@ export async function edicao(body){
     return retorno;
 }
 
+//Função para excluir uma familia
 export async function exclusao(codigo){
     let retorno = 0;
     try {

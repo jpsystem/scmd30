@@ -2,7 +2,7 @@
 import styles from './index.module.css'
 import TreeItem from './treeItem'
 
-export default function TreeView({tree}){
+export default function TreeView({tree, retornoFilho}){
     return(
         <>
             {/* cabeçalho */}
@@ -17,7 +17,8 @@ export default function TreeView({tree}){
                         <TreeItem 
                             key={i}
                             Recuo={0} 
-                            reg={item} 
+                            reg={item}
+                            retornoFilho={retornoFilho}
                             {...item} 
                         />
                     ))

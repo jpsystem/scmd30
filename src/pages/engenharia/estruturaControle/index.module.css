@@ -11,6 +11,12 @@
     cursor: pointer;
 }
 
+
+.icone{
+    font-size: 1em;
+    margin-right: 10px;
+}
+
 .title{
     text-align: center;
     height: 100px;

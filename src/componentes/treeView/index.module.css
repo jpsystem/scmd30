@@ -30,11 +30,11 @@
     width: 100%;
     padding-left: 0px;
     text-align: left;
-    cursor: pointer;
+    cursor: default;
 }
-.descricao:hover{
+/* .descricao:hover{
     background-color: #f9c070;
-}
+} */
 
 .teste {
     padding:  10px 30px;
@@ -76,12 +76,38 @@
     align-items: center;
     justify-content: center;
 }
-.iconeEdicao{
+
+.iconeIrmao{
     padding: 0 5px 0 5px;
     font-size: 1.5rem;
     cursor: pointer;
     margin-right: 5px;
     margin-left: 15px;
+    vertical-align: middle;
+}
+.iconeIrmao:hover{
+    background-color: #85f5b7;
+}
+
+.iconeFilho{
+    padding: 0 5px 0 5px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+.iconeFilho:hover{
+    background-color: #85f5b7;
+}
+
+
+.iconeEdicao{
+    padding: 0 5px 0 5px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
     vertical-align: middle;
 }
 .iconeEdicao:hover{
@@ -93,7 +119,7 @@
     font-size: 1.5rem;
     color: red;
     cursor: pointer;
-    margin-left: 15px;
+    margin-left: 5px;
     margin-right: 15px;
     vertical-align: middle;
 }
@@ -106,7 +132,7 @@
     font-size: 1.5rem;
     cursor: pointer;
     margin-right: 5px;
-    margin-left: 15px;
+    margin-left: 5px;
     align-items: center;
     vertical-align: middle;
 }
@@ -119,4 +145,9 @@
     margin-right: 5px;
     margin-left: 15px;
     vertical-align: middle;
+}
+
+.desabilitado{
+    pointer-events: none;
+    opacity: 0.3;
 }
