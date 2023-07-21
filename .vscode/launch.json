@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [],
+
+    "editor.fontSize": 14,
+    "editor.lineHeight": 24,
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontLigatures": true,
+    "explorer.compactFolders": false,
+    "editor.rulers": [80, 120],
+    "editor.formatOnSave": true,
+    "eslint.packageManager": "npm"
+}
