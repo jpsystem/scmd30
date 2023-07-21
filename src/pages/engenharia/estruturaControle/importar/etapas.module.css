@@ -1,4 +1,4 @@
-.etapa1{
+.etapas{
     display:flex;
     height: 100%;
     padding: 10px;
@@ -26,7 +26,7 @@
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     border: 1px solid #F2F2F2;
     table-layout: fixed;
 }
@@ -36,7 +36,12 @@
     top: 0px;
     color: #000;
     background-color: #FD8008;
+    height: 50px;
 
+}
+
+.tabela tr{
+    height: 40px;
 }
 
 .tabela tr:nth-child(odd){

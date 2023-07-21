@@ -46,7 +46,7 @@
     width: 1300px;
     padding: 6px 12px;
     font-size: 1em;
-    height: 120px;
+    height: 80px;
     line-height: 1.42857143;
     color: #000;
     background-image: none;
@@ -57,7 +57,7 @@
 
 .select{
     display: block;
-    width: 1000px;
+    width: 100%;
     padding: 6px 12px;
     font-size: 1em;
     height: 50px;

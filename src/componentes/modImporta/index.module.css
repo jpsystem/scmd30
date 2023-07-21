@@ -21,6 +21,8 @@
     border-radius: 50px;
     box-shadow: 5px 10px 15px 5px rgba(253, 128, 128, 0.5);
     cursor: default;
+    min-width: 1800px;
+    width: 90vw;
 }
 .form {
     margin: 20px;

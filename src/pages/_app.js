@@ -15,7 +15,7 @@ import  {
 const queryClient = new QueryClient()
 
 //Buscar o Layout padrão das páginas
-import Layout from '../pages/componentes/layout/index'
+import Layout from '../pages/componentes/layout/index.jsx'
 
 export default function App({ Component, pageProps: { session, ...pageProps }, }) {
   return (
