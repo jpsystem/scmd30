@@ -1,3 +1,7 @@
+//Autor: João Magalhães
+//Formulario para edição dos itens
+//da estrutura de controle
+
 import { useForm } from "react-hook-form";
 import { FaPaperPlane, FaThumbsUp, FaRegWindowClose } from 'react-icons/fa'
 import { useEffect, useState, useContext } from "react";

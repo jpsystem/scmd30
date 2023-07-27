@@ -38,7 +38,6 @@ export default function Login() {
                 login: formData.login, 
                 senha: formData.senha 
             });
-            console.log(resposta)
             if(resposta.ok){
                 router.push('/')
             } else{

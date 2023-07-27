@@ -1,6 +1,7 @@
 //Autor: João Magalhães
 //Componente Principal para importação dos itens do desenho
 
+import { useForm } from "react-hook-form";
 import {useContext, useEffect, useState } from 'react'
 import styles from '../../../../styles/login.module.css'
 import myStyle from "./index.module.css"
@@ -28,14 +29,19 @@ export default function ImportaLista({pai}) {
 
   //Estados para controle das opções dos selects
   const [opTag, setOpTag] = useState(1);
-
   const Selecionar = e => {
     if(e.target.id === "IdTag")
         setOpTag(e.target.value)
   }
 
-  // const dados = [];
-  const {dadosCSV, setDadosCSV, nomeDesenho} = useContext(CSVContext)
+  // lendo o contexto CSVContext
+  const { dadosCSV, 
+          setDadosCSV, 
+          nomeDesenho,
+          setNomeDesenho, 
+          tituloDesenho,
+          setTituloDesenho,
+  } = useContext(CSVContext)
 
   const pesoTotal = dadosCSV?.reduce(
     function(acumulador, valorAtual) {
@@ -55,7 +61,14 @@ export default function ImportaLista({pai}) {
   //limpar o contexto dos dados
   useEffect(() => {
     setDadosCSV(null);
+    setNomeDesenho("");
+    console.log("Passe aqui 1")
   }, []);
+  useEffect(() => {
+    setTituloDesenho("");
+    console.log("Passe aqui 2",nomeDesenho," - ", tituloDesenho);
+  }, [nomeDesenho]);
+
 
   //Variavel qtdDados para verificar se ativa
   //o botão da Segunda Etapa
@@ -65,7 +78,20 @@ export default function ImportaLista({pai}) {
   //Estado para controlar a etapa de importação
   //do arquivo dos itens do desenho
   const [etapa, setEtapa] = useState(1)
-    
+
+  //Estanciar o HOOK UseForm
+  const form = useForm({defaultValues: {
+    desenho: nomeDesenho,
+    titulo: "",
+    idTag: 0,
+    elePai: pai,
+    pesoTot: 0.0,
+    multLista: 1,
+    status: 0,
+  }})
+  const { register, handleSubmit, formState: {errors}} = form;
+
+
   return (    
     <>            
       <div className={myStyle.corpo}>
@@ -104,8 +130,9 @@ export default function ImportaLista({pai}) {
             </label>
             <input  type="text"
                 id="desenho"
-                defaultValue={nomeDesenho}
+                value={nomeDesenho}  
                 className={myStyle.input}
+                {...register("desenho")}
                 disabled
             />
           </div>
@@ -117,7 +144,8 @@ export default function ImportaLista({pai}) {
             <textarea
               id="titulo"
               className={myStyle.comentario}
-              defaultValue={nomeDesenho}
+              value={tituloDesenho}
+              {...register("titulo")}
             />  
           </div>
           <div style={{width: "80%"}}>  
@@ -174,9 +202,10 @@ export default function ImportaLista({pai}) {
               </label>
               <input  type="text"
                 id="elePai"
-                value={pai}
+                // value={pai}
                 className={myStyle.input}
                 disabled
+                {...register("elePai")}
               />
             </div>
             <div style={{width: "40%"}}>
@@ -189,23 +218,31 @@ export default function ImportaLista({pai}) {
                 className={myStyle.input}
                 defaultValue={pesoTotal?.toFixed(2)}
                 disabled
+                {...register("pesoTot")}
               />                       
             </div> 
-            <div style={{width: "30%"}}>
-              {/* Multiplicar Lista */}
-              <label className={myStyle.label}>
-                Mult.Lista X
-              </label>
-              <input  type="text"
-                id="multLista"
-                className={myStyle.input}
-                defaultValue={1}
-              />                       
-            </div>
           </div>
+
+          {/* Multiplicar Lista */}
+          <div className={myStyle.multLista}>    
+              <div > 
+                <label className={myStyle.label}>
+                  Mult.Lista X
+                </label>
+              </div>
+              <div style={{width: "30%"}}>
+                <input  type="text"
+                  id="multLista"
+                  className={myStyle.input2}
+                  // defaultValue={1}
+                  {...register("multLista")}
+                /> 
+              </div>
+          </div>
+          {/* Controle do botões */}
           <div className={[myStyle.emLinha]}>    
-              <Button disabled fontSize={"1em"} width={"40%"}>Importar</Button>
-              <Button fontSize={"1em"} width={"40%"}>Fechar</Button>
+              <Button disabled fontSize={"1.2em"} width={"45%"}>Importar</Button>
+              <Button fontSize={"1.2em"} width={"45%"}>Fechar</Button>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ export const CSVContext = createContext();
 export default function CSVProvider({children}){
     const [dadosCSV, setDadosCSV] = useState(null)
     const [nomeDesenho, setNomeDesenho] = useState(null)
+    const [tituloDesenho, setTituloDesenho] = useState(null)
     
     return(
         <CSVContext.Provider value={{
@@ -12,6 +13,8 @@ export default function CSVProvider({children}){
             setDadosCSV,
             nomeDesenho,
             setNomeDesenho,
+            tituloDesenho,
+            setTituloDesenho,
         }}>
             {children}
         </CSVContext.Provider>

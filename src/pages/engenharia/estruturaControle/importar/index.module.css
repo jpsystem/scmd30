@@ -1,9 +1,4 @@
 .corpo{
-    /* display: flex;
-    border: 5px solid #F7B577;
-    padding: 5px;
-    height: 600px;
-    align-content: space-around; */
     display: flex;
     border: 10px solid #FD8008;
     box-shadow: 15px 15px 25px rgba(253, 50, 8, 0.5);
@@ -12,44 +7,36 @@
     overflow-x: auto;
     overflow-y: auto;
     border-radius: 50px;
-    
 }
 .ladoE{
-    display: flex;
-    flex-direction: column;
-    flex: 0 1 70%;
-    /* border: 1px solid red;
-    padding: 5px; */
-    border-right: 5px solid #F7B577;
+    flex: 0 1 auto;
+    width: 75%;
+    padding: 5px;
 }
 .ladoD{
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 0 1 30%;
-    /* border: 1px solid red;
-    padding: 5px; */
-    justify-content: space-around;
+    flex: 0 1 auto;
+    width: 25%;
+    padding: 5px;
+    align-self: center;
+    justify-content: center;
 }
-
 .emLinha{
-    width: 80%;
+    width: 90%;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-
 }
 .flexItem1{
     flex: 1;
 }
-
 .label{
     font-weight: bold;
-    /* display: flex; */
     margin-bottom: 5px;
 }
 .input{
-    /* display: block; */
     width: 100%;
     padding: 3px 6px;
     font-size: 1em;
@@ -74,10 +61,10 @@
     margin-bottom: 20px; 
 }
 .controle{
+    padding: 20px;
     height: 15%;
-    margin: 10px;
     display: flex;
-    flex-direction: row;    
+    flex-direction: row;
     justify-content: space-between;
 }
 .etapas{
@@ -97,4 +84,28 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-bottom: 20px;
+}
+
+/* Classes para configura o seleção de 
+multiplicação dos itens da lista */
+.multLista{
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 5px;
+    background-color: #f8dfc8;
+}
+.input2{
+    width: 80%;
+    padding-left: 10px;
+    font-size: 1em;
+    height: 40px;
+    color: #000;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 15px;
 }

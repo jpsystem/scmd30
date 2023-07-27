@@ -25,16 +25,13 @@ export default function Formulario({item, setModalOpen}){
         carregarFamilias();
     },[])
 
-    //Estados para controle das opções dos selects
-    const [opFamilia, setOpFamilia] = useState(1);
-    const [nomeFamilia, setNomeFamilia] = useState("");
+    //Estados para controle das opções dos select Familias
+    const [opFamilia, setOpFamilia] = useState(item.IdFamilia? item.IdFamilia: 1);
 
-    const Selecionar =(e) => {
-        console.log("NOME",e.target)
+    const Selecionar = e => {
         if(e.target.id === "IdFamilia")
         {
             setOpFamilia(e.target.value)
-            setNomeFamilia(e.target.label)
         }
     }
 
@@ -44,8 +41,6 @@ export default function Formulario({item, setModalOpen}){
 
     const form = useForm({defaultValues: item})
     const { register, handleSubmit, formState: {errors} } = form;
-
-
 
     useEffect(() => {        
         setEspElemento( prev => 
@@ -59,7 +54,6 @@ export default function Formulario({item, setModalOpen}){
     }, []);   
 
     const atualizaEsp= (e) => {
-        console.log("EspElemento")
         setEspElemento( prev => 
             item?.Descricao 
             + " - " 
@@ -67,22 +61,25 @@ export default function Formulario({item, setModalOpen}){
             + " - " 
             + e.target.value
         )
-        console.log("EspElemento")
     }
-
-
 
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
     const onSubmit = (data) =>{
+        //Pega o nome da failia na coleção
+        const familia = familiasInfo?.data?.find(fan => fan.value == opFamilia);
+
+        //Atualiza os dados
         dadosCSV[item.id].Obs = data.Obs
-        dadosCSV[item.id].IdFamilia = data.IdFamilia
-        dadosCSV[item.id].Familia = nomeFamilia
+        dadosCSV[item.id].IdFamilia = opFamilia
+        dadosCSV[item.id].Familia = familia?.label
         dadosCSV[item.id].TipoEle = data.TipoEle
+        dadosCSV[item.id].Unidade = data.Unidade
+        setDadosCSV(dadosCSV)
+
+        //Fecha o formulário
         setModalOpen(false);
     }
-
-
 
     return(
     
@@ -176,9 +173,8 @@ export default function Formulario({item, setModalOpen}){
                         className={styles.select}
                         // style={{width: "500px"}}
                         id="IdFamilia"
-                        //value={opFamilia}
-                        onChange={(e)=>Selecionar(e)}
-                        {...register("IdFamilia")}
+                        value={opFamilia}
+                        onChange={Selecionar}
                     >
                     {
                     familiasInfo?.loading ? (
@@ -215,7 +211,7 @@ export default function Formulario({item, setModalOpen}){
                 </select>
               </div>
               <div style={{width: "15%"}}>  
-                {/*Familia */}  
+                {/*TIPO */}  
                 <label className={styles.label}>
                     Tipo
                 </label>

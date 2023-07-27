@@ -29,7 +29,6 @@ function readToken(token) {
 }
 
 export function verifica(token) {
-    console.log(jwt.decode(token,{complete: true}))
     return readToken(token)
 }
 

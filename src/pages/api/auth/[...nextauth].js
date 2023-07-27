@@ -36,7 +36,6 @@ export default NextAuth({
                                     }),
                             })
                         const retToken = await response.json();
-                        console.log(retToken);
                         if(response.status !== 200){
                             throw new Error(retToken);
                         }

@@ -7,13 +7,11 @@
     height: 440px;
     overflow-x: scroll;
     overflow-y: none;
-    /* scroll-behavior: auto; */
 }
 .itensLista{
     height: 500px;
     overflow-x: scroll;
     overflow-y: none;
-    /* scroll-behavior: auto; */
 }
 .arquivo{
     display:flex;
@@ -21,12 +19,10 @@
     height: 50px;
     padding: 5px;
 }
-
 .tabela{
     margin: 0;
     padding: 0;
     width: 100%;
-    /* height: 100%; */
     border: 1px solid #F2F2F2;
     table-layout: fixed;
 }
@@ -37,7 +33,6 @@
     color: #000;
     background-color: #FD8008;
     height: 50px;
-
 }
 
 .tabela tr{
@@ -80,7 +75,6 @@
     height: 40px;
     background-color:#FD8008;
     color: #000;
-    /* text-transform: uppercase; */
     display: block;
     margin: 3px;
     text-align: center;

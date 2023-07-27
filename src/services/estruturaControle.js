@@ -148,3 +148,45 @@ export async function exclusao(codigo){
     }
     return retorno;
 }
+
+//Função para retornar o titulo do desenho
+export async function retTitulo(body) {
+    let tit = [];
+    try {    
+        tit = await query({
+
+            query:  "SELECT TRIM(titulo) as titulo FROM teste.desenhos WHERE desenho = ?",
+            values: [body.desenho]
+        });
+  
+        if (!tit){
+            throw new Error('Esse desenho não está cadastrado.')
+        }  
+    } catch (error) {
+        
+        throw Error(error.message);
+
+    }
+    return tit
+}
+
+//Função para verificar se já existe item com mesmo desenho gropo/posicao
+// Status de retorno
+// 0 - No tem item como os mesmos dados
+// 1 - Existe Item é não tem ETC
+// 2 - Existe Item mais já tem ETC
+export async function verificaItem(body) {
+    let statusItem = null;
+    try {
+        statusItem = await query({
+            query:  "CALL verificaItem(?, ?, ?)",
+            values: [body.idEncomenda, body.desenho, body.grpos]
+        })
+    } catch (error) {
+        throw Error(error.message);
+    }
+    //DROP TABLE IF EXISTS Resultado; 
+
+    //return retorno[0][0].pPodeExcluir;
+    return statusItem[0][0].retorno
+}
