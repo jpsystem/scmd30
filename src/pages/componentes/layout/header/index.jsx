@@ -18,7 +18,7 @@ export default function Header(){
             <div className={Style.flexContainer}>
                 <div className={Style.headE}>
                     <Link href='/#'>
-                        <Image src="/images/Logo_SCMD.png" width="200" height="80" alt="Logo TMSA"/>
+                        <Image src="/images/Logo_SCMD.png" priority={true} width="200" height="80" alt="Logo TMSA"/>
                     </Link>
                     <Perfil/>
                 </div>

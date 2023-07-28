@@ -62,13 +62,8 @@ export default function ImportaLista({pai}) {
   useEffect(() => {
     setDadosCSV(null);
     setNomeDesenho("");
-    console.log("Passe aqui 1")
-  }, []);
-  useEffect(() => {
     setTituloDesenho("");
-    console.log("Passe aqui 2",nomeDesenho," - ", tituloDesenho);
-  }, [nomeDesenho]);
-
+  }, []);
 
   //Variavel qtdDados para verificar se ativa
   //o botão da Segunda Etapa
@@ -81,7 +76,7 @@ export default function ImportaLista({pai}) {
 
   //Estanciar o HOOK UseForm
   const form = useForm({defaultValues: {
-    desenho: nomeDesenho,
+    desenho: "",
     titulo: "",
     idTag: 0,
     elePai: pai,
@@ -156,7 +151,7 @@ export default function ImportaLista({pai}) {
             <select 
               className={myStyle.select}
               // style={{width: "500px"}}
-              id="IdTag"
+              //id="IdTag"
               value={opTag}
               onChange={Selecionar}
             >

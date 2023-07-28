@@ -7,11 +7,11 @@ export default function Etapa1(){
 
     const [dadoFile, setDadoFile] = useState({fileName: "", fileContent: "",})
 
-    const {dadosCSV, setDadosCSV, nomeDesenho, setNomeDesenho, tituloDesenho, setTituloDesenho} = useContext(CSVContext)
+    const {dadosCSV, setDadosCSV, setNomeDesenho, setTituloDesenho} = useContext(CSVContext)
 
     //Função para abrir o arquivo csv e ler o conteudo
     function handleFile(ev) {
-        // setFile(ev.target.files[0])
+  
         const file = ev.target.files[0];
         const reader = new FileReader();
         reader.readAsText(file);
@@ -27,43 +27,31 @@ export default function Etapa1(){
             const NomeD =  file.name.split("-R",1)
             setNomeDesenho(NomeD[0])
             setDadosCSV(dados)
+            buscaTitulo(NomeD[0]);
         }
-        
         reader.onerror = () => {
             console.log('Error', reader.error)
         }
     }
 
-    //Executa useEfect de forma assincrona
-    //para atualizar o titulo quando for alterado
-    //o nome do desenho
-    useEffect(() => {
-        const retTitulo = async () => {
-            let json = [{}]
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    desenho: nomeDesenho,          
-                })
-            };
-            try {
-              const response = await fetch('/api/estruturaControle/tituloDesenho', requestOptions )
-              json = await response.json()
-              setTituloDesenho(json[0]?.titulo)
-            //   if (response.status !== 200) {
-            //     throw new Error("Não foi possivel ler o titulo do desenho!")
-            //   }
-            } catch (error) {
-                setTituloDesenho("")
-            //   throw new Error(error.message)
-            }
-            return json         
+    const buscaTitulo = async (name) => {
+        let json = [{}]
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                desenho: name,          
+            })
+        };
+        try {
+            const response = await fetch('/api/estruturaControle/tituloDesenho', requestOptions )
+            json = await response.json()
+            console.log("Aqui! 6")
+            setTituloDesenho(json[0]?.titulo)
+        } catch (error) {
+            setTituloDesenho("")
         }
-
-        const result = retTitulo().catch(console.error);
-
-    },[])
+    };
 
     //Função que transformar os dados do texto
     //em um array de Itens
