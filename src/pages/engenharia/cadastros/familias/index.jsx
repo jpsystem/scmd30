@@ -87,7 +87,6 @@ export default function CadFamilias() {
   //Execução da consulta através do HOOK UseQuery
   const { data, isLoading } = useQuery( "tb_familias", async () => {
     const response = await retFamilias(`${encomendaAtiva?.idEncomenda}`);
-    console.log("DATA", data)
     return response;
   })
 

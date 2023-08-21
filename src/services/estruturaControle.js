@@ -37,10 +37,9 @@ async function podeExcluir(codigo){
     return retorno[0][0].pPodeExcluir;
 }
 
-
-
 //Função para incluir um novo elemento na encomenda
 export async function cadastro(body){
+    console.log("BODY-CADASTRO", body)
     let retorno = 0;
     try {
         const elemento = await query({
@@ -154,7 +153,6 @@ export async function retTitulo(body) {
     let tit = [];
     try {    
         tit = await query({
-
             query:  "SELECT TRIM(titulo) as titulo FROM teste.desenhos WHERE desenho = ?",
             values: [body.desenho]
         });
@@ -185,8 +183,6 @@ export async function verificaItem(body) {
     } catch (error) {
         throw Error(error.message);
     }
-    //DROP TABLE IF EXISTS Resultado; 
-
-    //return retorno[0][0].pPodeExcluir;
     return statusItem[0][0].retorno
 }
+

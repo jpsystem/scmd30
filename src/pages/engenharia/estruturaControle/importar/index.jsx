@@ -1,8 +1,7 @@
 //Autor: João Magalhães
 //Componente Principal para importação dos itens do desenho
-
 import { useForm } from "react-hook-form";
-import {useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import styles from '../../../../styles/login.module.css'
 import myStyle from "./index.module.css"
 import Button from '../../../../componentes/button'
@@ -10,28 +9,33 @@ import Etapa1 from "./etapa1"
 import Etapa2 from "./etapa2"
 import {CSVContext} from "../../../contexts/csvContext"
 import {PerfilContext} from "../../../contexts/perfilContext"
-import useApiListas from "@/hooks/useApiListas";
+import useApiListas from "@/hooks/useApiListas"
+//import { edicao } from "../../../services/encomenda"
 
-
-export default function ImportaLista({pai}) {
-
+export default function ImportaLista({pai, setModalOpen}) {
   //Ler os dados da Encomenda Ativo do Contexto Atual
   const {encomendaAtiva} = useContext(PerfilContext) 
 
   //carregar o HOOKs UseApiListas
   const [carregarTags, tagsInfo] = useApiListas({
-    url: `/api/combos/tags/${encomendaAtiva.idEncomenda}`,
+    url: `/api/combos/tags/${encomendaAtiva?.idEncomenda}`,
   })
 
+  //Carrega a lista de Tags da encomenda no load da página
   useEffect(()=>{
     carregarTags();
   },[])
 
-  //Estados para controle das opções dos selects
-  const [opTag, setOpTag] = useState(1);
+  //Variavel de estado para armazenar o codigo do Tag
+  //selecionado no combo
+  const [opTag, setOpTag] = useState(0);
+
+  //Setar a variavel de estado opTag com o codigo
+  //do tag selecionado
   const Selecionar = e => {
-    if(e.target.id === "IdTag")
-        setOpTag(e.target.value)
+    if(e.target?.id === "idTag"){
+        setOpTag(e.target?.value)
+    }
   }
 
   // lendo o contexto CSVContext
@@ -41,41 +45,46 @@ export default function ImportaLista({pai}) {
           setNomeDesenho, 
           tituloDesenho,
           setTituloDesenho,
+          pesoTotal,
+          setPesoTotal,
+          statusPai,
+          setStatusPai,
+          statusFilhos,
+          setStatusFilhos
   } = useContext(CSVContext)
-
-  const pesoTotal = dadosCSV?.reduce(
-    function(acumulador, valorAtual) {
-      if(valorAtual?.Sel ){
-        if(parseFloat(valorAtual?.PesoTot) > 0){
-          return acumulador + parseFloat(valorAtual?.PesoTot);
-        }else{
-          return acumulador
-        }
-      }else{
-        return acumulador
-      }
-    }, 0.0
-  )
 
   //Ao carregar a página de importação
   //limpar o contexto dos dados
   useEffect(() => {
-    setDadosCSV(null);
-    setNomeDesenho("");
-    setTituloDesenho("");
+    setDadosCSV(va => va = null);
+    setNomeDesenho(va => va = "");
+    setTituloDesenho(va => va = "");
+    setPesoTotal(va => va = "");
+    setStatusPai(va => va = "");
   }, []);
 
   //Variavel qtdDados para verificar se ativa
   //o botão da Segunda Etapa
-  let qtdDados = dadosCSV?.length;
-  if(qtdDados === undefined) {qtdDados = 0}
+  const [qtdDados, setQtdDados] = useState(0);
+
+  //Atualiza a variavel de estado qtdDados no load
+  //da página de importação
+  useEffect(()=>{
+    if(dadosCSV?.length > 0){
+      setQtdDados(va => va =dadosCSV?.length)
+    }else{
+      setQtdDados(va => va = 0)
+    }
+  },[dadosCSV])
 
   //Estado para controlar a etapa de importação
   //do arquivo dos itens do desenho
   const [etapa, setEtapa] = useState(1)
 
-  //Estanciar o HOOK UseForm
+  //Estanciar o HOOK UseForm para edição
+  //do elemento pai
   const form = useForm({defaultValues: {
+    idEncomenda: encomendaAtiva?.idEncomenda,
     desenho: "",
     titulo: "",
     idTag: 0,
@@ -85,6 +94,93 @@ export default function ImportaLista({pai}) {
     status: 0,
   }})
   const { register, handleSubmit, formState: {errors}} = form;
+  
+  //Quando os dados dos itens da lista dadosCSV
+  //sofrer auterações atualiza o PesoTotal
+  useEffect(()=>{
+    const pesoTotal = dadosCSV?.reduce(
+      function(acumulador, valorAtual) {
+        if(valorAtual?.Sel && valorAtual?.TipoEle !=="I"){
+          if(parseFloat(valorAtual?.PesoTot) > 0){
+            return acumulador + parseFloat(valorAtual?.PesoTot);
+          }else{
+            return acumulador
+          }
+        }else{
+          return acumulador
+        }
+      }, 0.0
+    )
+    setPesoTotal(va => va = pesoTotal)
+  },[dadosCSV])
+
+  //Atualiza o contexto statusFilhos sempre
+  //que houver alteração nos dadosCSV
+  useEffect( () => {
+    const fetchData = async () => {
+      const novoStatus = await verificaFilhos()
+      setStatusFilhos(va => va = novoStatus)
+    }
+    fetchData();
+
+  },[dadosCSV])
+
+  //Excutar verificação nos status dos itens para liberar
+  //o botão importar sempre que alterar o status de um item  
+  async function verificaFilhos(){
+      let retorno = false
+      let qtdliberados = 0
+      let qtdPendentes = 0
+      await dadosCSV?.map( (i) => {
+          if(i.StatusItem === -1 && i.Sel){
+              qtdPendentes ++;
+          }else{
+              if(i.StatusItem < 2 && i.Sel){
+                  qtdliberados ++
+              }
+          }
+      })
+      if(qtdPendentes === 0 && qtdliberados > 0){
+          retorno = true;
+      }
+      return retorno
+  }
+
+
+  //Função para ser executada na submissão do formulario
+  //quando o mesmo estiver sido validado pelo HOOK UseForm
+  const onSubmit = async (data) =>{
+    
+    data.idTag = opTag;
+    data.desenho = nomeDesenho;
+    data.titulo = tituloDesenho;
+    data.pesoTot = pesoTotal?.toFixed(2);
+    const filhos = dadosCSV.filter(st => st.Sel);
+    
+    //console.log("DADOS DO PAI", data)
+    //console.log("DADOS DOS FILHOS", filhos)
+    
+    // body.push(JSON.stringify(data));
+    // body.push(JSON.stringify(filhos))
+    // console.log("BODY", body)
+
+    const body = {
+      pai: data,
+      filhos: filhos
+    };
+
+    const resposta = await fetch ('/api/estruturaControle/importacao',{
+      method: 'POST',
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+    const json = await resposta.json();
+    console.log("Resposta", resposta)
+    console.log("JSON", json)
+    setModalOpen(false)
+  }
 
 
   return (    
@@ -117,127 +213,168 @@ export default function ImportaLista({pai}) {
           </div>
         </div>
         {/* Lado Direito onde fica o formulario do Pai Principal */}
-        <div className={myStyle.ladoD}>    
-          <div style={{width: "80%"}}> 
-            {/*Numero do Desenho */}   
-            <label className={styles.label}>
-                NºDesenho
-            </label>
-            <input  type="text"
-                id="desenho"
-                value={nomeDesenho}  
-                className={myStyle.input}
-                {...register("desenho")}
-                disabled
-            />
-          </div>
-          <div style={{width: "80%"}}>    
-            {/*Titulo */}
-            <label className={myStyle.label}>
-              Titulo
-            </label>
-            <textarea
-              id="titulo"
-              className={myStyle.comentario}
-              value={tituloDesenho}
-              {...register("titulo")}
-            />  
-          </div>
-          <div style={{width: "80%"}}>  
-            {/*TAG */}  
-            <label className={myStyle.label}>
-                TAG
-            </label>
-            <select 
-              className={myStyle.select}
-              // style={{width: "500px"}}
-              //id="IdTag"
-              value={opTag}
-              onChange={Selecionar}
-            >
-            {
-              tagsInfo?.loading ? (
-                <option key={0} value={1}>
-                    Carregando...
-                </option>
-              ):
-              (
-                tagsInfo?.data?.length === 0 ? 
-                (
-                  <option key={0} value={1}>
-                      Nenhum resultado encontrado
-                  </option> 
-                ):
-                (
+        <div className={myStyle.ladoD}>
+          {/*Mostra aviso só se estiver na etapa 2 */}
+          {etapa === 2 &&
+            <div className={myStyle.aviso}>
+              {
+                statusPai === 0 &&
                   <>
-                    <option key={0} value={1}>
-                        Selecione um Tag
-                    </option>
-                    {
-                      tagsInfo?.data?.map( (item, i) =>
-                        <option 
-                          key={i+1} 
-                          value={item?.value}
-                        >
-                          {item?.label}
-                        </option>
-                      )
-                    }
+                  <h1 style={{color: '#269026'}}>Novo desenho!</h1>
+                  <h2>Será gerado um elemento pai novo para o desenho</h2>
                   </>
-                )
-              )
-            } 
-            </select>
-          </div>
-          <div className={myStyle.emLinha}>    
-            <div style={{width: "20%"}}> 
-              {/* Elemento Pai */}
-              <label className={myStyle.label}>
-                Pai
+              }
+              {
+                statusPai === 1 &&
+                  <> 
+                  <h1>Desenho já cadastrado!</h1>
+                  <h2>Os itens ja cadstrado no desenho, se não tiverem ETC, serão atualizados</h2>
+                  </>
+              }
+            </div>
+          }
+          <form className={myStyle.forme}>          
+            <div style={{width: "90%"}}> 
+              {/*Numero do Desenho */}   
+              <label className={styles.label}>
+                  NºDesenho
               </label>
               <input  type="text"
-                id="elePai"
-                // value={pai}
-                className={myStyle.input}
-                disabled
-                {...register("elePai")}
+                  id="desenho"
+                  value={nomeDesenho? nomeDesenho: ""}  
+                  className={myStyle.input}
+                  {...register("desenho")}
               />
             </div>
-            <div style={{width: "40%"}}>
-              {/* Peso Total */}
+            <div style={{width: "90%"}}>    
+              {/*Titulo */}
               <label className={myStyle.label}>
-                Peso Total
+                Titulo
               </label>
-              <input  type="text"
-                id="pesoTot"
-                className={myStyle.input}
-                defaultValue={pesoTotal?.toFixed(2)}
-                disabled
-                {...register("pesoTot")}
-              />                       
-            </div> 
-          </div>
+              <textarea
+                id="titulo"
+                className={myStyle.comentario}
+                value={tituloDesenho? tituloDesenho:""}
+                {...register("titulo")}
+              />              
+            </div>
+            <div style={{width: "90%"}}>  
+              {/*TAG */}  
+              <label className={myStyle.label}>
+                  TAG
+              </label>
+              <select 
+                id="idTag"
+                value={opTag}
+                {...register("idTag", {validate: (value) => {
+                  return value != "0"
+                } } )}
+                className={myStyle.select}
+                // style={{width: "500px"}}
 
-          {/* Multiplicar Lista */}
-          <div className={myStyle.multLista}>    
-              <div > 
+                onChange={Selecionar}
+              >
+
+              {
+                tagsInfo?.loading ? (
+                  <option key={0} value={0}>
+                      Carregando...
+                  </option>
+                ):
+                (
+                  tagsInfo?.data?.length === 0 ? 
+                  (
+                    <option key={0} value={0}>
+                        Nenhum resultado encontrado
+                    </option> 
+                  ):
+                  (
+                    <>
+                      <option key={0} value={0}>
+                          Selecione um Tag
+                      </option>
+                      {
+                        tagsInfo?.data?.map( (item, i) =>
+                          <option 
+                            key={i+1} 
+                            value={item?.value}
+                          >
+                            {item?.label}
+                          </option>
+                        )
+                      }
+                    </>
+                  )
+                )
+              } 
+              </select>
+              {errors?.idTag?.type === "validate" && 
+                    <p className={myStyle.error}>O necessário selecionar um Tag</p>
+              }
+            </div>
+            <div className={myStyle.emLinha}>    
+              <div style={{width: "25%"}}> 
+                {/* Elemento Pai */}
                 <label className={myStyle.label}>
-                  Mult.Lista X
+                  Pai
                 </label>
-              </div>
-              <div style={{width: "30%"}}>
                 <input  type="text"
-                  id="multLista"
-                  className={myStyle.input2}
-                  // defaultValue={1}
-                  {...register("multLista")}
-                /> 
+                  id="elePai"
+                  // value={pai}
+                  className={myStyle.input}
+                  disabled
+                  {...register("elePai")}
+                />
               </div>
-          </div>
+              <div style={{width: "65%"}}>
+                {/* Peso Total */}
+                <label className={myStyle.label}>
+                  Peso Total
+                </label>
+                <input  type="text"
+                  id="pesoTot"
+                  className={myStyle.input}
+                  value={pesoTotal? pesoTotal?.toFixed(2):""}
+                  disabled
+                  {...register("pesoTot")}
+                />                       
+              </div> 
+            </div>
+            {/* Multiplicar Lista */}
+            <div className={myStyle.multLista}>    
+                <div > 
+                  <label className={myStyle.label}>
+                    Mult.Lista X
+                  </label>
+                </div>
+                <div style={{width: "30%"}}>
+                  <input  type="text"
+                    id="multLista"
+                    className={myStyle.input2}
+                    // defaultValue={1}
+                    {...register("multLista")}
+                  /> 
+                </div>
+            </div>
+          </form>
           {/* Controle do botões */}
           <div className={[myStyle.emLinha]}>    
-              <Button disabled fontSize={"1.2em"} width={"45%"}>Importar</Button>
-              <Button fontSize={"1.2em"} width={"45%"}>Fechar</Button>
+              <Button 
+                onClick={() => handleSubmit(onSubmit)()} 
+                fontSize={"1.2em"} 
+                width={"45%"}
+                // disabled= {etapa===2 ? false: true}
+                disabled= {statusFilhos ? false: true}
+              >
+                Importar
+              </Button>
+              <Button 
+                onClick={() => setModalOpen(false)}
+                fontSize={"1.2em"}
+                width={"45%"}
+              >
+                Fechar
+              </Button>
           </div>
         </div>
       </div>

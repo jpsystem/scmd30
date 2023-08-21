@@ -8,7 +8,7 @@ export default function Footer(){
         <footer className="rodape">
             <div className={Style.footerContainer}>
                 <div className={Style.item1}>                
-                <Image src="/images/LogoTMSA_Site.jpg" priority={true} width="200" height="60" alt="Logo TMSA"/>
+                <Image src="/images/LogoTMSA_Site.jpg" priority={false} width="200" height="60" alt="Logo TMSA"/>
                 </div>
                 <div className={Style.item2}>                
                     <p>

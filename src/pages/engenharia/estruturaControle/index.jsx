@@ -1,3 +1,6 @@
+//Autor: João Magalhães
+//Componente principal para controle da Estrutura de Controle
+
 import { useQuery, useQueryClient } from 'react-query'
 import { useState, useContext } from 'react'
 import TreeView from '@/componentes/treeView'
@@ -10,9 +13,7 @@ import Modal from "@/componentes/modal";
 import Formulario from './formulario.jsx';
 import Alerta from "@/componentes/alerta/alerta";
 import {PerfilContext} from "../../contexts/perfilContext"
-import {    
-            BiSitemap               //ItemInicial
-        } from "react-icons/bi";
+import { BiSitemap } from "react-icons/bi";
 
 
 export default function EstControle() {
@@ -31,9 +32,7 @@ export default function EstControle() {
 
     //Função para retornar os itens ta Estrutura de Controle
     async function retElementos(codEncomenda) {
-    
         let json = [{}]
-
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -41,8 +40,6 @@ export default function EstControle() {
                 encomenda: codEncomenda,          
             })
         };
-
-        
         try {
           const response = await fetch('/api/estruturaControle/treeView', requestOptions )
           
@@ -56,6 +53,8 @@ export default function EstControle() {
         return json
     }
 
+    //Execução do HOOK useQuery para executar a API e retornar
+    //todos os elementos da estrutura de controle (TREEVIEW)
     const { data, isLoading } = useQuery( "treeView", async () => {
         const response = await retElementos(`${encomendaAtiva?.idEncomenda}`);
         if(response[0]?.length > 0){
@@ -66,20 +65,23 @@ export default function EstControle() {
         return response;
     })
 
-    const tree2 = [
-        {
-            label: "FORMUALÁRIO",
+    // const tree2 = [
+    //     {
+    //         label: "FORMUALÁRIO",
+    //         filhos: [
+    //             {
 
-            filhos: [
-                {
-
-                },
-            ],
-        },
-    ]
+    //             },
+    //         ],
+    //     },
+    // ]
 
     //Variavel de estado para exibição
     //do aviso de execução
+    
+    //Variavel de estado para armazenar os
+    //dados da menssagem de aviso que retornar 
+    //dos formularios de edição
     const [dadosAviso, setDadosAviso] = useState({
         tipo: "",
         texto: "",
@@ -93,8 +95,9 @@ export default function EstControle() {
         queryClient.invalidateQueries("treeView")
     }
 
-    //Função para receber o retorno do componente filho
-     //e atualizar os dados na Tela
+    //Verifica se a atualização dos dados está em
+    //Loading e exibe menssagem temporaria até finalizar
+    //a carga dos dados
     if( isLoading) {
         return( 
             <div className="loading">
@@ -147,7 +150,7 @@ export default function EstControle() {
                     >
                       <BiSitemap className={styles.icone}/>Item inicial
                     </Button>
-                    <Button heigth={"50px"} fontSize={"1.2em"} disabled={inicio}>Importar Lista</Button>
+                    {/* <Button heigth={"50px"} fontSize={"1.2em"} disabled={inicio}>Importar Lista</Button> */}
                     <Button heigth={"50px"} fontSize={"1.2em"} disabled={inicio}>Relatórios</Button>
                 </div>
             </div>

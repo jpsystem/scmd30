@@ -75,6 +75,7 @@ export default function CadEncomendas() {
   //Criação e execução do HOOK useQuery
   const { data, isLoading } = useQuery( "tb_encomendas", async () => {
     const response = await retEncomendas();
+    console.log("DATA", data)
     return response;
   })
 
@@ -116,6 +117,7 @@ export default function CadEncomendas() {
                 <Alerta tipo={dadosAviso.tipo} texto={dadosAviso.texto} id={dadosAviso.id}/>
                 <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>
             </div>
+
             <Tabela defTable={dados}>
                 {   
                     data?.map( (item) => 

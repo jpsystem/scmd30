@@ -109,3 +109,40 @@ multiplicação dos itens da lista */
     border-radius: 4px;
     margin-left: 15px;
 }
+
+.error{
+    color: red;
+    font-style: bold;
+}
+
+.aviso{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 5px solid #FD8008;
+    border-radius: 3px;
+    box-shadow: 10px 10px 15px rgba(253, 50, 8, 0.5);
+}
+.aviso h1{
+    color: red;
+    font-style: bold;
+    font-size: 1.5em;
+}
+.aviso h2{
+    padding: 5px 10px;
+    color: rgb(0,0,0);
+    font-style: bold;
+    font-size: 1em;
+}
+
+.forme{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

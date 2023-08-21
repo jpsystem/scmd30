@@ -6,6 +6,7 @@ import Modal from '../modal';
 import FormUsuario from "../../pages/principal/cadastros/usuarios/formulario.jsx"
 import FormFamilia from "../../pages/engenharia/cadastros/familias/formulario.jsx"
 import FormEncomenda from "../../pages/principal/cadastros/encomendas/formulario.jsx"
+import FormETC from "../../pages/engenharia/etcs/formulario.jsx"
 
 
 
@@ -93,6 +94,14 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
                 }
                 {nomeForme ==="Encomenda" && 
                     <FormEncomenda 
+                        campos={reg}
+                        tipo={tipoForme} 
+                        setModalOpen={()=> setOpenModal(!openModal)}
+                        retornoFilho={retornoFilho}
+                    />
+                }
+                {nomeForme ==="ETC" && 
+                    <FormETC 
                         campos={reg}
                         tipo={tipoForme} 
                         setModalOpen={()=> setOpenModal(!openModal)}

@@ -101,3 +101,40 @@
     display: block;
     margin: 3px;
 }
+.texto {
+    padding: 5px;
+    color: #000000;
+}
+.red{
+    cursor: pointer;
+    padding: 5px;
+    background-color: #FF5555;
+}
+.red:hover{
+    background-color: #FAFAFA;
+}
+.green{
+    cursor: pointer;
+    padding: 5px;
+    background-color: #99FF99;
+}
+.green:hover{
+    background-color: #FAFAFA;
+}
+
+.yellow{
+    cursor: pointer;
+    padding: 5px;
+    background-color: #EEEE88;
+}
+.yellow:hover{
+    background-color: #FAFAFA;
+}
+.gray{
+    cursor: pointer;
+    padding: 5px;
+    background-color: gray;
+}
+.gray:hover{
+    background-color: #FAFAFA;
+}

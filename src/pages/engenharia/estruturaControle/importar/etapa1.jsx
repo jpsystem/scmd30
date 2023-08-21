@@ -1,39 +1,82 @@
-import { useContext, useState, useEffect } from 'react'
-import myStyle from "./etapas.module.css"
+//Componente GRID para controle de abertura do arquivo de exportação
+// e exibição dos dados na tela. (Etapa 1)
 
+import { useContext, useState } from 'react'
+import myStyle from "./etapas.module.css"
 import {CSVContext} from "../../../contexts/csvContext"
+import { PerfilContext } from '@/pages/contexts/perfilContext'
 
 export default function Etapa1(){
 
     const [dadoFile, setDadoFile] = useState({fileName: "", fileContent: "",})
 
-    const {dadosCSV, setDadosCSV, setNomeDesenho, setTituloDesenho} = useContext(CSVContext)
+    //Ler os dados da Encomenda Ativo do Contexto Atual
+    const {encomendaAtiva} = useContext(PerfilContext) 
+
+    //Ler os dados do arquivo CSV de importação
+    const { dadosCSV, 
+            setDadosCSV, 
+            setNomeDesenho,
+            setTituloDesenho,
+            setPesoTotal,
+            setStatusPai
+    } = useContext(CSVContext)
 
     //Função para abrir o arquivo csv e ler o conteudo
-    function handleFile(ev) {
+    async function handleFile(ev) {
   
         const file = ev.target.files[0];
         const reader = new FileReader();
         reader.readAsText(file);
         reader.onload = () => {
-            //Executa a função que transforma o texto em
-            // um array de elementos dos itens para salvar
-            // na variavel dados
-            const dados =  parseCSV(reader.result)
+
+            //Recupera os dados do arquivo
             setDadoFile({
                 fileName: file.name,
                 fileContent: reader.result,
             })
             const NomeD =  file.name.split("-R",1)
-            setNomeDesenho(NomeD[0])
-            setDadosCSV(dados)
+            //Salva no contexto o nome e titulo do desenho
+            setNomeDesenho(va => va = NomeD[0])
             buscaTitulo(NomeD[0]);
+            buscaStatusPai(NomeD[0]);
+            //Executa a função que transforma o texto em
+            // um array de elementos dos itens para salvar
+            // na variavel dados
+            const dados = parseCSV(reader.result,NomeD[0] )
+            //Salva os dados no contexto
+            setDadosCSV(va => va = dados)
+            //Calcula o peso total e salva no contexto
+            calculaPeso(dados)
+
         }
         reader.onerror = () => {
             console.log('Error', reader.error)
         }
     }
 
+    //Função que calcula o peso total dos itens
+    //filhos do elemento Pai e salva no Contexto
+    function calculaPeso(dados)
+    {
+          const pesoTotal = dados?.reduce(
+           function(acumulador, valorAtual) {
+             if(valorAtual?.Sel ){
+               if(parseFloat(valorAtual?.PesoTot) > 0){
+                 return acumulador + parseFloat(valorAtual?.PesoTot);
+               }else{
+                 return acumulador
+               }
+             }else{
+               return acumulador
+             }
+           }, 0.0
+         )
+         setPesoTotal(va => va = pesoTotal)
+    }
+    
+    //Consulta na api para retornar o titulo do desenho
+    //e salvar no contexto
     const buscaTitulo = async (name) => {
         let json = [{}]
         const requestOptions = {
@@ -46,16 +89,37 @@ export default function Etapa1(){
         try {
             const response = await fetch('/api/estruturaControle/tituloDesenho', requestOptions )
             json = await response.json()
-            console.log("Aqui! 6")
-            setTituloDesenho(json[0]?.titulo)
+            setTituloDesenho(va => va = json[0]?.titulo)
         } catch (error) {
-            setTituloDesenho("")
+            setTituloDesenho(va => va = "")
+        }
+    };
+
+    //Consulta na api para retornar a situação atual
+    //do item (PAI) se mesmo já estiver cadastrado
+    const buscaStatusPai = async (name) => {
+        let json = [{}]
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                idEncomenda: encomendaAtiva.idEncomenda,  
+                desenho: name,
+                grpos: ""          
+            })
+        };
+        try {
+            const response = await fetch('/api/estruturaControle/verificaItem', requestOptions )
+            json = await response.json()
+            setStatusPai(va => va = json)
+        } catch (error) {
+            setStatusPai(va => va = -1)
         }
     };
 
     //Função que transformar os dados do texto
     //em um array de Itens
-    function parseCSV(text){
+    function parseCSV(text, pDesenho){
         const dados = [];
         //Efetua a leitura das linhas
         const result = text.split('\n')
@@ -79,6 +143,7 @@ export default function Etapa1(){
                 TipoEle: "",
                 IdFamilia: 0,
                 Desenho: "",
+                StatusItem: -1,
             }
             
             let dadoLinha = [];
@@ -91,8 +156,9 @@ export default function Etapa1(){
             dado.Qtd = dadoLinha[2];
             dado.Descricao = dadoLinha[3];
             dado.Material = dadoLinha[5];
-            dado.Peso = dadoLinha[6];
-            dado.PesoTot = dadoLinha[6];
+            dado.Peso = parseFloat(dadoLinha[6]);
+            dado.PesoTot = parseFloat(dadoLinha[6]);
+            dado.Desenho = pDesenho;
             id ++;
             //Tem Grupo
             if(dado.Grupo !== undefined && dado.Grupo.trim() > ""){
@@ -118,7 +184,7 @@ export default function Etapa1(){
                     dado.Tipo = "N" //Tipo Nulo
                 }
             }
-
+            //dado.StatusItem = buscaStatusItem(dado?.Desenho, dado?.Grupo + dado?.Posicao)
             dados.push(dado);
         })
 
@@ -173,7 +239,6 @@ export default function Etapa1(){
                     <tbody>
                         {
                             dadosCSV?.map((item) => (
-                                
                                 <tr key={item.id}>
                                     <td width="5%">
                                         <input 
@@ -195,10 +260,8 @@ export default function Etapa1(){
                                     <td width="10%">{
                                         item?.Tipo === "E" && item?.Peso
                                     }</td>                           
-                                </tr>       
-                                )
-                                
-                            )
+                                </tr>  
+                            ))  
                         }
                     </tbody>
                 </table>

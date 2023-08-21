@@ -12,19 +12,16 @@ import Button from "@/componentes/button/index"
 import { PerfilContext } from '../../contexts/perfilContext'
 import useApiListas from "@/hooks/useApiListas";
 
-
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
-
 
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
     const { register, handleSubmit, formState: {errors}} = form;
 
-
     //Ler os dados da Encomenda Ativo do Contexto Atual
     const {encomendaAtiva} = useContext(PerfilContext) 
 
-    //carregar o HOOKs UseApiListas
+    //carregar o HOOKs UseApiListas para buscar as Familias
     const [carregarFamlias, familiasInfo] = useApiListas({
         url: `/api/combos/familias/${encomendaAtiva.idEncomenda}`,
         // onCompleted: (response) =>{
@@ -32,19 +29,25 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         // }
     })
 
+    //carregar o HOOKs UseApiListas para buscar os TAGs
     const [carregarTags, tagsInfo] = useApiListas({
         url: `/api/combos/tags/${encomendaAtiva.idEncomenda}`,
     })
 
+    //Carregar as lista de Familias e TAGs da encomenda
+    //no load da Pagina.
     useEffect(()=>{
         carregarFamlias();
         carregarTags();
     },[])
 
-    //Estados para controle das opções dos selects
+    //Variaveis de estado para controle das opções 
+    //dos combos de Familias e de TAGs
     const [opFamilia, setOpFamilia] = useState(campos.IdFamilia? campos.IdFamilia: 1);
     const [opTag, setOpTag] = useState(campos?.IdTag? campos.IdTag: 1);
 
+    //Função para setar as variaveis de estados
+    //quando selecionar uma Familia ou um TAG
     const Selecionar = e => {
         if(e.target.id === "IdFamilia") 
             setOpFamilia(e.target.value)

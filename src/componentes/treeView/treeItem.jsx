@@ -175,7 +175,7 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
                 setModalOpen={()=> setOpenModal2(!openModal2)}
                 titulo="Importar lista de materiais"
             >
-                <ImportaLista pai={reg?.Elemento} />
+                <ImportaLista pai={reg?.Elemento} setModalOpen={()=> setOpenModal2(!openModal2)} />
             </ModImporta>
         </>
     )

@@ -7,12 +7,11 @@ import styles from "../formulario.module.css"
 import {CSVContext} from "../../../contexts/csvContext"
 import {PerfilContext} from "../../../contexts/perfilContext"
 import useApiListas from "@/hooks/useApiListas";
-import { FaPaperPlane, FaThumbsUp, FaRegWindowClose } from 'react-icons/fa'
+import { FaPaperPlane, FaRegWindowClose } from 'react-icons/fa'
 import LocalStyle from "../../../../styles/formulario.module.css";
 import Button from "../../../../componentes/button/index"
 
 export default function Formulario({item, setModalOpen}){
-    
     //Ler os dados da Encomenda Ativo do Contexto Atual
     const {encomendaAtiva} = useContext(PerfilContext) 
 
@@ -21,27 +20,50 @@ export default function Formulario({item, setModalOpen}){
         url: `/api/combos/familias/${encomendaAtiva.idEncomenda}`,
     })
 
-    useEffect(()=>{
-        carregarFamilias();
-    },[])
+    //Variavel de estado para controle das opções dos select Familias
+    const [opFamilia, setOpFamilia] = useState(0);
 
-    //Estados para controle das opções dos select Familias
-    const [opFamilia, setOpFamilia] = useState(item.IdFamilia? item.IdFamilia: 1);
-
-    const Selecionar = e => {
-        if(e.target.id === "IdFamilia")
-        {
-            setOpFamilia(e.target.value)
+    //Função para atualizar a variavel de estado opFamilia
+    //Com o codigo da familia selecionada no cambo
+    const Selecionar = async e => {
+        if(e?.target.id === "IdFamilia"){
+            setOpFamilia(va => va = e?.target.value)
         }
     }
 
-    const {dadosCSV, setDadosCSV} = useContext(CSVContext)
+    //Executar a função CarregarFamilias no load da pagina.
+    useEffect(()=>{
+        carregarFamilias();
+        setOpFamilia(va => va = item.IdFamilia? item.IdFamilia: 0)
+    },[])
 
-    const [espElemento, setEspElemento] = useState();
+    //Carregar as variaveis de Cotexto do arquivoCSV
+    const { 
+            setDadosCSV, 
+            nomeDesenho
+        } = useContext(CSVContext)
 
-    const form = useForm({defaultValues: item})
+    //Variavel de estado para controle da edição da
+    //especificação do item
+    const [espElemento, setEspElemento] = useState("");
+
+    //carregar o HOOKs useForm
+    const form = useForm({defaultValues:{ 
+        GrPos: item?.Grupo + item?.Posicao,
+        Qtd: item.Qtd,
+        Peso: item.PesoTot,
+        Descricao: item.Descricao,
+        Obs: item.Obs,
+        IdFamilia: item.IdFamilia,
+        TipoEle: item.TipoEle,
+        Unidade: item.Unidade,
+        Material: item.Material,
+        Esp: espElemento,
+    }})
     const { register, handleSubmit, formState: {errors} } = form;
 
+    //Executa função para atualizar descrição do 
+    //elemento pai apnes no load da página
     useEffect(() => {        
         setEspElemento( prev => 
             item?.Descricao 
@@ -53,6 +75,8 @@ export default function Formulario({item, setModalOpen}){
         
     }, []);   
 
+    //Executa função para atualizar descrição do 
+    //elemento quando o campo Observação for alterado   
     const atualizaEsp= (e) => {
         setEspElemento( prev => 
             item?.Descricao 
@@ -63,20 +87,67 @@ export default function Formulario({item, setModalOpen}){
         )
     }
 
+    //Faz consulta na API para retornar o status do item
+    // -1 = Pendente / 0 = Novo / 1 = Alterar / 2 = Bloqueado 
+    const buscaStatusItem = async (pGrupoPos) => {
+        let retStatus = 0
+        let retorno = [{}]
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                idEncomenda: encomendaAtiva.idEncomenda,  
+                desenho: nomeDesenho,
+                grpos: pGrupoPos          
+            })
+        };
+        try {
+            const response = await fetch('/api/estruturaControle/verificaItem', requestOptions )
+            retorno = await response.json()
+            retStatus = retorno;
+        } catch (error) {
+            retStatus = -1;
+        } 
+        return retStatus;
+    };
+
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
-    const onSubmit = (data) =>{
+    const onSubmit =  async (data) =>{
         //Pega o nome da failia na coleção
-        const familia = familiasInfo?.data?.find(fan => fan.value == opFamilia);
-
-        //Atualiza os dados
-        dadosCSV[item.id].Obs = data.Obs
-        dadosCSV[item.id].IdFamilia = opFamilia
-        dadosCSV[item.id].Familia = familia?.label
-        dadosCSV[item.id].TipoEle = data.TipoEle
-        dadosCSV[item.id].Unidade = data.Unidade
-        setDadosCSV(dadosCSV)
-
+        const familia = await familiasInfo?.data?.find(fan => fan.value == opFamilia);
+        const retStatus = await buscaStatusItem(data?.GrPos).then((resposta) => {return resposta})
+        // const retStatus = 0;
+        await setDadosCSV(
+            //prevState contem os dados atuais de dadosCSV
+             prevState => {
+                //Criu um novo estado para atualizar o item especifico
+                //com os dados do formulário
+                const  newState =  prevState.map( (i) => {
+                    
+                    if(i.id === item.id){
+                        return { 
+                            ...i,
+                            Obs: data.Obs,
+                            IdFamilia: opFamilia,
+                            Familia: familia?.label,
+                            TipoEle: data.TipoEle,
+                            Unidade: data.Unidade,
+                            StatusItem: retStatus
+                            //[event.target.name]: event.target.checked 
+                        }
+                    }else{
+                        return i
+                    }
+                })
+                
+                //Retorna o novo estado atual com as alterações
+                //para atualizar.
+                return newState
+            }
+            
+        )
+        
         //Fecha o formulário
         setModalOpen(false);
     }
@@ -98,7 +169,7 @@ export default function Formulario({item, setModalOpen}){
                             id="GrPos" 
                             disabled={true}
                             className={styles.input}
-                            value={item?.Grupo + item?.Posicao}
+                            {...register("GrPos")}
                         />
                     </div>
                     <div className={styles.grupoC}>
@@ -111,7 +182,6 @@ export default function Formulario({item, setModalOpen}){
                             id="Qtd" 
                             disabled={true}
                             className={styles.input}
-                            //defaultValues={itemEdicao?.Qtd}
                             {...register("Qtd")}
                         />
                     </div>
@@ -125,7 +195,6 @@ export default function Formulario({item, setModalOpen}){
                             id="Peso" 
                             disabled={true}
                             className={styles.input}
-                            //defaultValues={itemEdicao?.PesoTot}
                             {...register("Peso")}
                         />
                     </div>
@@ -164,74 +233,87 @@ export default function Formulario({item, setModalOpen}){
                 </div>
                 {/* GRUPO 04 */}
                 <div className={styles.grupoR}>
-                <div style={{width: "80%"}}>  
-                    {/*Familia */}  
-                    <label className={styles.label}>
-                        Familia
-                    </label>
-                    <select 
-                        className={styles.select}
-                        // style={{width: "500px"}}
-                        id="IdFamilia"
-                        value={opFamilia}
-                        onChange={Selecionar}
-                    >
-                    {
-                    familiasInfo?.loading ? (
-                        <option key={0} value={1}>
-                            Carregando...
-                        </option>
-                    ):
-                    (
-                        familiasInfo?.data?.length === 0 ? 
-                        (
-                        <option key={0} value={1}>
-                            Nenhum resultado encontrado
-                        </option> 
-                        ):
-                        (
-                        <>
-                            <option key={0} value={1}>
-                                Selecione uma Familia
-                            </option>
-                            {
-                            familiasInfo?.data?.map( (item, i) =>
-                                <option 
-                                key={i+1} 
-                                value={item?.value}
-                                >
-                                {item?.label}
-                                </option>
-                            )
-                            }
-                        </>
-                        )
-                    )
-                    } 
-                </select>
-              </div>
-              <div style={{width: "15%"}}>  
-                {/*TIPO */}  
-                <label className={styles.label}>
-                    Tipo
-                </label>
-                <select 
-                    className={styles.select}
-                    // style={{width: "500px"}}
-                    id="TipoEle"
-                    //value={opFamilia}
-                    // onChange={Selecionar}
-                    {...register("TipoEle")}
-                >
-                    <option key={0}> </option>
-                    <option key={0}>C</option>
-                    <option key={0}>F</option>
-                    <option key={0}>I</option>
-                </select>
-              </div>
+                    <div style={{width: "80%"}}>  
+                        {/*Familia */}  
+                        <label className={styles.label}>
+                            Familia
+                        </label>
+                        <select 
+                            id="IdFamilia"
+                            //value={opFamilia}
+                            {...register("IdFamilia", {validate: (value) => {
+                                return value != "0"
+                            }})}
 
-              </div>
-                {/* GRUPO 04 */}
+                            className={styles.select}
+
+                            onChange={async (e)=>{await Selecionar(e)}}
+                        >
+                        {
+                            familiasInfo?.loading ? 
+                                (
+                                    <option key={0} value={0}>
+                                        Carregando...
+                                    </option>
+                                ):
+                                (
+                                    familiasInfo?.data?.length === 0 ? 
+                                    (
+                                    <option key={0} value={0}>
+                                        Nenhum resultado encontrado
+                                    </option> 
+                                    ):
+                                    (
+                                    <>
+                                        <option key={0} value={0}>
+                                            Selecione uma Familia
+                                        </option>
+                                        {
+                                        familiasInfo?.data?.map( (item, i) =>
+                                            <option 
+                                            key={i+1} 
+                                            value={item?.value}
+                                            >
+                                            {item?.label}
+                                            </option>
+                                        )
+                                        }
+                                    </>
+                                    )
+                                )
+                        } 
+                        </select>
+                    </div>
+                    <div style={{width: "15%"}}>  
+                        {/*TIPO */}  
+                        <label className={styles.label}>
+                            Tipo
+                        </label>
+                        <select 
+                            className={styles.select}
+                            id="TipoEle"
+                            {...register("TipoEle", {validate: (value) => {
+                                return value != ""
+                            }})}
+                        >
+                            <option key={0} value={""}> </option>
+                            <option key={1} value={"C"}>C</option>
+                            <option key={2} value={"F"}>F</option>
+                            <option key={3} value={"I"}>I</option>
+                        </select>
+
+                    </div>
+                </div>
+                {/* ERROS GRUPO 04 */}
+                <div className={styles.grupoC}>
+                    {errors?.IdFamilia?.type === "validate" && 
+                        <p className={styles.error}>O necessário selecionar uma familia</p>
+                    }
+                    {errors?.TipoEle?.type === "validate" && 
+                        <p className={styles.error}>O necessário selecionar o Tipo do elemento</p>
+                    }
+                </div>                   
+                {/* GRUPO 05 */}
                 <div className={styles.grupoR}>
                     <div className={styles.grupoC}>
                         <label className={styles.label}>
@@ -259,10 +341,6 @@ export default function Formulario({item, setModalOpen}){
                         />
                     </div>
                 </div> 
-                {/* GRUPO 05 */}
-
-
-
                 {/* GRUPO 06 */}
                 <div className={styles.grupoR}>
                     <div className={styles.grupoC}>
@@ -275,10 +353,10 @@ export default function Formulario({item, setModalOpen}){
                             className={styles.text}
                             disabled={true}
                             value={espElemento}
+                            {...register("Esp")}
                         />
                     </div>
                 </div>
-
                 {/* GRUPO 7 */}
                 <div className={styles.grupoR} style={{marginTop: "30px"}}>
                     <Button 

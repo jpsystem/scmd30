@@ -38,7 +38,7 @@ const OpcoesMenu = [
             },
             {
                 title: "ETCs",
-                page: "/#",
+                page: "/engenharia/etcs",
             },
             {
                 title: "Cadastros",
@@ -50,10 +50,6 @@ const OpcoesMenu = [
                     {
                         title: "Familias",
                         page: "/engenharia/cadastros/familias",
-                    },
-                    {
-                        title: "Importar Lista",
-                        page: "/engenharia/estruturaControle/importar",
                     },
                 ]
             },
