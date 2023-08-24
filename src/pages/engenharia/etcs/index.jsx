@@ -7,7 +7,7 @@ import Linha from "../../../componentes/tabela/linha";
 import Button from '../../../componentes/button';
 import { useContext, useState } from 'react';
 import Modal from "../../../componentes/modal";
-import Formulario from './formulario.jsx';
+import Formulario from './formETC.jsx';
 import Alerta from "../../../componentes/alerta/alerta";
 import FechaForm from '../../../componentes/fechaForm';
 import { PerfilContext } from "@/pages/contexts/perfilContext";

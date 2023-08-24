@@ -16,7 +16,13 @@ import { useState } from 'react';
       });
       let json = null;
       try {
-        const response = await fetch(config.url)
+        let response = {};
+        if(config.requestOptions){
+          response = await fetch(config.url, config.requestOptions)
+        }
+        else{
+          response = await fetch(config.url)
+        }
         json = await response.json()
         setRequestInfo({
           ...initialRequestInfo,

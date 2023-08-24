@@ -17,3 +17,21 @@ export async function gridETCs(body) {
   }
   return etcs
 }
+
+//Função para retornar os itens da GRD
+export async function itensGRD(body) {
+    let itens = [];
+    try {    
+        itens = await query({
+            query:  "CALL ItensGRD(?,?)",
+            values: [body.codEncomenda, body.GRD]
+        });
+  
+        if (!itens){
+            throw new Error('Não tem itens cadastrados!')
+        }  
+    } catch (error) {
+        throw Error(error.message);
+    }
+    return itens
+  }

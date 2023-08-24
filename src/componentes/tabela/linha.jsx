@@ -2,11 +2,14 @@ import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa'
 import Coluna from './coluna'
 import styles from './index.module.css'
 import { useEffect, useState } from 'react';
+
 import Modal from '../modal';
+import ModETC from '../modETC'
+
 import FormUsuario from "../../pages/principal/cadastros/usuarios/formulario.jsx"
 import FormFamilia from "../../pages/engenharia/cadastros/familias/formulario.jsx"
 import FormEncomenda from "../../pages/principal/cadastros/encomendas/formulario.jsx"
-import FormETC from "../../pages/engenharia/etcs/formulario.jsx"
+import FormETC from "../../pages/engenharia/etcs/formETC.jsx"
 
 
 
@@ -16,6 +19,8 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
 
     const [openModal, setOpenModal] = useState(false)
 
+    const [openModal2, setOpenModal2] = useState(false)
+
     const [tipoForme, setTipoForm] = useState("")
 
     const cabeca = props.cabecalho;
@@ -23,14 +28,27 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
     // let  myOpcao = 0
 
     const controle =(opcao)=> {
-        // myOpcao = opcao
-        if(opcao === 1){
-            setTipoForm("edicao")
-            setOpenModal(true)
-        }
-        if(opcao === 2){
-            setTipoForm("exclusao")
-            setOpenModal(true)
+        if(nomeForme !== "ETC")
+        {
+            // myOpcao = opcao
+            if(opcao === 1){
+                setTipoForm("edicao")
+                setOpenModal(true)
+            }
+            if(opcao === 2){
+                setTipoForm("exclusao")
+                setOpenModal(true)
+            }
+        }else{
+            // myOpcao = opcao
+            if(opcao === 1){
+                setTipoForm("edicao")
+                setOpenModal2(true)
+            }
+            if(opcao === 2){
+                setTipoForm("exclusao")
+                setOpenModal2(true)
+            }
         }
         // alert(JSON.stringify(opcao))
         return null
@@ -100,15 +118,19 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
                         retornoFilho={retornoFilho}
                     />
                 }
-                {nomeForme ==="ETC" && 
-                    <FormETC 
-                        campos={reg}
-                        tipo={tipoForme} 
-                        setModalOpen={()=> setOpenModal(!openModal)}
-                        retornoFilho={retornoFilho}
-                    />
-                }
             </Modal>
+            <ModETC 
+                isOpen={openModal2} 
+                setModalOpen={()=> setOpenModal2(!openModal2)}
+                titulo="ETC - Especificações Tecnicas para Compra"
+            > 
+                <FormETC 
+                    campos={reg}
+                    tipo={tipoForme} 
+                    setModalOpen={()=> setOpenModal2(!openModal2)}
+                    //retornoFilho={retornoFilho}
+                />    
+            </ModETC>            
         
          </>
     )

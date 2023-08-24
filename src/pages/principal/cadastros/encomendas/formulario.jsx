@@ -1,3 +1,6 @@
+//Autor: João Magalhães
+//Componente principal para o formulario da Encomenda.
+
 import { useForm } from "react-hook-form";
 import { FaPaperPlane, FaThumbsUp, FaRegWindowClose } from 'react-icons/fa'
 import styleLogin from "../../../../styles/login.module.css"
