@@ -8,6 +8,7 @@ import { useContext, useState } from 'react'
 import { PerfilContext } from '../contexts/perfilContext'
 import Select from 'react-select';
 import {useRouter} from "next/router"
+import {setCookie} from "cookies-next"
 
 export default function SelEncomendas() {
       //Ler os dados da Encomenda Ativo do Contexto Atual
@@ -36,6 +37,10 @@ export default function SelEncomendas() {
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
     const onSubmit = () => {
+
+      setCookie("encID",selectedOption.value)
+      setCookie("encCodigo",selectedOption.tag)
+      setCookie("encCliente",selectedOption.label)
       setEncomendaAtiva(
         {
           idEncomenda: selectedOption.value,

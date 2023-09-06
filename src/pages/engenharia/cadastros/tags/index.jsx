@@ -1,79 +1,72 @@
 import { useQuery, useQueryClient } from 'react-query'
+import { useContext } from 'react';
 import LayoutPagina from "../../../componentes/layoutPagina";
-import Tabela from "../../../../componentes/tabela";
+import Tabela from "../../../../componentes/tabela/index";
 import styles from '../../../../styles/login.module.css'
 import Coluna from "../../../../componentes/tabela/coluna";
 import Linha from "../../../../componentes/tabela/linha";
 import Button from '@/componentes/button';
 import { useState } from 'react';
-import Modal from "../../../../componentes/modal";
-import Formulario from './formulario.jsx';
-import Alerta from "../../../../componentes/alerta/alerta";
+import Modal from "../../../../componentes/modal/index";
+import Formulario from './formulario';
 import FechaForm from '@/componentes/fechaForm';
+import Alerta from "../../../../componentes/alerta/alerta";
+import {PerfilContext} from "../../../contexts/perfilContext"
 
 //Coleção de dados para cabecalho da tabela
 const dados={
   key: 0,
   id: 1,
-  largura_Cabecalho:  "1670px",
-  largura_Corpo:      "1700px",
+  largura_Cabecalho:  "970px",
+  largura_Corpo:      "1000px",
   altura:  "450px", 
   colunas: [
     { key: 1,
       nome: "ID",
-      largura: "50px",
+      largura: "100px",
       align: "",
     },
     { key: 2,
-      nome: "Login",
+      nome: "Encomenda",
       largura: "200px",
       align: "",
     },
     { key: 3,
-      nome: "Nome",
-      largura: "350px",
+      nome: "Tag",
+      largura: "300px",
       align: "",
-    },
-    { key: 4,
-      nome: "E-mail",
-      largura: "450px",
-      align: "",
-    },
-    { key: 5,
-      nome: "Cargo",
-      largura: "400px",
-      align: "",
-    },   
-    { key: 6,
-      nome: "Senha",
-      largura: "150px",
-      align: "",
-    },
-    { key: 7,
-      nome: "Admin",
-      largura: "100px",
-      align: "center",
-    },         
+    },           
   ],
 }
 
-export default function CadUsuarios() {
+export default function CadTags() {
+
+  //Carrega dados da Encomenda do Contexto
+  const {encomendaAtiva} = useContext(PerfilContext)
+
   //HOOK para atualizar e redenrizar os
   //dados do usuário na página
   const queryClient = useQueryClient();
 
-  //Função para retornar os dados dos
-  //usuarios da api "/api/user/usuarios"
-  async function retUsuarios() {
+  //Função para buscar os Tags da encomenda
+  //ativa da api '/api/tag/listaTags'
+  async function retTags(codEncomenda) {
     
     let json = [{}]
     
     try {
-      const response = await fetch('/api/user/usuarios')
-      
+      const response = await fetch ('/api/tag/listaTags', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idEncomenda: codEncomenda,
+        })
+      });
       json = await response.json()
       if (response.status !== 200) {
-        throw new Error("Não foi possivel listar os usuários!")
+        throw new Error("Não foi possivel listar os Tags!")
       } 
     } catch (error) {
       throw new Error(error.message)
@@ -81,13 +74,13 @@ export default function CadUsuarios() {
     return json
   }
 
-  //Criação e execução do HOOK useQuery
-  const { data, isLoading } = useQuery( "tb_usuarios", async () => {
-    const response = await retUsuarios();
+  //Execução da consulta através do HOOK UseQuery
+  const { data, isLoading } = useQuery( "tb_tags", async () => {
+    const response = await retTags(`${encomendaAtiva?.idEncomenda}`);
     return response;
   })
 
-  //Variavel de Estado para controle do formulario Modal
+  //Variavel para controle do Modal
   const [openModal, setOpenModal] = useState(false)
 
   //Variavel de estado para exibição
@@ -102,7 +95,7 @@ export default function CadUsuarios() {
   //e atualizar os dados na Tela
   const retornoFilho = (childdata) => {
     setDadosAviso(childdata)
-    queryClient.invalidateQueries("tb_usuarios")
+    queryClient.invalidateQueries("tb_tags")
   }
 
   //Tratamento para exibição de menssagem de espera
@@ -113,53 +106,48 @@ export default function CadUsuarios() {
             </div>
   }
 
-  return (
-    <LayoutPagina largura="1900px">
+  return(
+    <LayoutPagina largura="1100px">
       <div className={styles.barraFecha}>
         <FechaForm/>
       </div>
-
       <div className={styles.barraTitulo}>
-        <h2 className={styles.title}>Cadastro de Usuários</h2>
+        <h2 className={styles.title}>Cadastro de TAGs</h2>
         {/* LINHA AVISO */}
         <Alerta tipo={dadosAviso.tipo} texto={dadosAviso.texto} id={dadosAviso.id}/>
         <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>
       </div>
+
       <Tabela defTable={dados}>
         {   
           data?.map( (item) => 
           (
             // corpoForm={<Formulario dados={dados}/>}
-            <Linha key={item.id} 
-                  nomeForme="Usuario" 
-                  reg={item}
-                  retornoFilho={retornoFilho}
+            <Linha key={item.Id} 
+                    nomeForme="Tag" 
+                    reg={item}
+                    retornoFilho={retornoFilho}
             >
-              <Coluna width="50px">{item.id}</Coluna>
-              <Coluna width="200px">{item.login}</Coluna>
-              <Coluna width="350px">{item.nome}</Coluna>
-              <Coluna width="450px">{item.eMail}</Coluna>
-              <Coluna width="400px">{item.cargo}</Coluna>
-              <Coluna width="150px" >{"*".repeat(item.senha.length)}</Coluna>
-              <Coluna width="100px" align="center">{item.admin}</Coluna>
+              <Coluna width="100px">{item.Id}</Coluna>
+              <Coluna width="200px">{item.CodEncomenda}</Coluna>
+              <Coluna width="300px">{item.Tag}</Coluna>
             </Linha>
           )
           )
         }   
-        </Tabela>
+        </Tabela>  
+
         <Modal 
           isOpen={openModal} 
           setModalOpen={()=> setOpenModal(!openModal)}
-          titulo="Novo usuário"
+          titulo="Novo Tag"
         >
           <Formulario 
             setModalOpen={()=> setOpenModal(!openModal)} 
             tipo={"inclusao"}
-            retornoFilho={retornoFilho}
+            retornoFilho={retornoFilho}          
           />
         </Modal>
- 
     </LayoutPagina>
-    
   )
 }

@@ -7,6 +7,7 @@ import Linha from "../../../componentes/tabela/linha";
 import Button from '../../../componentes/button';
 import { useContext, useState } from 'react';
 import Modal from "../../../componentes/modal";
+import ModETC from '../../../componentes/modETC'
 import Formulario from './formETC.jsx';
 import Alerta from "../../../componentes/alerta/alerta";
 import FechaForm from '../../../componentes/fechaForm';
@@ -167,7 +168,7 @@ export default function CadETCs() {
                 }   
             </Tabela>
 
-            <Modal 
+            <ModETC 
                 isOpen={openModal} 
                 setModalOpen={()=> setOpenModal(!openModal)}
                 titulo="Nova ETC"
@@ -177,7 +178,7 @@ export default function CadETCs() {
                     tipo={"inclusao"}
                     retornoFilho={retornoFilho}
                 />
-            </Modal>
+            </ModETC>
         </LayoutPagina>
   )
 }

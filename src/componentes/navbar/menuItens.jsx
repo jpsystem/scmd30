@@ -57,10 +57,13 @@ const MenuItems = (	{items, depthLevel	} ) => {
 						/> 
 					</>
 				) : 
-				( 
-					<Link href={items?.page}> 
+				( items.disabled ?
+					(<Link href={items?.page} style={{pointerEvents: 'none', color: '#c0c0c0'}}> 
 						{items?.title} 
-					</Link>
+					</Link>):
+					(<Link href={items?.page}> 
+						{items?.title} 
+					</Link>)
 				)
 			} 
 		</li>

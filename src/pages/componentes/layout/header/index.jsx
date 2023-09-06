@@ -5,13 +5,25 @@ import Style from './index.module.css'
 import Perfil from '../../../../componentes/perfil/index';
 
 import {PerfilContext} from "../../../contexts/perfilContext"
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { FaUserAlt, FaProjectDiagram } from 'react-icons/fa'
 
 
 export default function Header(){
     const {usuario, encomendaAtiva} = useContext(PerfilContext)
+
+    const [dadosAviso, setDadosAviso ] = useState({
+        nome: "Desconectado",
+        encomenda: "Selecione uma encomenda!"
+    })
+
+    useEffect(()=>{
+        setDadosAviso({
+            nome: usuario.nome,
+            encomenda: encomendaAtiva.cliente
+        })
+    },[PerfilContext])
 
     return(
         <>
@@ -20,7 +32,7 @@ export default function Header(){
                     <Link href='/#'>
                         <Image src="/images/Logo_SCMD.png" priority={false} width="200" height="80" alt="Logo SCMD"/>
                     </Link>
-                    <Perfil/>
+                    {/* <Perfil/> */}
                 </div>
                 <div className={Style.headC}>
                     <div className={Style.headC1}>
@@ -37,7 +49,7 @@ export default function Header(){
                         <FaUserAlt/> {usuario?.nome}
                     </div>
                     <div className={Style.headD2}>
-                        <FaProjectDiagram/> {encomendaAtiva?.codEncomenda}
+                        <FaProjectDiagram/> {encomendaAtiva?.cliente }
                     </div>
                 </div>
             </div>

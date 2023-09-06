@@ -44,7 +44,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     eMail: data.eMail,
                     cargo: data.cargo,
                     senha: data.senha,
-                    administrador: data.administrador,
+                    administrador: data.administrador ,
                 })
             });
             const json = await resposta.json();
@@ -192,6 +192,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     <label className={styles.label}>Admin</label>
                     <input  type="checkbox"
                             id="administrador"
+                            // styled={{cheked: `"${campos.administrador}"`}}
                             className={styles.input}
                             {...register("administrador")} 
                     /> 

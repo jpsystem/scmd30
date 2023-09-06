@@ -1,0 +1,30 @@
+.container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.containerPag {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 85vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background-color: #252525;
+}
+
+.wrapPag {
+  /* width: 650px; */
+  background-color: #FFF;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 77px 55px 77px 55px;
+  box-shadow: 5px 10px 15px 5px rgba(253, 128, 128, 0.5);
+  /* height: 800px; */
+}
+.texto{
+  font-size: 5rem;
+}

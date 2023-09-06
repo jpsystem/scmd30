@@ -35,3 +35,26 @@
     color: rgb(253, 128, 8);
     background-color: #000;
 }
+
+.strong{
+    position: relative;
+}
+
+.strong::after{
+    content: "Teste JP";
+    position: absolute;
+    background-color: #ffcc33;
+    top: -100px;
+    left: -100px;
+    width: 100px;
+    height: 30px;
+    color: #2e2e2e;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 500ms, transform 500ms;
+
+}
+.strong:is(:hover, :focus)::after {
+    opacity: 1;
+    transform: translateY(70px) translateX(50px);
+}

@@ -1,0 +1,76 @@
+/* ========== BOTÃO 1 =============*/
+.botao{
+  position: relative;
+}
+.botao::after{
+  position: absolute;
+  background-color: #ffcc33;
+  top: -100px;
+  left: -100px;
+  height: auto;
+  padding: 10px;
+  color: #2e2e2e;
+  font-weight: 600;
+  font-size: 1.5rem;
+  opacity: 0;
+  transition: opacity 800ms, transform 800ms;
+}
+.botao:is(:hover, :focus)::after {
+  opacity: 1;
+  transform: translateY(25px) translateX(120px);
+}
+.bt1::after{
+  content: "Salvar dados...";
+  width: 200px;
+}
+.bt2::after{
+  content: "Selecionar elementos...";
+  width: 300px;
+}
+.bt3::after{
+  content: "Emitir a ETC";
+  width: 200px;
+}
+.bt4::after{
+  content: "Destravar a ETC";
+  width: 200px;
+}
+.btDesabled::after{
+  content: "Desabilitado...";
+  width: 200px;
+  background-color: #ffffff;
+  color: gray;
+}
+.btIcon{
+  color: gray;
+  font-size: 2em;
+  margin-left: 20px;
+}
+
+.botoes{
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.icon{
+  font-size: 2em;
+  cursor: pointer;
+  color: #000;
+  margin-left: 20px;
+}
+.icon:hover{
+  color: #000;
+  background-color:  rgb(253, 128, 8);
+}
+
+.toolBar{
+  margin-left: 20px;
+  border: 5px solid  rgb(253, 128, 8);
+  box-shadow: 5px 5px 5px rgba(253, 50, 8, 0.5);
+  height: 60px;
+  padding: 10px;
+  background-color: white
+}

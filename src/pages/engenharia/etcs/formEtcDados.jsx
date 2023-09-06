@@ -5,6 +5,7 @@ import styles from "./formETC.module.css"
 import { useContext, useEffect, useState } from "react";
 import { PerfilContext } from "@/pages/contexts/perfilContext";
 import useApiListas from "@/hooks/useApiListas";
+import Button from "@/componentes/button";
 
 export default function FormEtcDados({campos, tipo}){
   //Estanciar o HOOK UseForm
@@ -27,7 +28,7 @@ export default function FormEtcDados({campos, tipo}){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
           codEncomenda: encomendaAtiva.codEncomenda,
-          GRD: campos.GRD          
+          GRD: (tipo !== "inclusao"? campos.GRD: 0)         
       })
     }
   })  
@@ -43,7 +44,7 @@ export default function FormEtcDados({campos, tipo}){
 
   //Variaveis de estado para controle das opções 
   //do combo de Familias
-  const [opFamilia, setOpFamilia] = useState(campos.IdFamilia? campos.IdFamilia: 1);
+  const [opFamilia, setOpFamilia] = useState(campos?.IdFamilia? campos?.IdFamilia: 1);
 
   //Função para setar as variaveis de estados
   //quando selecionar uma Familia ou um TAG
@@ -66,8 +67,9 @@ export default function FormEtcDados({campos, tipo}){
                     style={{width: "100px"}}
                     type="text"
                     id="codEtc"
+                    disabled
                     className={styles.input}
-                    {...register("codETC",{requered: true})}
+                    {...register("codETC")}
                   />
                 </div> 
                 {/* Rev */}
@@ -79,8 +81,9 @@ export default function FormEtcDados({campos, tipo}){
                     style={{width: "100px"}}
                     type="text"
                     id="Revisao" 
+                    disabled
                     className={styles.input}
-                    {...register("Revisao",{requered: true})}
+                    {...register("Revisao")}
                   />
                 </div> 
           </div>
@@ -94,6 +97,7 @@ export default function FormEtcDados({campos, tipo}){
                   style={{width: "350px"}}
                   type="date"
                   id="DataEmi" 
+                  // value={today.toLocaleDateString()}
                   className={styles.input}
                   {...register("DataEmi")}
               />
@@ -285,17 +289,31 @@ export default function FormEtcDados({campos, tipo}){
                     )
                   )
                 }
-                {/* <tr>
-                  <td width="10%">001</td>
-                  <td width="25%">XXX-00000-00</td>
-                  <td width="25%">WYZ000-0000-00</td>
-                  <td width="30%">TITULO DO DESENHO</td>
-                  <td width="10%">X</td>
-                </tr> */}
               </tbody>
             </table>
           </div>
         </div>
+        {/* BOTÔES */}
+        {
+          tipo === "inclusao" && (
+            <div className={styles.grupoR} style={{marginBottom: "50px"}}>
+              <Button 
+                onClick={() => setModalOpen(false)}
+                fontSize={"2em"}
+                width={"200px"}
+              >
+                Salvar
+              </Button>
+              <Button 
+                onClick={() => setModalOpen(false)}
+                fontSize={"2em"}
+                width={"200px"}
+              >
+                Fechar
+              </Button>
+            </div>
+          )
+        }     
       </div>
     </>
   )

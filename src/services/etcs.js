@@ -35,3 +35,21 @@ export async function itensGRD(body) {
     }
     return itens
   }
+
+//Função para retornar os itens da ETC
+export async function itensETC(body) {
+    let itens = [];
+    try {    
+        itens = await query({
+            query:  "CALL ItensETC(?)",
+            values: [body.idEtc]
+        });
+  
+        if (!itens){
+            throw new Error('Não tem itens cadastrados na ETC!')
+        }  
+    } catch (error) {
+        throw Error(error.message);
+    }
+    return itens
+  }

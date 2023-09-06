@@ -35,6 +35,9 @@
     justify-content: center;
     width: 100%; 
 }
+.headC1 h1{
+    font-size: 2rem;
+}
 .headC2{
     display: flex;
     justify-content: center;
@@ -44,10 +47,12 @@
 .headD1{
     align-self: center;
     width: 100%; 
+    font-size: 1.5rem;
 }
 .headD2{
     align-self: center;
     width: 100%; 
+    font-size: 1.5rem;
 }
 
 .mostraClasse{

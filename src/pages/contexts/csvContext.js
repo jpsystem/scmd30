@@ -9,7 +9,7 @@ export default function CSVProvider({children}){
     const [pesoTotal, setPesoTotal] = useState(null)
     const [statusPai, setStatusPai] = useState(null)
     const [statusFilhos, setStatusFilhos] = useState(false)
-    
+
     return(
         <CSVContext.Provider value={{
             dadosCSV,

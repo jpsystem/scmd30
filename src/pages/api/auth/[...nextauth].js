@@ -54,7 +54,9 @@ export default NextAuth({
         )
     ] ,
     callbacks: {
-        async jwt({ token, account }) {        
+        async jwt({ token, account }) {   
+        console,log("token",token)     
+        console,log("account",account)   
           if (token.sub) {
             return token
           }

@@ -8,15 +8,14 @@ const SECRET = process.env.JWT_SECRET
 function createToken(user) {
     return jwt.sign(
     {
-        login:  user.login,
-        senha:  user.senha,
-        id:     user.id,
-        nome:   user.nome,
+        login:         user.login,
+        senha:         user.senha,
+        id:            user.id,
+        nome:          user.nome,
+        administrador: user.administrador
     }, 
-    SECRET, 
-    {
-        expiresIn: 300 // equivale a 5 minutos (60*5)
-    })
+    SECRET)
+
 }
 
 function readToken(token) {
@@ -36,16 +35,26 @@ export async function login(body) {
     let token = [];
     try {    
         const usuario = await query({
-            query: "Select id, login, senha, nome From tb_Usuarios where UCASE(login) = UCASE(?)",
+            query:  "SELECT "
+                    +"id, "
+                    +"login, "
+                    +"senha, "
+                    +"nome, "
+                    +"administrador "
+                    +"FROM tb_usuarios "
+                    +"WHERE UCASE(login) = UCASE(?)",
             values: [body.login],
         });
         //token = createToken(usuario[0])
-        token = usuario[0]
+        //token = usuario[0]
         if (!usuario) throw new Error('Usuário não cadastrado')
         else{ 
             if (usuario[0].senha !== body.senha)
             {
                 throw new Error('Senha incorreta!')
+            }else
+            {
+                token = [{dadosUser: usuario[0]}, {token: createToken(usuario[0])} ]
             }
         }   
     } catch (error) {
@@ -155,4 +164,34 @@ export async function exclusao(codigo){
         throw Error(error.message);
     }
     return retorno;
+}
+
+
+
+//Função para retornar os dados do usuário para
+//prencher os dados do perfil
+export async function buscaUsuario(body) {
+    let user = [];
+    try {    
+        user = await query({
+            query:  " SELECT " 
+	                +"  Id, "
+                    +"  Login, "
+                    +"  Nome, "
+                    +"  Senha, "
+                    +"  Administrador " 
+                    +" FROM "
+                    +"  tb_usuarios "
+                    +" WHERE "
+                    +"  login=? and senha=? ",
+            values: [body.login, body.senha]
+        });
+  
+        if (!user){
+            throw new Error('Esse usuário não está cadastrado')
+        }  
+    } catch (error) {
+        throw Error(error.message);
+    }
+    return user
 }

@@ -15,10 +15,10 @@ export default function Footer(){
                         <span>JPSystem  &copy; 2023 </span>
                     </p>
                 </div>
-                <div className={Style.item3}>                
-                    <FaFacebookSquare className={Style.icon}/>
-                    <FaInstagramSquare className={Style.icon}/>
-                    <FaLinkedin className={Style.icon}/>
+                <div className={Style.item3}>
+                    <strong className={Style.strong}><FaFacebookSquare className={Style.icon}/></strong> 
+                    <strong className={Style.strong}><FaInstagramSquare className={Style.icon}/></strong>
+                    <strong className={Style.strong}><FaLinkedin className={Style.icon}/></strong>               
                 </div>
             </div>
         </footer>

@@ -5,12 +5,18 @@ import styles from '../../../../styles/login.module.css'
 import Coluna from "../../../../componentes/tabela/coluna";
 import Linha from "../../../../componentes/tabela/linha";
 import Button from '@/componentes/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from "../../../../componentes/modal";
 import Formulario from './formulario.jsx';
 import Alerta from "../../../../componentes/alerta/alerta";
 import FechaForm from '@/componentes/fechaForm';
+// import { Token } from '@/pages/componentes/token';
+import {useRouter} from "next/router"
 
+import {useContext} from "react"
+import { PerfilContext } from '@/pages/contexts/perfilContext';
+
+// const token = Token;
 //Coleção de dados para cabecalho da tabela
 const dados={
     key: 0,
@@ -48,10 +54,19 @@ const dados={
   }
   
 
-export default function CadEncomendas() {
+export default function CadEncomendas(props) {
+  const router = useRouter()
+  const {usuario} = useContext(PerfilContext)
+  useEffect(()=>{
+    if(!usuario.administrador){
+      router.replace('/principal/login')
+    }
+  },[])
+
   //HOOK para atualizar e redenrizar os
   //dados do usuário na página
   const queryClient = useQueryClient();
+  //console.log("CadEncomendas",token)
 
   //Função para retornar os dados das
   //encomendas da api "/api/encomenda/encomendas"
@@ -75,7 +90,7 @@ export default function CadEncomendas() {
   //Criação e execução do HOOK useQuery
   const { data, isLoading } = useQuery( "tb_encomendas", async () => {
     const response = await retEncomendas();
-    console.log("DATA", data)
+    // console.log("DATA", data)
     return response;
   })
 
@@ -112,7 +127,7 @@ export default function CadEncomendas() {
             </div>
 
             <div className={styles.barraTitulo}>
-                <h2 className={styles.title}>Cadastro de Encomendas</h2>
+                <h2 className={styles.title}>Cadastro de Encomendas{props.token}</h2>
                 {/* LINHA AVISO */}
                 <Alerta tipo={dadosAviso.tipo} texto={dadosAviso.texto} id={dadosAviso.id}/>
                 <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>
@@ -153,3 +168,29 @@ export default function CadEncomendas() {
         </LayoutPagina>
     )
 }
+// export const getStaticProps = async () => {
+//   // return{
+//   //   props: {teste: "JPSYSTEM"},
+//   // }
+
+//   try {
+//     console.log("getStaticProps",token)
+//     //const token = "TESTE"
+//     if(!token) throw new Error("Token invalido")
+//     //const token = "JPSYSTEM"
+//     //verifica(token)
+
+//     return{
+//       props: {token: "TESTE"},
+//     }
+//   } catch (error) {
+//     return{
+//       redirect:{
+//         permanent: false,
+//         destination: "principal/login"
+//       },
+//       props: {},
+//     }
+//   }
+
+// }

@@ -10,6 +10,7 @@ import Button from "../../../../componentes/button/index"
 
 
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
+    
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
     const { register, handleSubmit, formState: {errors} } = form;
