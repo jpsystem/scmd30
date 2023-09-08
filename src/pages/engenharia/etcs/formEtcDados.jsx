@@ -28,7 +28,7 @@ export default function FormEtcDados({campos, tipo}){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
           codEncomenda: encomendaAtiva.codEncomenda,
-          GRD: (tipo !== "inclusao"? campos.GRD: 0)         
+          GRD: (tipo !== "inclusao"? campos?.GRD: 0)         
       })
     }
   })  
@@ -277,11 +277,11 @@ export default function FormEtcDados({campos, tipo}){
                       {
                         itensInfo?.data[0]?.map( (item, i) =>
                           <tr key={i}>
-                            <td width="10%">{item.Item}</td>
-                            <td width="25%">{item.NumeroTMSA}</td>
-                            <td width="25%">{item.NumeroCliente}</td>
-                            <td width="30%">{item.Titulo}</td>
-                            <td width="10%">{item.Rev}</td>                          
+                            <td width="10%">{item?.Item}</td>
+                            <td width="25%">{item?.NumeroTMSA}</td>
+                            <td width="25%">{item?.NumeroCliente}</td>
+                            <td width="30%">{item?.Titulo}</td>
+                            <td width="10%">{item?.Rev}</td>                          
                           </tr> 
                         )
                       }                 

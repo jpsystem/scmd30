@@ -43,8 +43,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
 
     //Variaveis de estado para controle das opções 
     //dos combos de Familias e de TAGs
-    const [opFamilia, setOpFamilia] = useState(campos.IdFamilia? campos.IdFamilia: 1);
-    const [opTag, setOpTag] = useState(campos?.IdTag? campos.IdTag: 1);
+    const [opFamilia, setOpFamilia] = useState(campos?.IdFamilia? campos?.IdFamilia: 1);
+    const [opTag, setOpTag] = useState(campos?.IdTag? campos?.IdTag: 1);
 
     //Função para setar as variaveis de estados
     //quando selecionar uma Familia ou um TAG
@@ -79,9 +79,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         try {
             let novoPai = 0;
             if(tipo === "filho"){
-                novoPai = campos.Elemento
+                novoPai = campos?.Elemento
             }else{
-                novoPai = data.Pai
+                novoPai = data?.Pai
             }
             const resposta = await fetch ('/api/estruturaControle/cadastro', {
                 method: 'POST',
@@ -92,16 +92,16 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     idEncomenda: encomendaAtiva.idEncomenda,
                     idTag:          (opTag===1 ? null: opTag),
                     pai:            novoPai,
-                    desenho:        data.Desenho,
-                    grpos:          data.GrPos,
+                    desenho:        data?.Desenho,
+                    grpos:          data?.GrPos,
                     idFamilia:      (opFamilia===1 ? null: opFamilia),
-                    esp:            data.Especificacao,  
-                    qtd:            data.Qtd, 
-                    unid:           data.Unid,
-                    peso_unit:      data.Peso_Unit, 
-                    peso_total:     data.Peso_Total, 
-                    tipo:           data.Tipo,
-                    codigo:         data.Codigo
+                    esp:            data?.Especificacao,  
+                    qtd:            data?.Qtd, 
+                    unid:           data?.Unid,
+                    peso_unit:      data?.Peso_Unit, 
+                    peso_total:     data?.Peso_Total, 
+                    tipo:           data?.Tipo,
+                    codigo:         data?.Codigo
                 })
             });
             const json = await resposta.json();
@@ -127,9 +127,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         try {
             let novoPai = 0;
             if(tipo === "filho"){
-                novoPai = campos.Elemento
+                novoPai = campos?.Elemento
             }else{
-                novoPai = data.Pai
+                novoPai = data?.Pai
             }
             const resposta = await fetch ('/api/estruturaControle/edicao', {
                 method: 'PUT',
@@ -137,19 +137,19 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    id:             data.id,
+                    id:             data?.id,
                     idTag:          (opTag===1 ? null: opTag),
                     pai:            novoPai,
-                    desenho:        data.Desenho,
-                    grpos:          data.GrPos,
+                    desenho:        data?.Desenho,
+                    grpos:          data?.GrPos,
                     idFamilia:      (opFamilia===1 ? null: opFamilia),
-                    esp:            data.Especificacao,  
-                    qtd:            data.Qtd, 
-                    unid:           data.Unid,
-                    peso_unit:      data.Peso_Unit, 
-                    peso_total:     data.Peso_Total, 
-                    tipo:           data.Tipo,
-                    codigo:         data.Codigo
+                    esp:            data?.Especificacao,  
+                    qtd:            data?.Qtd, 
+                    unid:           data?.Unid,
+                    peso_unit:      data?.Peso_Unit, 
+                    peso_total:     data?.Peso_Total, 
+                    tipo:           data?.Tipo,
+                    codigo:         data?.Codigo
                 })
             });
             const json = await resposta.json();
@@ -167,7 +167,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     //Função para a excluir o elemento através
     //da API '/api/estruturaControle/exclusao/${data.id}'
     async function  exclusao (data){
-        console.log("ID",data.id)
+        console.log("ID",data?.id)
         try {
             const resposta = await fetch (`/api/estruturaControle/exclusao/${data.id}`, {
                 method: 'DELETE',
@@ -234,7 +234,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         style={{width: "400px"}}
                                         type="text"
                                         id="Pai"
-                                        value={ tipo ==="filho" ? campos.Elemento : campos.Pai }
+                                        value={ tipo ==="filho" ? campos?.Elemento : campos?.Pai }
                                         disabled={tipo ==="inclusao" ? false : true}
                                         className={styles.input}
                                         {...register("Pai")}
@@ -480,8 +480,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     <div className={LoginStyle.corpoExclusão}>
                         <div className={LoginStyle.textExclusao}>
                             <p>Você está prestes a excluir esse elemento da estrutura de controle!</p>
-                            <p>Elemento: {campos.Elemento}</p> 
-                            <p>Especificação: {campos.Especificacao}</p> 
+                            <p>Elemento: {campos?.Elemento}</p> 
+                            <p>Especificação: {campos?.Especificacao}</p> 
                             <p className={LoginStyle.destaqueExclusao} >CONFIRMA A EXCLUSÃO?</p>
                         </div>
                         {/* BOTÃO ENVIAR */}

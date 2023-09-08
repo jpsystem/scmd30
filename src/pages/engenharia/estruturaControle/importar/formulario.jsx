@@ -34,7 +34,7 @@ export default function Formulario({item, setModalOpen}){
     //Executar a função CarregarFamilias no load da pagina.
     useEffect(()=>{
         carregarFamilias();
-        setOpFamilia(va => va = item.IdFamilia? item.IdFamilia: 0)
+        setOpFamilia(va => va = item?.IdFamilia? item?.IdFamilia: 0)
     },[])
 
     //Carregar as variaveis de Cotexto do arquivoCSV
@@ -50,14 +50,14 @@ export default function Formulario({item, setModalOpen}){
     //carregar o HOOKs useForm
     const form = useForm({defaultValues:{ 
         GrPos: item?.Grupo + item?.Posicao,
-        Qtd: item.Qtd,
-        Peso: item.PesoTot,
-        Descricao: item.Descricao,
-        Obs: item.Obs,
-        IdFamilia: item.IdFamilia,
-        TipoEle: item.TipoEle,
-        Unidade: item.Unidade,
-        Material: item.Material,
+        Qtd: item?.Qtd,
+        Peso: item?.PesoTot,
+        Descricao: item?.Descricao,
+        Obs: item?.Obs,
+        IdFamilia: item?.IdFamilia,
+        TipoEle: item?.TipoEle,
+        Unidade: item?.Unidade,
+        Material: item?.Material,
         Esp: espElemento,
     }})
     const { register, handleSubmit, formState: {errors} } = form;
@@ -125,14 +125,14 @@ export default function Formulario({item, setModalOpen}){
                 //com os dados do formulário
                 const  newState =  prevState.map( (i) => {
                     
-                    if(i.id === item.id){
+                    if(i.id === item?.id){
                         return { 
                             ...i,
-                            Obs: data.Obs,
+                            Obs: data?.Obs,
                             IdFamilia: opFamilia,
                             Familia: familia?.label,
-                            TipoEle: data.TipoEle,
-                            Unidade: data.Unidade,
+                            TipoEle: data?.TipoEle,
+                            Unidade: data?.Unidade,
                             StatusItem: retStatus
                             //[event.target.name]: event.target.checked 
                         }
