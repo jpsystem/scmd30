@@ -31,7 +31,7 @@ export async function listaTags(body) {
                     + "  IdEncomenda,"
                     + "  enc as CodEncomenda "
                     + "FROM "
-                    + "  scmd3.tb_tags "
+                    + "  tb_tags "
                     + "WHERE "
                     + "  idEncomenda =? "
                     + "ORDER BY "

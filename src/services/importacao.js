@@ -79,7 +79,7 @@ async function retIdElemento(pElemento, pEncomenda){
     let idEle = 0;
     try {    
         idEle = await query({
-            query:"SELECT id FROM scmd3.tb_estcontrole WHERE idEncomenda=? and elemento=?",
+            query:"SELECT id FROM tb_estcontrole WHERE idEncomenda=? and elemento=?",
             values: [pEncomenda, pElemento]
         });
    

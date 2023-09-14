@@ -9,7 +9,7 @@ export async function familias(idEncomenda) {
                     + "     id as value, "
                     + "     familia as label "
                     + "FROM "
-                    + " scmd3.tb_familias"
+                    + " tb_familias"
                     + " WHERE idEncomenda = ?"
                     + " ORDER BY familia",
             values: [idEncomenda]
@@ -33,7 +33,7 @@ export async function tags(idEncomenda) {
                     + "     id as value, "
                     + "     tag as label "
                     + "FROM "
-                    + " scmd3.tb_tags"
+                    + " tb_tags"
                     + " WHERE idEncomenda = ?"
                     + " ORDER BY tag",
             values: [idEncomenda]

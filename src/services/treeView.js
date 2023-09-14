@@ -18,7 +18,7 @@ export async function treeView(body) {
 
     const dado = [];
 
-    const primeiroNivel = temp[0].filter(item => item.Pai === 0)
+    const primeiroNivel = temp.filter(item => item.Pai === 0)
     const pegaPrimeirosFilhos = primeiroNivel.map(buildTreeView)
     
     pegaPrimeirosFilhos.forEach( linha => dado.push(linha))
@@ -48,7 +48,7 @@ export async function treeView(body) {
             ],
         }
 
-        const filhos = temp[0].filter(filho => filho.Pai === item.Elemento)
+        const filhos = temp.filter(filho => filho.Pai === item.Elemento)
         if(filhos.length > 0) {
             const subLinha = [];
             filhos.map(buildTreeView)
@@ -66,12 +66,58 @@ export async function treeView(body) {
 }
 
 
+// async function retDados(encomenda) {
+//     let ecs = [];
+//     try {    
+//         ecs = await query({
+
+//             query:  "CALL TreeViewTW(?)",
+//             values: [encomenda]
+//         });
+  
+//         if (!ecs){
+//             throw new Error('Não tem elementos cadastrados!')
+//         }  
+//     } catch (error) {
+        
+//         throw Error(error.message);
+
+//     }
+//     return ecs
+// }
+
 async function retDados(encomenda) {
     let ecs = [];
     try {    
         ecs = await query({
 
-            query:  "CALL TreeView(?)",
+            query: " SELECT "
+            + " E.elemento as Elemento, "
+            + " CONCAT(E.elemento, ' - ', E.esp) as Descricao,   "  
+            + " E.pai as Pai, "
+            + " E.etc as ETC, "
+            + " E.id, "
+            + " E.tipo, "
+            + " E.idTag, "
+            + " E.idFamilia, "
+            + " E.qtd, "
+            + " E.unid, "
+            + " E.peso_unit, "
+            + " E.peso_total, "
+            + " E.desenho, "
+            + " E.grpos, "
+            + " E.codigo, "
+            + " E.esp, "
+            + " F.familia, "
+            + " T.tag "
+            + " FROM "
+            + " tb_estcontrole E Left Join tb_Familias F "
+            + " ON E.idFamilia = F.id Left Join tb_tags T "
+            + " ON E.idTag = T.id "
+            + " WHERE  "
+            + " E.idEncomenda= ? "
+            + " Order By "
+            + " E.Elemento" ,
             values: [encomenda]
         });
   
@@ -85,6 +131,5 @@ async function retDados(encomenda) {
     }
     return ecs
 }
-
 
 

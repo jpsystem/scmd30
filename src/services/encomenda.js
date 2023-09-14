@@ -182,7 +182,7 @@ export async function exclusao(codigo){
         if(teste)
         {
             const encomenda = await query({
-                query:  "DELETE FROM tb_Encomenda WHERE id = ?",
+                query:  "DELETE FROM tb_encomenda WHERE id = ?",
                 values: [   
                             codigo
                         ]

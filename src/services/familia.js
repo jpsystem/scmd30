@@ -35,7 +35,7 @@ export async function listaFamilias(body) {
                     + "     A.espcificacao As especificacao , "
                     + "     A.cod_erp As cod_Erp "
                     + "FROM "
-                    + " scmd3.tb_familias A Left Join scmd3.tb_encomenda B "
+                    + " tb_familias A Left Join tb_encomenda B "
                     + " ON A.idEncomenda = B.id"
                     + " WHERE idEncomenda = ?"
                     + " ORDER BY Familia",

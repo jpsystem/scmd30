@@ -1,25 +1,25 @@
 import {query} from "/db.js"
 
-//Função para retornar os itens da Estrutura de Controle da Encomenda
-export async function treeViewEC(body) {
-    let ecs = [];
-    try {    
-        ecs = await query({
+// //Função para retornar os itens da Estrutura de Controle da Encomenda
+// export async function treeViewEC(body) {
+//     let ecs = [];
+//     try {    
+//         ecs = await query({
 
-            query:  "CALL dados_TreeViewEC(?,?)",
-            values: [body.encomenda, body.pai]
-        });
+//             query:  "CALL dados_TreeViewEC(?,?)",
+//             values: [body.encomenda, body.pai]
+//         });
   
-        if (!ecs){
-            throw new Error('Não tem elementos cadastrados!')
-        }  
-    } catch (error) {
+//         if (!ecs){
+//             throw new Error('Não tem elementos cadastrados!')
+//         }  
+//     } catch (error) {
         
-        throw Error(error.message);
+//         throw Error(error.message);
 
-    }
-    return ecs
-}
+//     }
+//     return ecs
+// }
 
 //Regra para validar se a familia pode ser excluida
 async function podeExcluir(codigo){
