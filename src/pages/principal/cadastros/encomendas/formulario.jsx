@@ -12,6 +12,7 @@ import Button from "../../../../componentes/button/index"
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     
     //Estanciar o HOOK UseForm
+    console.log("CAMPOS", campos)
     const form = useForm({defaultValues: campos})
     const { register, handleSubmit, formState: {errors} } = form;
 
@@ -36,6 +37,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     //da API '/api/encomenda/cadastro'
     async function  inclusao (data){
         try {
+
             const resposta = await fetch ('/api/encomenda/cadastro', {
                 method: 'POST',
                 headers: {
@@ -50,8 +52,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     localSetor: data.localSetor,
                     ref_cliente: data.ref_cliente,
                     descricao: data.descricao,
-                    dt_pedido: data.dt_pedido,
-                    dt_entrega: data.dt_entrega,
+                    dt_pedido: trataData(data.dt_pedido),
+                    dt_entrega: trataData(data.dt_entrega),
                     contatoETC: data.contatoETC,
                     deptoETC: data.deptoETC,
                     contato_cml: data.contato_cml,
@@ -61,24 +63,26 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     sepaTMSA: data.sepaTMSA,
                     sepaCRet: data.sepaCRet,
                     sepaCEmi: data.sepaCEmi,
-                    prazoTMSA: data.prazoTMSA,
-                    prazoCli: data.prazoCli,
-                    prazoFor: data.prazoFor,
+                    prazoTMSA: Number(data.prazoTMSA),
+                    prazoCli: Number(data.prazoCli),
+                    prazoFor: Number(data.prazoFor),
                     pastaDoc: data.pastaDoc,
                     pastaDes: data.pastaDes,
                     pastaGuias: data.pastaGuias,
                 })
             });
+            
             const json = await resposta.json();
+            console.log("JSON ", json)
             if(resposta.status === 201){
-                if(json[0][0].idEncomenda > 0)
+                if(json.encomendaID > 0)
                 {
-                    retornoFilho( {tipo:"sucesso", texto:"Encomenda incluida com sucesso!", id: Math.random()})
+                    retornoFilho( {tipo:"sucesso", texto:json.menssagem, id: Math.random()})
                 }else{
-                    retornoFilho( {tipo:"falha", texto:"Não é possivel incluir encomenda com mesmo codigo!", id: Math.random()})
+                    retornoFilho( {tipo:"falha", texto:json.menssagem, id: Math.random()})
                 }
             } else{
-                retornoFilho({tipo:"falha", texto: json, id: Math.random()})
+                retornoFilho( {tipo:"falha", texto:json.menssagem, id: Math.random()})
             }
 
         } catch (error) {
@@ -86,6 +90,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
         }
     } 
 
+    function trataData(sDate ){
+        if(sDate){
+            return sDate
+        }else{
+            return null
+        }
+    }
     //Função para a alteração da encomenda através
     // da API '/api/encomenda/edicao'
     async function  edicao (data){
@@ -104,8 +115,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     localSetor: data.localSetor,
                     ref_cliente: data.ref_cliente,
                     descricao: data.descricao,
-                    dt_pedido: data.dt_pedido,
-                    dt_entrega: data.dt_entrega,
+                    dt_pedido: trataData(data.dt_pedido),
+                    dt_entrega: trataData(data.dt_entrega),
                     contatoETC: data.contatoETC,
                     deptoETC: data.deptoETC,
                     contato_cml: data.contato_cml,
@@ -115,18 +126,19 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     sepaTMSA: data.sepaTMSA,
                     sepaCRet: data.sepaCRet,
                     sepaCEmi: data.sepaCEmi,
-                    prazoTMSA: data.prazoTMSA,
-                    prazoCli: data.prazoCli,
-                    prazoFor: data.prazoFor,
+                    prazoTMSA: Number(data.prazoTMSA),
+                    prazoCli: Number(data.prazoCli),
+                    prazoFor: Number(data.prazoFor),
                     pastaDoc: data.pastaDoc,
                     pastaDes: data.pastaDes,
                     pastaGuias: data.pastaGuias,
                 })
             });
             const json = await resposta.json();
-            retornoFilho({tipo: "",texto: ""});
+            console.log("JSON", json)
+            // retornoFilho({tipo: "",texto: ""});
             if(resposta.status === 201){
-                if(json[0][0].idEncomenda > 0)
+                if(json.changedRows > 0)
                 {
                     retornoFilho( {tipo:"sucesso", texto:"Os dados da encomenda foram alterados com sucesso!", id: Math.random()})
                 }else{

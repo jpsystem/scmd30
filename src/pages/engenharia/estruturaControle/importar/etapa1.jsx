@@ -255,10 +255,10 @@ export default function Etapa1(){
                                     <td width="36%">{item?.Descricao}</td>
                                     <td width="20%">{item?.Material}</td>
                                     <td width="10%">{
-                                        item?.Tipo === "S"  && item?.Peso
+                                        item?.Tipo === "S"  &&  (isNaN(item?.Peso) ? 0 : item?.Peso)
                                     }</td>
                                     <td width="10%">{
-                                        item?.Tipo === "E" && item?.Peso
+                                        item?.Tipo === "E" && (isNaN(item?.Peso) ? 0 : item?.Peso)
                                     }</td>                           
                                 </tr>  
                             ))  

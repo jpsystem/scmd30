@@ -63,7 +63,7 @@ export default function Etapa2(){
                                     <td width="30%">{item?.Descricao}</td>
                                     <td width="15%">{item?.Obs}</td>
                                     <td width="10%">{item?.Material}</td>
-                                    <td width="8%">{item?.Peso}</td>
+                                    <td width="8%">{(isNaN(item?.Peso) ? 0 : item?.Peso)}</td>
                                     <td width="10%">{item?.Familia}</td>
                                     <td width="5%">{item?.TipoEle}</td> 
                                     {/* <td width="5%">                                

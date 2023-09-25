@@ -42,7 +42,7 @@ export default function Navbar() {
         }
         console.log("Tipo", tipo)
         setTipoLink(tipo);
-    },[])
+    },[pAuth, pAdministrador])
 
     const OpcoesMenu = [
         {

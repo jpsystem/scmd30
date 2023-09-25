@@ -13,6 +13,7 @@ import { PerfilContext } from '../../contexts/perfilContext'
 import useApiListas from "@/hooks/useApiListas";
 
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
+    console.log("CAMPOS", campos)
 
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
@@ -101,14 +102,16 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     peso_unit:      data?.Peso_Unit, 
                     peso_total:     data?.Peso_Total, 
                     tipo:           data?.Tipo,
-                    codigo:         data?.Codigo
+                    codigo:         data?.Codigo,
+                    codigoCWP:      data?.CodigoCWP
                 })
             });
             const json = await resposta.json();
+            console.log("json: ", json)
             if(resposta.status === 201){
-                if(json[0][0].novoElemento > 0)
+                if(json.elemento > 0)
                 {
-                    retornoFilho( {tipo:"sucesso", texto:`Elemento ${json[0][0].novoElemento}, incluida com sucesso!`, id: Math.random()})
+                    retornoFilho( {tipo:"sucesso", texto:`Elemento ${json.elemento}, ${json.menssagem}`, id: Math.random()})
                 }else{
                     retornoFilho( {tipo:"falha", texto:"Não é possivel incluir o elemento!", id: Math.random()})
                 }
@@ -149,7 +152,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     peso_unit:      data?.Peso_Unit, 
                     peso_total:     data?.Peso_Total, 
                     tipo:           data?.Tipo,
-                    codigo:         data?.Codigo
+                    codigo:         data?.Codigo,
+                    codigoCWP:      data?.CodigoCWP
                 })
             });
             const json = await resposta.json();
@@ -200,7 +204,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                             {/* GRUPO 01 */}
                             <div className={styles.grupoR}>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="Elemento" className={styles.label}>
                                         Elemento
                                     </label>
                                     { tipo === "edicao" ?  
@@ -221,13 +225,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             className={styles.input}
                                             {...register("Elemento")}
                                         />)
-                                    }   
+                                    } 
                                     {errors?.elemento?.type === "required" && 
                                         <p className={styles.error}>O campo numero do elemento é obrigatório</p>
                                     }
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="Pai" className={styles.label}>
                                         Elemento Pai
                                     </label>
                                     <input
@@ -241,7 +245,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                     />
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="Tipo" className={styles.label}>
                                         Tipo
                                     </label>
                                     <input
@@ -256,7 +260,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                             {/* GRUPO 02 */}
                             <div className={styles.grupoR}>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="IdFamilia" className={styles.label}>
                                         Familia
                                     </label>
                                     <select 
@@ -266,7 +270,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         value={opFamilia}
                                         onChange={Selecionar}
                                     >
-
                                     {
                                         familiasInfo?.loading ? (
                                             <option key={0} value={1}>
@@ -285,7 +288,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                                     <option key={0} value={1}>
                                                         Selecione uma Familia
                                                     </option>
-                                                   {
+                                                {
                                                         familiasInfo?.data?.map( (item, i) =>
                                                                 <option 
                                                                     key={i+1} 
@@ -301,10 +304,10 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             )
                                         )
                                     } 
-                                    </select>
+                                    </select>                             
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="IdTag" className={styles.label}>
                                         Tags
                                     </label>
                                     <select 
@@ -314,7 +317,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         value={opTag}
                                         onChange={Selecionar}
                                     >
-
                                     {
                                         tagsInfo?.loading ? (
                                             <option key={0} value={1}>
@@ -333,7 +335,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                                     <option key={0} value={1}>
                                                         Selecione um Tag
                                                     </option>
-                                                   {
+                                                {
                                                         tagsInfo?.data?.map( (item, i) =>
                                                                 <option 
                                                                     key={i+1} 
@@ -348,27 +350,27 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             )
                                         )
                                     } 
-                                    </select>
+                                    </select>        
                                 </div>
                             </div>
                             {/* GRUPO 03 */}
                             <div className={styles.grupoR}>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="Qtd" className={styles.label}>
                                         Quantidade
                                     </label>
                                     <input
-                                            style={{width: "200px"}}
-                                            type="text"
-                                            id="Qtd" 
-                                            className={styles.input}
-                                            {...register("Qtd")}
+                                        style={{width: "200px"}}
+                                        type="text"
+                                        id="Qtd" 
+                                        className={styles.input}
+                                        {...register("Qtd")}
                                     />
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="Unid" className={styles.label}>
                                         Unidade
-                                    </label>
+                                    </label>  
                                     <input
                                         style={{width: "200px"}}
                                         type="text"
@@ -378,46 +380,58 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                     />
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
-                                        Peso Unit.
-                                    </label>
+                                    <label for="Peso_Unit" className={styles.label}>
+                                        Peso Unit. 
+                                    </label>             
                                     <input
-                                            style={{width: "400px"}}
-                                            type="text"
-                                            id="Peso_Unit" 
-                                            className={styles.input}
-                                            {...register("Peso_Unit")}
+                                        style={{width: "200px"}}
+                                        type="text"
+                                        id="Peso_Unit" 
+                                        className={styles.input}
+                                        {...register("Peso_Unit")}
                                     />
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
-                                        Peso Total
-                                    </label>
+                                    <label for="Peso_Total" className={styles.label}>
+                                        Peso Total   
+                                    </label>                        
                                     <input
-                                        style={{width: "400px"}}
+                                        style={{width: "200px"}}
                                         type="text"
                                         id="Peso_Total" 
                                         className={styles.input}
                                         {...register("Peso_Total")}
                                     />
                                 </div>
+                                <div className={styles.grupoC}>
+                                    <label for="Codigo" className={styles.label}>
+                                        Código
+                                    </label>
+                                    <input
+                                        style={{width: "200px"}}
+                                        type="text"
+                                        id="Codigo" 
+                                        className={styles.input}
+                                        {...register("Codigo")}
+                                    />
+                                </div>
                             </div>
                             {/* GRUPO 04 */}
                             <div className={styles.grupoR}>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="Desenho" className={styles.label}>
                                         Desenho
                                     </label>
                                     <input
-                                            style={{width: "600px"}}
-                                            type="text"
-                                            id="Desenho" 
-                                            className={styles.input}
-                                            {...register("Desenho")}
-                                    />
+                                        style={{width: "450px"}}
+                                        type="text"
+                                        id="Desenho" 
+                                        className={styles.input}
+                                        {...register("Desenho")}
+                                    />                           
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="GrPos" className={styles.label}>
                                         Grupo/Posição
                                     </label>
                                     <input
@@ -426,25 +440,25 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         id="GrPos" 
                                         className={styles.input}
                                         {...register("GrPos")}
-                                    />
+                                    />   
                                 </div>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
-                                        Código
+                                    <label for="CodigoCWP" className={styles.label}>
+                                        Código CWP
                                     </label>
                                     <input
-                                            style={{width: "300px"}}
-                                            type="text"
-                                            id="Codigo" 
-                                            className={styles.input}
-                                            {...register("Codigo")}
+                                        style={{width: "500px"}}
+                                        type="text"
+                                        id="CodigoCWP" 
+                                        className={styles.input}
+                                        {...register("CodigoCWP")}
                                     />
                                 </div>
                             </div>
                             {/* GRUPO 05 */}
                             <div className={styles.grupoR}>
                                 <div className={styles.grupoC}>
-                                    <label className={styles.label}>
+                                    <label for="Especificacao" className={styles.label}>
                                         Especificação
                                     </label>
                                     <textarea

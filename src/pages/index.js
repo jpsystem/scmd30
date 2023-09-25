@@ -1,24 +1,21 @@
-// import { COMPILER_INDEXES } from "next/dist/shared/lib/constants"
-// import LayoutPagina from "./componentes/layoutPagina"
+// import { useContext, useEffect } from 'react'
+// import { PerfilContext } from './contexts/perfilContext'
 
-
-import { useContext, useEffect } from 'react'
-import { PerfilContext } from './contexts/perfilContext'
 import styles from './index.module.css'
 
 // import { getCookie } from "cookies-next"
 // import {verifica} from "../services/user"
 
 export default function Home(props) {
-  const {pageReload,setPageReload} = useContext(PerfilContext)
-  useEffect(()=>{
-    if(pageReload)
-    {
-      setPageReload(false)
-      location.reload()
-    }
-  },[])
-  //location.reload()
+                    //const {pageReload,setPageReload} = useContext(PerfilContext)
+                    // useEffect(()=>{
+                    //   if(pageReload)
+                    //   {
+                    //     setPageReload(false)
+                    //     location.reload()
+                    //   }
+                    // },[])
+                    //location.reload()
   // ESSE RETORNO SEM O LAYOUT DA PAGINA É
   // PARA DEIXA A AREA DO CONTEUDO APENAS COM
   // O FUNDO SEM CONTEUDO

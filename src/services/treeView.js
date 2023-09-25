@@ -43,6 +43,7 @@ export async function treeView(body) {
             GrPos: item.grpos,
             Codigo: item.codigo,
             Especificacao: item.esp,
+            CodigoCWP: item.codigoCWP,
             Filhos: [
 
             ],
@@ -93,7 +94,7 @@ async function retDados(encomenda) {
 
             query: " SELECT "
             + " E.elemento as Elemento, "
-            + " CONCAT(E.elemento, ' - ', E.esp) as Descricao,   "  
+            + " Trim(CONCAT(E.elemento, ' - ', E.esp)) as Descricao,   "  
             + " E.pai as Pai, "
             + " E.etc as ETC, "
             + " E.id, "
@@ -107,9 +108,10 @@ async function retDados(encomenda) {
             + " E.desenho, "
             + " E.grpos, "
             + " E.codigo, "
-            + " E.esp, "
+            + " Trim(E.esp) as esp, "
             + " F.familia, "
-            + " T.tag "
+            + " T.tag, "
+            + " Trim(E.fdrtet) as codigoCWP "
             + " FROM "
             + " tb_estcontrole E Left Join tb_Familias F "
             + " ON E.idFamilia = F.id Left Join tb_tags T "

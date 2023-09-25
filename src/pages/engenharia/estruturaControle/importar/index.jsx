@@ -169,7 +169,9 @@ export default function ImportaLista({pai, setModalOpen}) {
       filhos: filhos
     };
 
-    const resposta = await fetch ('/api/estruturaControle/importacao',{
+    console.log("BODY", JSON.stringify(body))
+
+    const resposta = await fetch ('/api/estruturaControle/importaLista',{
       method: 'POST',
       headers: {
           "Content-Type": "application/json"
@@ -195,14 +197,16 @@ export default function ImportaLista({pai, setModalOpen}) {
             }
           </div>
           <div className={myStyle.controle}>
-                <Button  
+                <Button
+                  id="btEtapa1"  
                   fontSize={"1em"} 
                   width={"40%"} 
                   onClick={() => setEtapa(1)}
                 >
                   Primeira Etapa
                 </Button>
-                <Button  
+                <Button 
+                  id="btEtapa2" 
                   fontSize={"1em"} 
                   width={"40%"} 
                   disabled={qtdDados > 0 ? (false):(true)}
@@ -238,106 +242,105 @@ export default function ImportaLista({pai, setModalOpen}) {
               {/*Numero do Desenho */}   
               <label className={styles.label}>
                   NºDesenho
+                  <input  type="text"
+                      id="desenho"
+                      value={nomeDesenho? nomeDesenho: ""}  
+                      className={myStyle.input}
+                      {...register("desenho")}
+                  />
               </label>
-              <input  type="text"
-                  id="desenho"
-                  value={nomeDesenho? nomeDesenho: ""}  
-                  className={myStyle.input}
-                  {...register("desenho")}
-              />
             </div>
             <div style={{width: "90%"}}>    
               {/*Titulo */}
               <label className={myStyle.label}>
                 Titulo
-              </label>
-              <textarea
-                id="titulo"
-                className={myStyle.comentario}
-                value={tituloDesenho? tituloDesenho:""}
-                {...register("titulo")}
-              />              
+                <textarea
+                  id="titulo"
+                  className={myStyle.comentario}
+                  value={tituloDesenho? tituloDesenho:""}
+                  {...register("titulo")}
+                />          
+              </label>    
             </div>
             <div style={{width: "90%"}}>  
               {/*TAG */}  
               <label className={myStyle.label}>
-                  TAG
-              </label>
-              <select 
-                id="idTag"
-                value={opTag}
-                {...register("idTag", {validate: (value) => {
-                  return value != "0"
-                } } )}
-                className={myStyle.select}
-                // style={{width: "500px"}}
+                TAG
+                <select 
+                  id="idTag"
+                  value={opTag}
+                  {...register("idTag", {validate: (value) => {
+                    return value != "0"
+                  } } )}
+                  className={myStyle.select}
+                  // style={{width: "500px"}}
 
-                onChange={Selecionar}
-              >
-
-              {
-                tagsInfo?.loading ? (
-                  <option key={0} value={0}>
-                      Carregando...
-                  </option>
-                ):
-                (
-                  tagsInfo?.data?.length === 0 ? 
-                  (
+                  onChange={Selecionar}
+                >
+                {
+                  tagsInfo?.loading ? (
                     <option key={0} value={0}>
-                        Nenhum resultado encontrado
-                    </option> 
+                        Carregando...
+                    </option>
                   ):
                   (
-                    <>
+                    tagsInfo?.data?.length === 0 ? 
+                    (
                       <option key={0} value={0}>
-                          Selecione um Tag
-                      </option>
-                      {
-                        tagsInfo?.data?.map( (item, i) =>
-                          <option 
-                            key={i+1} 
-                            value={item?.value}
-                          >
-                            {item?.label}
-                          </option>
-                        )
-                      }
-                    </>
+                          Nenhum resultado encontrado
+                      </option> 
+                    ):
+                    (
+                      <>
+                        <option key={0} value={0}>
+                            Selecione um Tag
+                        </option>
+                        {
+                          tagsInfo?.data?.map( (item, i) =>
+                            <option 
+                              key={i+1} 
+                              value={item?.value}
+                            >
+                              {item?.label}
+                            </option>
+                          )
+                        }
+                      </>
+                    )
                   )
-                )
-              } 
-              </select>
-              {errors?.idTag?.type === "validate" && 
-                    <p className={myStyle.error}>O necessário selecionar um Tag</p>
-              }
+                } 
+                </select>
+                {errors?.idTag?.type === "validate" && 
+                      <p className={myStyle.error}>O necessário selecionar um Tag</p>
+                }
+              </label>
             </div>
             <div className={myStyle.emLinha}>    
               <div style={{width: "25%"}}> 
                 {/* Elemento Pai */}
                 <label className={myStyle.label}>
                   Pai
+                  <input  type="text"
+                    id="elePai"
+                    // value={pai}
+                    className={myStyle.input}
+                    disabled
+                    {...register("elePai")}
+                  />
                 </label>
-                <input  type="text"
-                  id="elePai"
-                  // value={pai}
-                  className={myStyle.input}
-                  disabled
-                  {...register("elePai")}
-                />
               </div>
               <div style={{width: "65%"}}>
                 {/* Peso Total */}
                 <label className={myStyle.label}>
                   Peso Total
+                  <input  type="text"
+                    id="pesoTot"
+                    className={myStyle.input}
+                    value={pesoTotal? pesoTotal?.toFixed(2):""}
+                    disabled
+                    {...register("pesoTot")}
+                  />
                 </label>
-                <input  type="text"
-                  id="pesoTot"
-                  className={myStyle.input}
-                  value={pesoTotal? pesoTotal?.toFixed(2):""}
-                  disabled
-                  {...register("pesoTot")}
-                />                       
               </div> 
             </div>
             {/* Multiplicar Lista */}
@@ -359,7 +362,8 @@ export default function ImportaLista({pai, setModalOpen}) {
           </form>
           {/* Controle do botões */}
           <div className={[myStyle.emLinha]}>    
-              <Button 
+              <Button
+                id="btImportar" 
                 onClick={() => handleSubmit(onSubmit)()} 
                 fontSize={"1.2em"} 
                 width={"45%"}
@@ -369,6 +373,7 @@ export default function ImportaLista({pai, setModalOpen}) {
                 Importar
               </Button>
               <Button 
+                id="btFechar"
                 onClick={() => setModalOpen(false)}
                 fontSize={"1.2em"}
                 width={"45%"}

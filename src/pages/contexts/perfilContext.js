@@ -18,7 +18,7 @@ export default function PerfilProvider( {children,number}){
     // const useNome = getCookie("useNome")
     // console.log("useNome",useNome)
     const [usuario, setUsuario] = useState({
-        nome: "",
+        nome: "Desconectado",
         login: "",
         id: 0,
         administrador: false,

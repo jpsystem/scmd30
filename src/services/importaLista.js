@@ -1,35 +1,99 @@
 import {dbCC} from "/db.js"
 
-export async function importaLista(){
-  let resposta = ""
-  let myQuery = ""
+
+//Função para importar os elementos da Lista recebidos
+//no parametro BADY utilizando uma tranzação no Banco de dados
+//para garantir a integridade dos dados só COMMITando se todos os registros
+//forem incluidos com sucesso senão executa um ROLLBACK
+export async function importaLista(body){
+  let novoElementoPai = 0;
+  let novoElementoFilho = 0;
+  let resposta = "TESTE";
 
 
-  await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
 
-  //Inicia a transação
-  await dbCC.beginTransaction();
-  console.log("Inicio da transação!")
+  let abortar = false;
+
+  //Inclui o elemento pai para o desenho
+  //e guardo o numero do elemento na variavel
+  //novoElementoPai para cadastrar os filhos  
   try {
 
-    resposta = await cadastrar([900,"TESTE-10","00900"])
-    resposta = await cadastrar([900,"TESTE-11","00900"])
-    resposta = await cadastrar([900,"TESTE-12","00900"])
-    resposta = await cadastrar([900,"TESTE-13","00900"])
+    await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+    //Inicia a transação
+    await dbCC.beginTransaction();
+    console.log("Inicio da transação!")
 
-    // myQuery = " Insert Into tb_tags (idEncomenda, tag, enc) VALUES(?,?,?)";
-    // resposta = await dbCC.execute( myQuery,[900,"TESTE-3","00900"]);  
-    // myQuery = " Insert Into tb_tags (idEncomenda, tag, enc) VALUES(?,?,?)";
-    // resposta = await dbCC.execute( myQuery,[900,"TESTE-4","00900"]); 
-    
-    if(resposta){
-      await dbCC.commit();
-      resposta = "Importação concluida com sucesso!"
-    }else{
-      dbCC.rollback();
-      resposta = "Importação cancelada! Erro: " + error.message
-    }
+    if(body.pai.status === 0)
+    {
+      novoElementoPai = await cadastro(
+        {
+          idEncomenda: body.pai.idEncomenda, 
+          idTag: body.pai.idTag, 
+          pai: body.pai.elePai,
+          desenho: body.pai.desenho,
+          grpos: "",
+          idFamilia: null,
+          esp: body.pai.titulo,
+          qtd: 1,
+          unid: "",
+          peso_unit: body.pai.pesoTot,
+          peso_total: body.pai.pesoTot,
+          tipo: "",
+          codigo: ""           
+        }
+      )
+      console.log("novoPAI", novoElementoPai)
+      //Se não gravou o novo elemento pai aborta a trasação
+      if(novoElementoPai === 0){
+        abortar = true;
+      }
+      else
+      {
+        //Depois de gravar o PAI
+        //Grava todos os filhos
+        for(let i = 0; i < body.filhos.length; i++){
+          const ele = body.filhos[i];
+          if(ele.StatusItem === 0)
+          {
+            novoElementoFilho = await cadastro(
+              {
+                idEncomenda: body.pai.idEncomenda, 
+                idTag: body.pai.idTag, 
+                pai: novoElementoPai,
+                desenho: ele.Desenho,
+                grpos: (ele.Grupo + ele.Posicao),
+                idFamilia: ele.IdFamilia,
+                esp: ele.Descricao,
+                qtd: ele.Qtd,
+                unid: ele.Unidade,
+                peso_unit: ele.Peso,
+                peso_total: ele.PesoTot,
+                tipo: ele.TipoEle,
+                codigo: ele.Material           
+              }
+            )
+          }
 
+          if(novoElementoFilho === 0){
+            abortar = true;
+            break;
+          }
+          console.log("novoFILHO", novoElementoFilho)
+        }
+      }
+      if(!abortar)
+      {
+        await dbCC.commit();
+        resposta = "Importação concluida com sucesso!"
+      }
+      else
+      {
+        dbCC.rollback();
+        resposta = "Importação cancelada! --> " + novoElementoPai.toString();
+      }
+    }      
+  
   } catch (error) {
     dbCC.rollback();
     resposta = "Importação cancelada! Erro: " + error.message
@@ -42,16 +106,43 @@ export async function importaLista(){
   return resposta;
 }
 
-async function cadastrar(valores){
-  let resposta = false
-  let myQuery = ""
 
-  try {
-    myQuery = " Insert Into tb_tags (idEncomenda, tag, enc) VALUES(?,?,?)";
+//Função para incluir um novo elemento na encomenda
+async function cadastro(body){
+  let resposta = 0;
+  let myQuery = "";
+  let valores = [];
+  try 
+  {
+    //Busca o novo numero para o elemento
+    myQuery = "SELECT (MAX(elemento) + 1) as novoNumero FROM tb_estcontrole WHERE idEncomenda = ?"
+    const [rows,] = await dbCC.execute( myQuery,[body.idEncomenda]);
+    console.log("ROWS", JSON.stringify(rows))
+    console.log("NovoNumero", rows[0].novoNumero )
+    //Efetua o Insert na tabela tb_estcontrole
+    myQuery = "INSERT INTO tb_estcontrole (idEncomenda, elemento, idTag, pai, desenho, "
+            + " grpos, idFamilia, esp, qtd, unid, peso_unit, peso_total, tipo, codigo )"
+            + " Values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    valores = [
+      body.idEncomenda,
+      rows[0].novoNumero, 
+      body.idTag,
+      body.pai,
+      body.desenho,
+      body.grpos,
+      body.idFamilia,
+      body.esp,
+      body.qtd,
+      body.unid,
+      body.peso_unit,
+      body.peso_total,
+      body.tipo,
+      body.codigo
+    ];
     await dbCC.execute( myQuery,valores); 
-    resposta = true
+    resposta = rows[0].novoNumero
   } catch (error) {
-    resposta = false
+    resposta = 0
   }
  
   return resposta
