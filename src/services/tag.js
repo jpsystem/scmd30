@@ -1,5 +1,7 @@
 import {query} from "/db.js"
 
+import {dbCC} from "/db.js"
+
 //Regra para validar se o TAG pode ser excluido
 async function podeExcluir(codigo){
     let retorno = false;
@@ -21,13 +23,66 @@ async function podeExcluir(codigo){
     return retorno;
 }
 
+//Verifica se já existe um tag cadastro com esse nome na encomenda
+async function achou(pEncomendaID, pTag){
+    let retorno = false;
+    try {
+        const tag = await query({
+            query:  "SELECT count(*) as codigo FROM tb_tags WHERE idEncomenda = ? and tag = ?",
+            values: [   
+                        pEncomendaID,
+                        pTag
+                    ]
+        });
+        if(tag[0].codigo > 0){
+            retorno = true;
+        }else{
+            retorno = false;
+        }
+
+    } catch (error) {
+        throw Error(error.message);
+    }
+
+    return retorno;
+
+}
+
+//Verifica se já existe um tag cadastro com esse nome no tag diferente
+async function podeAlterar(pEncomendaID, pTag, pId){
+    let retorno = false;
+
+    try {
+        const tag = await query({
+            query:  "SELECT count(*) as codigo FROM tb_tags WHERE idEncomenda = ? and tag = ? and id != ?",
+            values: [   
+                        pEncomendaID,
+                        pTag,
+                        pId
+                    ]
+        });
+        if(tag[0].codigo > 0){
+            retorno = false;
+        }else{
+            retorno = true;
+        }
+
+    } catch (error) {
+        throw Error(error.message);
+    }
+
+    return retorno;
+
+}
+
+//Função para retornar os itens dos Tags da Encomenda
 export async function listaTags(body) {
     let tags = [];
     try {    
         tags = await query({
             query:  "  SELECT "
-                    + "  Id, "
-                    + "  Tag, "
+                    + "  id, "
+                    + "  tag, "
                     + "  IdEncomenda,"
                     + "  enc as CodEncomenda "
                     + "FROM "
@@ -35,7 +90,7 @@ export async function listaTags(body) {
                     + "WHERE "
                     + "  idEncomenda =? "
                     + "ORDER BY "
-                    + "  Tag",
+                    + "  tag",
             values: [body.idEncomenda]
         });
   
@@ -52,40 +107,63 @@ export async function listaTags(body) {
 
 //Função para incluir um novo Tag na Encomenda
 export async function cadastro(body){
-    let retorno = 0;
-    try {
-        const tag = await query({
-            query:  "CALL insert_Tag(?,?,?)",
-            values: [   
-                        body.idEncomenda, 
-                        body.tag,
-                        body.enc
-                    ]
-        });
+    
+    let novoTagID = 0;
+    let aviso = ""
+    let resposta = {menssagem: "", tagID: 0};
+    let myQuery = "";
+    let valores = [];
 
-        if (!tag) throw new Error('Tag não cadastrado')
-        else{ 
-            if (tag === 0)
-            {
-                throw new Error('Erro, o tag já está cadatrado!')
-            }else{
-                retorno = tag;
-            }
-        }   
+    try 
+    {
+        const verifica = await achou(body.idEncomenda, body.tag);
+        if(verifica){
+            aviso = "Já existe um tag cadastrado com mesmo nome!";
+            novoTagID = 0;
+        }else{
+            await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+            //Inicia a transação
+            await dbCC.beginTransaction();
+    
+            myQuery = "INSERT INTO tb_tags "
+                + " ( idEncomenda, tag, enc ) "
+                + " Values (?,?,?)" ;
+            valores = [ 
+                body.idEncomenda, 
+                body.tag,
+                body.enc
+            ];
+            await dbCC.execute( myQuery,valores); 
+            aviso = "Registro incluido com sucesso!";
+            const [retID,] = await dbCC.execute("SELECT LAST_INSERT_ID() as novoID")
+            novoTagID = retID[0].novoID
+            aviso = "Registro incluido com sucesso!";
+    
+            await dbCC.commit();
+        }
+        
     } catch (error) {
-        throw Error(error.message);
+        dbCC.rollback();
+        aviso = "Erro ao incluir registro! Erro: " + error.message
+        novoTagID = 0;
     }
-    return retorno;
+
+    resposta.menssagem = aviso;
+    resposta.tagID = novoTagID;
+    
+    return resposta;
 }
 
 //Função para editar um tag
 export async function edicao(body){
     let retorno = 0;
+
     try {
-        const valida = await podeExcluir(body.id);
+        const valida = await podeAlterar(body.idEncomenda, body.tag, body.id);
+
         if(valida){
             const tag = await query({
-                query:  "UPDATE tb_Tags SET "
+                query:  "UPDATE tb_tags SET "
                         + "tag = ? "
                         + "WHERE id = ?",     
                 values: [   
@@ -118,7 +196,7 @@ export async function exclusao(codigo){
         const valida = await podeExcluir(codigo);
         if(valida){
             const tag = await query({
-                query:  "DELETE FROM tb_Tags WHERE id = ?",
+                query:  "DELETE FROM tb_tags WHERE id = ?",
                 values: [   
                             codigo
                         ]

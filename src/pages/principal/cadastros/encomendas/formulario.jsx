@@ -73,7 +73,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
             });
             
             const json = await resposta.json();
-            console.log("JSON ", json)
+            
             if(resposta.status === 201){
                 if(json.encomendaID > 0)
                 {
@@ -135,14 +135,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                 })
             });
             const json = await resposta.json();
-            console.log("JSON", json)
             // retornoFilho({tipo: "",texto: ""});
             if(resposta.status === 201){
-                if(json.changedRows > 0)
+                if(json.affectedRows > 0)
                 {
                     retornoFilho( {tipo:"sucesso", texto:"Os dados da encomenda foram alterados com sucesso!", id: Math.random()})
                 }else{
-                    retornoFilho( {tipo:"falha", texto:"Não é possivel alterar, os dados já pertence a outra encomenda!", id: Math.random()})
+                    retornoFilho( {tipo:"falha", texto:"Não houve alteração nos dados da encomenda!", id: Math.random()})
                 }
             } else{
                 retornoFilho( {tipo:"falha", texto: json, id: Math.random()})
@@ -192,6 +191,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                             </label>
                             { tipo === "edicao" ?  
                                 (<input
+                                    maxLength={8}
                                     style={{width: "250px"}}
                                     type="text"
                                     id="codEncomenda" 
@@ -210,6 +210,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                             {errors?.codEncomenda?.type === "required" && 
                                 <p className={styles.error}>O campo codigo da encomenda é obrigatório</p>
                             }
+                            {errors?.codEncomenda?.type === "maxLength" && 
+                                <p className={styles.error}>O campo codigo da encomenda só pode ter no maximo 8 caracteres!</p>
+                            }
                         </div>
                         <div className={styles.grupoC}>
                             <label className={styles.label}>
@@ -219,8 +222,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="cliente" 
                                 className={styles.input}
-                                {...register("cliente")}
+                                {...register("cliente",{maxLength: 25})}
                             />
+                            {errors?.cliente?.type === "maxLength" && 
+                                <p className={styles.error}>O campo cliente só pode ter no maximo 25 caracteres!</p>
+                            }                         
                         </div>
                     </div>
                     {/* GRUPO 02 */}
@@ -234,8 +240,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="razao" 
                                 className={styles.input}
-                                {...register("razao")}
+                                {...register("razao",{maxLength: 60})}
                             />
+                            {errors?.razao?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Razão Social só pode ter no maximo 60 caracteres!</p>
+                            }
                         </div>
                     </div>
                     {/* GRUPO 03 */}
@@ -247,8 +256,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                             <textarea
                                 id="endereco" 
                                 className={styles.text}
-                                {...register("endereco")}
+                                {...register("endereco",{maxLength: 100})}
                             />
+                            {errors?.endereco?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Endereço só pode ter no maximo 100 caracteres!</p>
+                            }
                         </div>
                     </div>
                     {/* GRUPO 04 */}
@@ -262,8 +274,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="localObra" 
                                 className={styles.input}
-                                {...register("localObra")}
+                                {...register("localObra",{maxLength: 40})}
                             />
+                            {errors?.localObra?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Local da Obra só pode ter no maximo 40 caracteres!</p>
+                            }
                         </div>
                         <div className={styles.grupoC}>
                             <label className={styles.label}>
@@ -274,8 +289,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="localSetor" 
                                 className={styles.input}
-                                {...register("localSetor")}
+                                {...register("localSetor",{maxLength: 30})}
                             />
+                            {errors?.cliente?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Local/Setor só pode ter no maximo 30 caracteres!</p>
+                            }
                         </div>
                         <div className={styles.grupoC}>
                             <label className={styles.label}>
@@ -286,8 +304,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="ref_cliente" 
                                 className={styles.input}
-                                {...register("ref_cliente")}
+                                {...register("ref_cliente",{maxLength: 30})}
                             />
+                            {errors?.cliente?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Ref. Cliente só pode ter no maximo 30 caracteres!</p>
+                            }
                         </div>
                     </div>
                     {/* GRUPO 05 */}
@@ -338,8 +359,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="contatoETC" 
                                 className={styles.input}
-                                {...register("contatoETC")}
+                                {...register("contatoETC",{maxLength: 25})}
                             />
+                            {errors?.contatoETC?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Contato ETC só pode ter no maximo 25 caracteres!</p>
+                            }
                         </div>
                         <div className={styles.grupoC}>
                             <label className={styles.label}>
@@ -350,8 +374,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="deptoETC" 
                                 className={styles.input}
-                                {...register("deptoETC")}
+                                {...register("deptoETC",{maxLength: 25})}
                             />
+                            {errors?.deptoETC?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Depto. ETC só pode ter no maximo 25 caracteres!</p>
+                            }
                         </div>
                     </div>
                     {/* GRUPO 07 */}
@@ -365,8 +392,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="contato_cml" 
                                 className={styles.input}
-                                {...register("contato_cml")}
+                                {...register("contato_cml",{maxLength: 75})}
                             />
+                            {errors?.contato_cml?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Contato Comercial só pode ter no maximo 75 caracteres!</p>
+                            }
                         </div>
                         <div className={styles.grupoC}>
                             <label className={styles.label}>
@@ -377,8 +407,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="contato_tec" 
                                 className={styles.input}
-                                {...register("contato_tec")}
+                                {...register("contato_tec",{maxLength: 75})}
                             />
+                            {errors?.contato_tec?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Contato Técnico só pode ter no maximo 75 caracteres!</p>
+                            }
                         </div>
                         <div className={styles.grupoC}>
                             <label className={styles.label}>
@@ -389,8 +422,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="coord_proj" 
                                 className={styles.input}
-                                {...register("coord_proj")}
+                                {...register("coord_proj",{maxLength: 25})}
                             />
+                            {errors?.coord_proj?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Coord.Projeto só pode ter no maximo 25 caracteres!</p>
+                            }                            
                         </div>
                         <div className={styles.grupoC}>
                             <label className={styles.label}>
@@ -401,8 +437,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                 type="text"
                                 id="coord_eng" 
                                 className={styles.input}
-                                {...register("coord_eng")}
+                                {...register("coord_eng",{maxLength: 25})}
                             />
+                            {errors?.coord_eng?.type === "maxLength" && 
+                                <p className={styles.error}>O campo Coord.Engenharia só pode ter no maximo 25 caracteres!</p>
+                            }  
                         </div>
                     </div>
                     {/* GRUPO 08 */}
@@ -419,8 +458,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         type="text"
                                         id="sepaTMSA" 
                                         className={styles.input}
-                                        {...register("sepaTMSA")}
+                                        {...register("sepaTMSA",{maxLength: 10})}
                                     />
+                                    {errors?.sepaTMSA?.type === "maxLength" && 
+                                        <p className={styles.error}>O campo Separador TMSA só pode ter no maximo 10 caracteres!</p>
+                                    }                                      
                                 </div>
                                 <div className={styles.grupoC}>
                                     <label className={styles.label}>
@@ -431,8 +473,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         type="text"
                                         id="sepaCRet" 
                                         className={styles.input}
-                                        {...register("sepaCRet")}
+                                        {...register("sepaCRet",{maxLength: 10})}
                                     />
+                                    {errors?.sepaCRet?.type === "maxLength" && 
+                                        <p className={styles.error}>O campo Separador Cliente-Ref só pode ter no maximo 10 caracteres!</p>
+                                    }                                        
                                 </div>
                                 <div className={styles.grupoC}>
                                     <label className={styles.label}>
@@ -443,8 +488,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         type="text"
                                         id="sepaCEmi" 
                                         className={styles.input}
-                                        {...register("sepaCEmi")}
+                                        {...register("sepaCEmi",{maxLength: 10})}
                                     />
+                                    {errors?.sepaCEmi?.type === "maxLength" && 
+                                        <p className={styles.error}>O campo Separador Cliente-Emiss só pode ter no maximo 10 caracteres!</p>
+                                    }                                     
                                 </div>
                             </div>
                         </div>
@@ -464,8 +512,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         type="text"
                                         id="prazoTMSA" 
                                         className={styles.input}
-                                        {...register("prazoTMSA")}
+                                        {...register("prazoTMSA",{valueAsNumber: true})}
                                     />
+                                    {errors?.prazoTMSA?.type === "valueAsNumber" && 
+                                        <p className={styles.error}>O campo Prazo TMSA deve ser numerico!</p>
+                                    }                                      
                                 </div>
                                 <div className={styles.grupoC}>
                                     <label className={styles.label}>
@@ -476,8 +527,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         type="text"
                                         id="prazoCli" 
                                         className={styles.input}
-                                        {...register("prazoCli")}
+                                        {...register("prazoCli",{valueAsNumber: true})}
                                     />
+                                    {errors?.prazoCli?.type === "valueAsNumber" && 
+                                        <p className={styles.error}>O campo Prazo Cliente deve ser numerico!</p>
+                                    }                                      
                                 </div>
                                 <div className={styles.grupoC}>
                                     <label className={styles.label}>
@@ -488,8 +542,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         type="text"
                                         id="prazoFor" 
                                         className={styles.input}
-                                        {...register("prazoFor")}
+                                        {...register("prazoFor",{valueAsNumber: true})}
                                     />
+                                    {errors?.prazoFor?.type === "valueAsNumber" && 
+                                        <p className={styles.error}>O campo Prazo Fornecedor deve ser numerico!</p>
+                                    }                                      
                                 </div>
                             </div>
                         </div>

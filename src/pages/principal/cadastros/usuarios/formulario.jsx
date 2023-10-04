@@ -11,7 +11,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})
     const { register, handleSubmit, formState: {errors} } = form;
-
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
     const onSubmit = async (data) =>{
@@ -44,16 +43,17 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     eMail: data.eMail,
                     cargo: data.cargo,
                     senha: data.senha,
-                    administrador: data.administrador ,
+                    administrador: data.admin ,
                 })
             });
             const json = await resposta.json();
+            console.log("JSON ", json)
             if(resposta.status === 201){
-                if(json[0][0].idUsuario > 0)
+                if(json.usuarioID > 0)
                 {
-                    retornoFilho( {tipo:"sucesso", texto:"Usuário incluido com sucesso!", id: Math.random()})
+                    retornoFilho( {tipo:"sucesso", texto:json.menssagem, id: Math.random()})
                 }else{
-                    retornoFilho( {tipo:"falha", texto:"Não é possivel incluir usuário com login ou email já cadastrado!", id: Math.random()})
+                    retornoFilho( {tipo:"falha",  texto:json.menssagem, id: Math.random()})
                 }
                 // setModalOpen(false);
             } else{
@@ -81,17 +81,19 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     eMail: data.eMail,
                     cargo: data.cargo,
                     senha: data.senha,
-                    administrador: data.administrador,
+                    administrador: data.admin,
                 })
             });
             const json = await resposta.json();
-            retornoFilho({tipo: "",texto: ""});
+            console.log("RESPOSTA", resposta)
+            console.log("JSON", json)
+            //retornoFilho({tipo: "",texto: ""});
             if(resposta.status === 201){
-                if(json[0][0].idUsuario > 0)
+                if(json > 0)
                 {
                     retornoFilho( {tipo:"sucesso", texto:"Os dados do usuário foram alterados com sucesso!", id: Math.random()})
                 }else{
-                    retornoFilho( {tipo:"falha", texto:"Não é possivel alterar, os dados já pertence a outro usuário!", id: Math.random()})
+                    retornoFilho( {tipo:"falha", texto:"FrontEnd-Não é possivel alterar, os dados já pertence a outro usuário!", id: Math.random()})
                 }
             } else{
                 retornoFilho( {tipo:"falha", texto: json, id: Math.random()})
@@ -191,10 +193,10 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     {/* Admin */}
                     <label className={styles.label}>Admin</label>
                     <input  type="checkbox"
-                            id="administrador"
+                            id="admin"
                             // styled={{cheked: `"${campos.administrador}"`}}
                             className={styles.input}
-                            {...register("administrador")} 
+                            {...register("admin")} 
                     /> 
                     {/* BOTÃO ENVIAR */}
                     <div className={LocalStyle.barraBotoes}>

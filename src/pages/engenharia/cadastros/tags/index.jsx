@@ -123,14 +123,14 @@ export default function CadTags() {
           data?.map( (item) => 
           (
             // corpoForm={<Formulario dados={dados}/>}
-            <Linha key={item.Id} 
+            <Linha key={item.id} 
                     nomeForme="Tag" 
                     reg={item}
                     retornoFilho={retornoFilho}
             >
-              <Coluna width="100px">{item.Id}</Coluna>
+              <Coluna width="100px">{item.id}</Coluna>
               <Coluna width="200px">{item.CodEncomenda}</Coluna>
-              <Coluna width="300px">{item.Tag}</Coluna>
+              <Coluna width="300px">{item.tag}</Coluna>
             </Linha>
           )
           )

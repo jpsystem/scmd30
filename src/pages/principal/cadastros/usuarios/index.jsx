@@ -5,11 +5,14 @@ import styles from '../../../../styles/login.module.css'
 import Coluna from "../../../../componentes/tabela/coluna";
 import Linha from "../../../../componentes/tabela/linha";
 import Button from '@/componentes/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from "../../../../componentes/modal";
 import Formulario from './formulario.jsx';
 import Alerta from "../../../../componentes/alerta/alerta";
 import FechaForm from '@/componentes/fechaForm';
+
+import {useRouter} from "next/router"
+import { getCookie } from 'cookies-next';
 
 //Coleção de dados para cabecalho da tabela
 const dados={
@@ -58,6 +61,18 @@ const dados={
 }
 
 export default function CadUsuarios() {
+  //Rotinas para enviar usuario para tela de login se
+  //não for administrador
+  const router = useRouter()
+
+  useEffect(()=>{
+    const cokieADM = getCookie("useAdministrador")
+    if(!cokieADM){
+      router.replace('/principal/login')
+    }
+  },[])
+
+
   //HOOK para atualizar e redenrizar os
   //dados do usuário na página
   const queryClient = useQueryClient();

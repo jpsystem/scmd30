@@ -54,8 +54,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                 })
             });
             const json = await resposta.json();
+            console.log("RESPOSTA", resposta)
+            console.log("JSON",json)
+
             if(resposta.status === 201){
-                if(json[0][0].idFamilia > 0)
+                if(json.familiaID > 0)
                 {
                     retornoFilho( {tipo:"sucesso", texto:"Familia incluida com sucesso!", id: Math.random()})
                 }else{
@@ -80,6 +83,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
+                    familia: data.familia,
+                    idEncomenda: encomendaAtiva.idEncomenda,
                     especificacao: data.especificacao,
                     cod_Erp: data.cod_Erp,
                     id: data.id,
@@ -90,7 +95,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
             if(resposta.status === 201){
                 retornoFilho( {tipo:"sucesso", texto:"Os dados da familia foram alterados com sucesso!", id: Math.random()})
             } else{
-                retornoFilho( {tipo:"falha", texto: resposta.error, id: Math.random()})
+                retornoFilho( {tipo:"falha", texto: "Essa familia não pode ser alterada!", id: Math.random()})
             }
         } catch (error) {
             retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
@@ -147,7 +152,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                     { tipo === "edicao" ?
                         (<input  type="text"
                                 id="familia"
-                                value={campos.familia}
                                 className={styles.input}
                                 {...register("familia", {required: true,  })}
                         />):

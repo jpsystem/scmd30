@@ -130,16 +130,80 @@ export async function cadastro(body){
         aviso = "Erro ao incluir registro! Erro: " + error.message
         novoElemento = 0;
     }
-    finally {
-        dbCC.close();
-        dbCC.end();
-    }
+
 
     resposta.menssagem = aviso;
     resposta.elemento = novoElemento;  
     return resposta
 
 }
+
+
+//Função para incluir o primeiro elemento da Encomenda
+export async function primeiroCadastro(body){
+    let novoElemento = 1;
+    let descricao = "";
+    let aviso = ""
+    let resposta = {menssagem: "", elemento: 0};
+    let myQuery = "";
+    let valores = [];
+    let abortar = false;
+
+    try 
+    {
+
+        await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+        //Inicia a transação
+        await dbCC.beginTransaction();
+        //Busca o novo numero para o elemento
+        myQuery = "SELECT CONCAT(codEncomenda, ' - ' , cliente) as espec FROM tb_encomenda WHERE id = ?"
+        const [rows,] = await dbCC.execute( myQuery,[body.idEncomenda]);
+  
+        descricao = rows[0].espec
+
+        if(descricao === null){
+            abortar = true;
+        }
+        else
+        {
+            //Efetua o Insert na tabela tb_estcontrole
+            myQuery = "INSERT INTO tb_estcontrole (idEncomenda, elemento, pai, esp, qtd, unid, peso_unit, peso_total ) "
+                    + " Values (?,?,?,?,?,?,?,?)";
+            valores = [
+                body.idEncomenda, 1, 0, descricao, 1, "CJ", 0, 0
+            ];
+            await dbCC.execute( myQuery,valores); 
+            aviso = "Registro incluido com sucesso!";
+        }
+
+        if(!abortar)
+        {
+            await dbCC.commit();
+        }
+        else
+        {
+            dbCC.rollback();
+            aviso = "Inclusão do registro cancelada!";
+            novoElemento = 0;
+        }
+
+    } catch (error) {
+        console.log("ERROR", error)
+        dbCC.rollback();
+        aviso = "Erro ao incluir registro! Erro: " + error.message
+        novoElemento = 0;
+    }
+
+
+    resposta.menssagem = aviso;
+    resposta.elemento = novoElemento;  
+    return resposta
+
+}
+
+
+
+
 
 //Função para editar um elemento
 export async function edicao(body){

@@ -18,8 +18,7 @@ export default function Navbar() {
         //tipo = 0 sem autenticação
         //tipo = 1 colaborador
         //tipo = 2 administrador
-        console.log("AUTH", pAuth)
-        console.log("Administrador", pAdministrador)
+
         let tipo = 0;
         // let enc = 0;
         // if(pEncomenda.length > 1){
@@ -40,7 +39,6 @@ export default function Navbar() {
         {
             tipo = 0
         }
-        console.log("Tipo", tipo)
         setTipoLink(tipo);
     },[pAuth, pAdministrador])
 

@@ -1,16 +1,18 @@
 import {query} from "/db.js"
 
+import {dbCC} from "/db.js"
+
 //Regra para validar se a familia pode ser excluida
 async function podeExcluir(codigo){
     let retorno = false;
     try {
         const familia = await query({
-            query:  "SELECT * FROM tb_estcontrole WHERE idFamilia = ?",
+            query:  "SELECT count(*) as qtd FROM tb_estcontrole WHERE idFamilia = ?",
             values: [   
                         codigo,
                     ]
         });
-        if(familia.affectedRows > 0){
+        if(familia[0].qtd > 0){
             retorno = false;
         }else{
             retorno = true;
@@ -19,6 +21,58 @@ async function podeExcluir(codigo){
         throw Error(error.message);
     }
     return retorno;
+}
+
+//Verifica se já existe uma familia cadastrada com esse nome na encomenda
+async function achou(pEncomendaID, pFamilia){
+    let retorno = false;
+    try {
+        const familia = await query({
+            query:  "SELECT count(*) as codigo FROM tb_familias WHERE idEncomenda = ? and familia = ?",
+            values: [   
+                        pEncomendaID,
+                        pFamilia
+                    ]
+        });
+        if(familia[0].codigo > 0){
+            retorno = true;
+        }else{
+            retorno = false;
+        }
+
+    } catch (error) {
+        throw Error(error.message);
+    }
+
+    return retorno;
+
+}
+
+//Verifica se já existe uma familia cadastrada com esse nome na familia diferente
+async function podeAlterar(pEncomendaID, pFamilia, pId){
+    let retorno = false;
+
+    try {
+        const familia = await query({
+            query:  "SELECT count(*) as codigo FROM tb_familias WHERE idEncomenda = ? and familia = ? and id != ?",
+            values: [   
+                        pEncomendaID,
+                        pFamilia,
+                        pId
+                    ]
+        });
+        if(familia[0].codigo > 0){
+            retorno = false;
+        }else{
+            retorno = true;
+        }
+
+    } catch (error) {
+        throw Error(error.message);
+    }
+
+    return retorno;
+
 }
 
 //Função para retornar os itens das Familias da Encomenda
@@ -38,7 +92,7 @@ export async function listaFamilias(body) {
                     + " tb_familias A Left Join tb_encomenda B "
                     + " ON A.idEncomenda = B.id"
                     + " WHERE idEncomenda = ?"
-                    + " ORDER BY Familia",
+                    + " ORDER BY familia",
             values: [body.idEncomenda]
         });
   
@@ -53,56 +107,82 @@ export async function listaFamilias(body) {
 
 //Função para incluir uma nova Familia na Encomenda
 export async function cadastro(body){
-    let retorno = 0;
-    try {
-        const familia = await query({
-            query:  "CALL insert_Familia(?,?,?,?,?)",
-            values: [   
-                        body.idEncomenda, 
-                        body.familia,
-                        body.especificacao,
-                        body.cod_Erp,
-                        body.enc
-                    ]
-        });
+    let novaFamiliaID = 0;
+    let aviso = ""
+    let resposta = {menssagem: "", familiaID: 0};
+    let myQuery = "";
+    let valores = [];
 
-        if (!familia) throw new Error('Familia não cadastrada')
-        else{ 
-            if (familia === 0)
-            {
-                throw new Error('Erro, a familia já está cadatrada!')
-            }else{
-                retorno = familia;
-            }
+    try 
+    {
+        const verifica = await achou(body.idEncomenda, body.familia);
+        if(verifica){
+            aviso = "Já existe uma familia cadastrada com mesmo nome!";
+            novaFamiliaID = 0;
+        }else{
+            await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+            //Inicia a transação
+            await dbCC.beginTransaction();
+    
+            myQuery = "INSERT INTO tb_familias "
+                + " (idEncomenda, familia, espcificacao, cod_erp, enc ) "
+                + " Values (?,?,?,?,?)" ;
+            valores = [ 
+                body.idEncomenda, 
+                body.familia,
+                body.especificacao,
+                body.cod_Erp,
+                body.enc
+            ];
+            await dbCC.execute( myQuery,valores); 
+            aviso = "Registro incluido com sucesso!";
+            const [retID,] = await dbCC.execute("SELECT LAST_INSERT_ID() as novoID")
+            novaFamiliaID = retID[0].novoID
+            aviso = "Registro incluido com sucesso!";
+    
+            await dbCC.commit();
         }   
     } catch (error) {
-        throw Error(error.message);
+        dbCC.rollback();
+        aviso = "Erro ao incluir registro! Erro: " + error.message
+        novaFamiliaID = 0;
     }
-    return retorno;
+       
+    resposta.menssagem = aviso;
+    resposta.familiaID = novaFamiliaID;
+
+    return resposta;    
 }
 
 //Função para editar uma familia
 export async function edicao(body){
     let retorno = 0;
     try {
-        const familia = await query({
-            query:  "UPDATE tb_familias SET "
-                    + "espcificacao = ?, "
-                    + "cod_erp = ? "
-                    + "WHERE id = ?",     
-            values: [   
-                        body.especificacao,
-                        body.cod_Erp, 
-                        body.id,
-                    ]
-        });
+        const valida = await podeAlterar(body.idEncomenda, body.familia, body.id);
 
-        if(familia.affectedRows > 0){
-            retorno = familia.affectedRows;
+        if(valida){
+            const familia = await query({
+                query:  "UPDATE tb_familias SET "
+                        + "familia = ?, espcificacao = ?, "
+                        + "cod_erp = ? "
+                        + "WHERE id = ?",     
+                values: [   
+                            body.familia,
+                            body.especificacao,
+                            body.cod_Erp, 
+                            body.id,
+                        ]
+            });
+            if(familia.affectedRows > 0){
+                retorno = familia.affectedRows;
+            }
+            else{
+                throw new Error('Não foi possivel alterar a familia')
+            } 
         }
         else{
-            throw new Error('Não foi possivel alterar a familia')
-        } 
+            throw new Error('Essa familia não pode ser alterada.')
+        }
     } catch (error) {
         throw Error(error.message);
     }
@@ -116,7 +196,7 @@ export async function exclusao(codigo){
         if(podeExcluir(codigo)){
 
             const familia = await query({
-                query:  "DELETE FROM tb_Familias WHERE id = ?",
+                query:  "DELETE FROM tb_familias WHERE id = ?",
                 values: [   
                             codigo
                         ]

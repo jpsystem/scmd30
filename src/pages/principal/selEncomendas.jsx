@@ -9,6 +9,7 @@ import { PerfilContext } from '../contexts/perfilContext'
 import Select from 'react-select';
 import {useRouter} from "next/router"
 import {setCookie} from "cookies-next"
+import FechaForm from '@/componentes/fechaForm'
 
 export default function SelEncomendas() {
       //Ler os dados da Encomenda Ativo do Contexto Atual
@@ -86,10 +87,12 @@ export default function SelEncomendas() {
 
   return (
     <LayoutPagina largura="800px" altura="500px">
+        <div className={styles.barraFecha}>
+          <FechaForm/>
+        </div>    
         <h2 className={styles.title}>Selecione a Encomenda</h2>
         <div className={styles.form}>
           <div>
-
             <Select
             className={styles.select}
             defaultValue={selectedOption}

@@ -2,9 +2,13 @@ import jwt from "jsonwebtoken";
 
 import {query} from "/db.js"
 
+import {dbCC} from "/db.js"
+
 
 const SECRET = process.env.JWT_SECRET
 
+
+//Cria um tokem com os dados do login
 function createToken(user) {
     return jwt.sign(
     {
@@ -18,6 +22,7 @@ function createToken(user) {
 
 }
 
+//Ler os dados do usuario gravados no token
 function readToken(token) {
     try {
         return jwt.verify(token, SECRET)
@@ -27,10 +32,71 @@ function readToken(token) {
     }
 }
 
+//Retorna os dados do usuario contidos no token
 export function verifica(token) {
     return readToken(token)
 }
 
+//Verifica se já existe um usuario cadastro 
+//com mesmo eMail ou Login
+async function achou(pEmail, pLogin){
+    let retorno = false;
+    try {
+        const usuario = await query({
+            query:  "SELECT count(*) as codigo FROM tb_usuarios WHERE "
+            + "UCASE(TRIM(login)) = UCASE(TRIM(?)) OR  "
+            + "UCASE(TRIM(eMail)) = UCASE(TRIM(?))",
+            values: [   
+                pLogin,
+                pEmail
+            ]
+        });
+
+        if(usuario[0].codigo > 0){
+            retorno = true;
+        }else{
+            retorno = false;
+        }
+
+    } catch (error) {
+        throw Error(error.message);
+    }
+
+    return retorno;
+
+}
+
+//Verifica se ao alterar os campos Email ou Login 
+//vai coencidir com outro usuario já cadastrado
+async function podeAlterar(pEmail, pLogin, pId){
+    let retorno = false;
+    try {
+        const usuario = await query({
+            query:  "SELECT count(*) as codigo FROM tb_usuarios WHERE "
+            + "( UCASE(TRIM(login)) = UCASE(TRIM(?)) OR  "
+            + "UCASE(TRIM(eMail)) = UCASE(TRIM(?)) ) "
+            + "AND id != ? ",
+            values: [   
+                pLogin,
+                pEmail,
+                pId
+            ]
+        });
+        if(usuario[0].codigo === 0){
+            retorno = true;
+        }else{
+            retorno = false;
+        }
+
+    } catch (error) {
+        throw Error(error.message);
+    }
+    return retorno;
+
+}
+
+//Valida o usuário durante o login se estiver
+//autorizado re torna um token criptografado
 export async function login(body) {
     let token = [];
     try {    
@@ -65,6 +131,7 @@ export async function login(body) {
     return token
 }
 
+//Retorna a lista de usuários cadastrados
 export async function lerUsuarios(){
     let tb_usuarios = [{}];
     try {
@@ -79,72 +146,102 @@ export async function lerUsuarios(){
     return tb_usuarios;
 }
 
+//grava um novo usuário na tabela do BD
 export async function cadastro(body){
-    let retorno = 0;
+    let novoUsuarioID = 0;
+    let aviso = ""
+    let resposta = {menssagem: "", usuarioID: 0};
+    let myQuery = "";
+    let valores = [];
+    
     try {
-        let admin = (body.administrador ? 1: 0);
-        const usuario = await query({
-            query:  "CALL insert_Usuario(?,?,?,?,?,?)",
-            values: [   
-                        body.login, 
-                        body.nome,
-                        body.eMail,
-                        body.cargo,
-                        body.senha,
-                        admin
-                    ]
-        });
+        const verifica = await achou(body.eMail, body.login);
 
-        if (!usuario) throw new Error('Usuário não cadastrado')
-        else{ 
-            if (usuario === 0)
-            {
-                throw new Error('Erro, o usuário já está cadatrado!')
-            }else{
-                retorno = usuario;
-            }
-        }   
-    } catch (error) {
+        if(verifica){
+            aviso = "Já existe um usuario cadastro com mesmo eMail ou login!";
+            novoUsuarioID = 0;
+        }else{
+            await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+            //Inicia a transação
+            await dbCC.beginTransaction();
+
+            let admin = (body.administrador ? 1: 0);
+             
+            myQuery = "INSERT INTO tb_usuarios "
+                + " (login, nome, eMail, cargo, senha, administrador) "
+                + " Values (?,?,?,?,?,?)" ;
+            valores = [   
+                body.login, 
+                body.nome,
+                body.eMail,
+                body.cargo,
+                body.senha,
+                admin
+            ];
+            await dbCC.execute( myQuery,valores); 
+            aviso = "Registro incluido com sucesso!";
+            const [retID,] = await dbCC.execute("SELECT LAST_INSERT_ID() as novoID")
+            novoUsuarioID = retID[0].novoID
+            aviso = "Registro incluido com sucesso!";
+    
+            await dbCC.commit();
+        }        
         
-        throw Error(error.message);
+    } catch (error) {
+        dbCC.rollback();
+        aviso = "Erro ao incluir registro! Erro: " + error.message
+        novoUsuarioID = 0;
     }
-    return retorno;
+    resposta.menssagem = aviso;
+    resposta.usuarioID = novoUsuarioID;
+    
+    return resposta;
+
 }
 
+//Função para alterar os dados do usuário
 export async function edicao(body){
     let retorno = 0;
     try {
-        let admin = (body.administrador ? 1: 0);
-        const usuario = await query({
-            query:  "CALL update_Usuario(?,?,?,?,?,?,?)",
-            values: [   
-                        body.id,
-                        body.login, 
-                        body.nome,
-                        body.eMail,
-                        body.cargo,
-                        body.senha,
-                        admin
-                    ]
-        });
-
-        if (!usuario) throw new Error('Não foi possivel alterar usuário')
-        else{ 
-            if (usuario === 0)
-            {
-                throw new Error('Erro, login ou email já pertence a outro usuário!')
-            }else{
-                retorno = usuario;
+        const valida = await podeAlterar(body.eMail, body.login, body.id);
+        if(valida){
+            let admin = (body.administrador ? 1: 0);
+            const usuario = await query({
+                query:  "UPDATE tb_usuarios SET "
+                + "login = ?, "
+                + "nome = ?,"
+                + "eMail = ?,"
+                + "cargo = ?,"
+                + "senha = ?,"
+                + "administrador = ? "
+                + "WHERE id = ? " ,
+                values: [    
+                            body.login, 
+                            body.nome,
+                            body.eMail,
+                            body.cargo,
+                            body.senha,
+                            admin,
+                            body.id
+                        ]
+            });
+            if(usuario.affectedRows > 0){
+                retorno = usuario.affectedRows;
             }
-        }   
-    } catch (error) {
-        
+            else{
+                throw new Error('Não foi possivel alterar o usuário')
+            }
+        }else{
+            throw new Error('Esse usuário não pode ser alterado!')
+        }  
+    } catch (error) {     
         throw Error(error.message);
-
     }
+
     return retorno;
 }
 
+//Função para excluir o usuario
 export async function exclusao(codigo){
     let retorno = 0;
     try {
@@ -166,8 +263,6 @@ export async function exclusao(codigo){
     return retorno;
 }
 
-
-
 //Função para retornar os dados do usuário para
 //prencher os dados do perfil
 export async function buscaUsuario(body) {
@@ -175,11 +270,11 @@ export async function buscaUsuario(body) {
     try {    
         user = await query({
             query:  " SELECT " 
-	                +"  Id, "
-                    +"  Login, "
-                    +"  Nome, "
-                    +"  Senha, "
-                    +"  Administrador " 
+	                +"  id as Id, "
+                    +"  login as Login, "
+                    +"  nome as Nome, "
+                    +"  senha as Senha, "
+                    +"  administrador as Administrador " 
                     +" FROM "
                     +"  tb_usuarios "
                     +" WHERE "

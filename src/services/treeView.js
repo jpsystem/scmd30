@@ -67,26 +67,6 @@ export async function treeView(body) {
 }
 
 
-// async function retDados(encomenda) {
-//     let ecs = [];
-//     try {    
-//         ecs = await query({
-
-//             query:  "CALL TreeViewTW(?)",
-//             values: [encomenda]
-//         });
-  
-//         if (!ecs){
-//             throw new Error('Não tem elementos cadastrados!')
-//         }  
-//     } catch (error) {
-        
-//         throw Error(error.message);
-
-//     }
-//     return ecs
-// }
-
 async function retDados(encomenda) {
     let ecs = [];
     try {    
@@ -113,13 +93,13 @@ async function retDados(encomenda) {
             + " T.tag, "
             + " Trim(E.fdrtet) as codigoCWP "
             + " FROM "
-            + " tb_estcontrole E Left Join tb_Familias F "
+            + " tb_estcontrole E Left Join tb_familias F "
             + " ON E.idFamilia = F.id Left Join tb_tags T "
             + " ON E.idTag = T.id "
             + " WHERE  "
             + " E.idEncomenda= ? "
             + " Order By "
-            + " E.Elemento" ,
+            + " E.elemento" ,
             values: [encomenda]
         });
   

@@ -45,13 +45,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
               },
               body: JSON.stringify({
                   idEncomenda: encomendaAtiva.idEncomenda,
-                  tag:  data.Tag,
+                  tag:  data.tag,
                   enc: encomendaAtiva.codEncomenda,
               })
           });
           const json = await resposta.json();
           if(resposta.status === 201){
-              if(json[0][0].idTag > 0)
+              if(json.tagID > 0)
               {
                   retornoFilho( {tipo:"sucesso", texto:"TAG incluido com sucesso!", id: Math.random()})
               }else{
@@ -77,8 +77,9 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({
-                  tag: data.Tag,
-                  id: data.Id,
+                idEncomenda: encomendaAtiva.idEncomenda,
+                tag: data.tag,
+                id: data.id,
               })
           });
           const json = await resposta.json();
@@ -97,7 +98,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
     // da API /api/tag/exclusao/${data.Id}
     async function  exclusao (data){
       try {
-          const resposta = await fetch (`/api/tag/exclusao/${data.Id}`, {
+          const resposta = await fetch (`/api/tag/exclusao/${data.id}`, {
               method: 'DELETE',
               headers: {
                   "Content-Type": "application/json"
@@ -141,11 +142,11 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                   TAG
               </label>
               <input  type="text"
-                      id="Tag"
+                      id="tag"
                       className={styles.input}
-                      {...register("Tag", {required: true,  })}
+                      {...register("tag", {required: true,  })}
               />
-              {errors?.Tag?.type === "required" && 
+              {errors?.tag?.type === "required" && 
                   <p className={styles.error}>O campo TAG é obrigatório</p>
               }
                 {/* BOTÃO ENVIAR */}                              
@@ -169,7 +170,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
             <div className={styles.corpoExclusão}>
                 <div className={styles.textExclusao}>
                     <p>Você está prestes a excluir esse TAG do sistema!</p>
-                    <p>Familia: {campos.Tag}</p>  
+                    <p>Familia: {campos.tag}</p>  
                     <p className={styles.destaqueExclusao} >CONFIRMA A EXCLUSÃO?</p>
                 </div>
                 {/* BOTÃO ENVIAR */}

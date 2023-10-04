@@ -9,6 +9,7 @@ import Button from '../../componentes/button/index'
 //import {signIn} from 'next-auth/react'
 import LayoutPagina from "../componentes/layoutPagina"
 import { PerfilContext } from "../contexts/perfilContext"
+import FechaForm from "@/componentes/fechaForm"
 
 //import { get } from "react-hook-form"
 
@@ -126,23 +127,26 @@ export default function Login( ) {
 
     return(
     <LayoutPagina largura="600px">
+        <div className={styles.barraFecha}>
+          <FechaForm/>
+        </div>   
         <h2 className={styles.title}>Login</h2>
-           <form className={styles.form} onSubmit={handleForm}>
-             <Input  type="text" 
-                     placeholder="Seu login" 
-                     required 
-                     value={formData.login}
-                     onChange={(e) => { handleFormEdit(e, "login")}}
-             />
-             <Input  type="password" 
-                    placeholder="Sua senha" 
-                    required 
-                    value={formData.senha}
-                     onChange={(e) => { handleFormEdit(e, "senha")}}
-             />
-             <Button>Entrar</Button>
-             {error && <p className={styles.error}>{error}</p>}
-           </form>       
+        <form className={styles.form} onSubmit={handleForm}>
+          <Input  type="text" 
+                  placeholder="Seu login" 
+                  required 
+                  value={formData.login}
+                  onChange={(e) => { handleFormEdit(e, "login")}}
+          />
+          <Input  type="password" 
+                placeholder="Sua senha" 
+                required 
+                value={formData.senha}
+                  onChange={(e) => { handleFormEdit(e, "senha")}}
+          />
+          <Button>Entrar</Button>
+          {error && <p className={styles.error}>{error}</p>}
+        </form>       
     </LayoutPagina>
     )
 }

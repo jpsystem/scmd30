@@ -17,7 +17,7 @@ export async function verificaSemLinks(codigo){
             +"(Select 1 as myKey, Count(*) as Qtde From tb_familias "
             +"where idEncomenda = ?) B ON A.myKey = B.myKey LEFT JOIN "
             +"(Select 1 as myKey, Count(*) as Qtde From tb_tags "
-            +"where idEncomenda = ?) C ON A.myKey = c.myKey ",
+            +"where idEncomenda = ?) C ON A.myKey = C.myKey ",
             values: [   
                         codigo,
                         codigo,
@@ -98,6 +98,7 @@ export async function listaEncomendas() {
     return encs
 }
 
+//Função para cadastrar uma nova encomenda
 export async function cadastro(body){
     let novaEncomendaID = 0;
     let aviso = ""
@@ -105,7 +106,7 @@ export async function cadastro(body){
     let myQuery = "";
     let valores = [];
     let abortar = false;
-
+    console.log("BODY", body)
     try 
     {
         await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
@@ -173,10 +174,6 @@ export async function cadastro(body){
         aviso = "Erro ao incluir registro! Erro: " + error.message
         novaEncomendaID = 0;
     }
-    finally {
-        dbCC.close();
-        dbCC.end();
-    }
    
     resposta.menssagem = aviso;
     resposta.encomendaID = novaEncomendaID;
@@ -184,6 +181,7 @@ export async function cadastro(body){
     return resposta;
 }
 
+//Função para alterar os dados de uma encomenda
 export async function edicao(body){
     let retorno = 0;
     try {
@@ -239,6 +237,7 @@ export async function edicao(body){
     return retorno;
 }
 
+//Função para excluir uma encomenda do BD
 export async function exclusao(codigo){
     let retorno = 0;
     const teste = await verificaSemLinks(codigo);

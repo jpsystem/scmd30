@@ -12,9 +12,7 @@ import Alerta from "../../../../componentes/alerta/alerta";
 import FechaForm from '@/componentes/fechaForm';
 // import { Token } from '@/pages/componentes/token';
 import {useRouter} from "next/router"
-
-import {useContext} from "react"
-import { PerfilContext } from '@/pages/contexts/perfilContext';
+import { getCookie } from 'cookies-next';
 
 // const token = Token;
 //Coleção de dados para cabecalho da tabela
@@ -55,10 +53,13 @@ const dados={
   
 
 export default function CadEncomendas(props) {
+  //Rotinas para enviar usuario para tela de login se
+  //não for administrador
   const router = useRouter()
-  const {usuario} = useContext(PerfilContext)
+
   useEffect(()=>{
-    if(!usuario.administrador){
+    const cokieADM = getCookie("useAdministrador")
+    if(!cokieADM){
       router.replace('/principal/login')
     }
   },[])

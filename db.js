@@ -15,14 +15,16 @@ export async function query({ query, values = [] }) {
        process.env.DATABASE_URL
     );
     
-    try {
+    try 
+    {
         const [results] = await dbConnection.execute(query, values);
         dbConnection.end();
         return results;
     } catch (error) {
-        throw Error(error.message);
+        throw Error(error.message); 
         return {error};
     }
+
 }
 
 export const dbCC = await mysql.createConnection(

@@ -11,6 +11,7 @@ import Button from '@/componentes/button'
 import FechaForm from '@/componentes/fechaForm';
 import Modal from "@/componentes/modal";
 import Formulario from './formulario.jsx';
+import FormPrimeiro from './formPrimeiroElemento.jsx';
 import Alerta from "@/componentes/alerta/alerta";
 import {PerfilContext} from "../../contexts/perfilContext"
 import { BiSitemap } from "react-icons/bi";
@@ -29,6 +30,9 @@ export default function EstControle() {
 
     //Variavel de Estado para controle do formulario Modal
     const [openModal, setOpenModal] = useState(false)
+
+    //Variavel de Estado para controle do formulario Modal2
+    const [openModal2, setOpenModal2] = useState(false)
 
     //Função para retornar os itens ta Estrutura de Controle
     async function retElementos(codEncomenda) {
@@ -65,20 +69,7 @@ export default function EstControle() {
         return response;
     })
 
-    // const tree2 = [
-    //     {
-    //         label: "FORMUALÁRIO",
-    //         filhos: [
-    //             {
-
-    //             },
-    //         ],
-    //     },
-    // ]
-
-    //Variavel de estado para exibição
-    //do aviso de execução
-    
+   
     //Variavel de estado para armazenar os
     //dados da menssagem de aviso que retornar 
     //dos formularios de edição
@@ -146,7 +137,7 @@ export default function EstControle() {
                         heigth={"50px"} 
                         fontSize={"1.2em"}
                         disabled={!inicio}
-                        onClick={() => setOpenModal(true)}
+                        onClick={() => setOpenModal2(true)}
                     >
                       <BiSitemap className={styles.icone}/>Item inicial
                     </Button>
@@ -162,6 +153,16 @@ export default function EstControle() {
                 <Formulario 
                     setModalOpen={()=> setOpenModal(!openModal)} 
                     tipo={"inclusao"}
+                    retornoFilho={retornoFilho}
+                />
+            </Modal>
+            <Modal 
+                isOpen={openModal2} 
+                setModalOpen={()=> setOpenModal2(!openModal2)}
+                titulo="PRIMEIRO ELEMENTO"
+            >
+                <FormPrimeiro 
+                    setModalOpen={()=> setOpenModal2(!setOpenModal2)} 
                     retornoFilho={retornoFilho}
                 />
             </Modal>            

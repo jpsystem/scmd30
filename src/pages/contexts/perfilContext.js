@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 export const PerfilContext = createContext();
 
-export default function PerfilProvider( {children,number}){
+export default function PerfilProvider( {children}){
     const [auth, setAuth] = useState(false)
     const [pageReload, setPageReload]= useState(false)
     // setCookie("auth",false)
