@@ -129,6 +129,7 @@ export default function Etapa1(){
             const dado = {
                 id: 0,
                 Sel: false,
+                SelGrupo: false,
                 Grupo: "",
                 Posicao: "",
                 Qtd: 0,
@@ -165,11 +166,13 @@ export default function Etapa1(){
                 //Não tem Posição
                 if(dado.Posicao === undefined || dado.Posicao.trim() === "" ){
                     dado.Tipo = "E" //Tipo Elemento
+                    dado.Unidade = "CJ"
                     dado.Sel = true
                 }
                 //Tem posição
                 else{
                     dado.Tipo = "S" //Tipo SubItem
+                    dado.Unidade = "PÇ"
                 }
             }
             //Não tem Grupo
@@ -177,6 +180,7 @@ export default function Etapa1(){
                 //Tem posição
                 if(dado.Posicao  !== undefined && dado.Posicao.trim() > ""){
                     dado.Tipo = "E" //Tipo Elemento
+                    dado.Unidade = "PÇ"
                     dado.Sel = true
                 }
                 //Não tem posição

@@ -147,7 +147,7 @@ export default function CadETCs() {
 
             <Tabela defTable={dados}>
                 {   
-                    data[0].map( (item) => 
+                    data.map( (item) => 
                     (
                         <Linha key={item.id} 
                             nomeForme="ETC" 

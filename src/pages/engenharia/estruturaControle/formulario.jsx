@@ -44,8 +44,8 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
 
     //Variaveis de estado para controle das opções 
     //dos combos de Familias e de TAGs
-    const [opFamilia, setOpFamilia] = useState(campos?.IdFamilia? campos?.IdFamilia: 1);
-    const [opTag, setOpTag] = useState(campos?.IdTag? campos?.IdTag: 1);
+    const [opFamilia, setOpFamilia] = useState(campos?.IdFamilia? campos?.IdFamilia: 0);
+    const [opTag, setOpTag] = useState(campos?.IdTag? campos?.IdTag: 0);
 
     //Função para setar as variaveis de estados
     //quando selecionar uma Familia ou um TAG
@@ -279,13 +279,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         (
                                             familiasInfo?.data?.length === 0 ? 
                                             (
-                                                <option key={0} value={1}>
+                                                <option key={0} value={0}>
                                                     Nenhum resultado encontrado
                                                 </option> 
                                             ):
                                             (
                                                 <>
-                                                    <option key={0} value={1}>
+                                                    <option key={0} value={0}>
                                                         Selecione uma Familia
                                                     </option>
                                                 {
@@ -326,13 +326,13 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         (
                                             tagsInfo?.data?.length === 0 ? 
                                             (
-                                                <option key={0} value={1}>
+                                                <option key={0} value={0}>
                                                     Nenhum resultado encontrado
                                                 </option> 
                                             ):
                                             (
                                                 <>
-                                                    <option key={0} value={1}>
+                                                    <option key={0} value={0}>
                                                         Selecione um Tag
                                                     </option>
                                                 {

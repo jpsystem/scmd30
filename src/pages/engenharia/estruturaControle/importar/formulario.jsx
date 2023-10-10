@@ -20,8 +20,14 @@ export default function Formulario({item, setModalOpen}){
         url: `/api/combos/familias/${encomendaAtiva.idEncomenda}`,
     })
 
+    //Executar a função CarregarFamilias no load da pagina.
+    useEffect(()=>{
+        carregarFamilias();
+        //setOpFamilia(va => va = item?.IdFamilia? item?.IdFamilia: 0)
+    },[])
+
     //Variavel de estado para controle das opções dos select Familias
-    const [opFamilia, setOpFamilia] = useState(0);
+    const [opFamilia, setOpFamilia] = useState(item?.IdFamilia? item?.IdFamilia: 0);
 
     //Função para atualizar a variavel de estado opFamilia
     //Com o codigo da familia selecionada no cambo
@@ -30,12 +36,6 @@ export default function Formulario({item, setModalOpen}){
             setOpFamilia(va => va = e?.target.value)
         }
     }
-
-    //Executar a função CarregarFamilias no load da pagina.
-    useEffect(()=>{
-        carregarFamilias();
-        setOpFamilia(va => va = item?.IdFamilia? item?.IdFamilia: 0)
-    },[])
 
     //Carregar as variaveis de Cotexto do arquivoCSV
     const { 
@@ -87,36 +87,24 @@ export default function Formulario({item, setModalOpen}){
         )
     }
 
-    //Faz consulta na API para retornar o status do item
-    // -1 = Pendente / 0 = Novo / 1 = Alterar / 2 = Bloqueado 
-    const buscaStatusItem = async (pGrupoPos) => {
-        let retStatus = 0
-        let retorno = [{}]
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                idEncomenda: encomendaAtiva.idEncomenda,  
-                desenho: nomeDesenho,
-                grpos: pGrupoPos          
-            })
-        };
-        try {
-            const response = await fetch('/api/estruturaControle/verificaItem', requestOptions )
-            retorno = await response.json()
-            retStatus = retorno;
-        } catch (error) {
-            retStatus = -1;
-        } 
+    //Retornar status 0 [Novo] se já foi definido uma familia
+    //Se não retorna -1{Pendente]
+    const statusItem = async (data) => {
+        let retStatus = -1
+        // if(data.IdFamilia > 0){
+        if(opFamilia > 0){
+            retStatus = 0
+        }
         return retStatus;
-    };
+    }
 
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
     const onSubmit =  async (data) =>{
         //Pega o nome da failia na coleção
         const familia = await familiasInfo?.data?.find(fan => fan.value == opFamilia);
-        const retStatus = await buscaStatusItem(data?.GrPos).then((resposta) => {return resposta})
+        //const retStatus = await buscaStatusItem(data?.GrPos).then((resposta) => {return resposta})
+        const retStatus = await statusItem(data).then((resposta) => {return resposta})
         // const retStatus = 0;
         await setDadosCSV(
             //prevState contem os dados atuais de dadosCSV
@@ -235,18 +223,16 @@ export default function Formulario({item, setModalOpen}){
                 <div className={styles.grupoR}>
                     <div style={{width: "80%"}}>  
                         {/*Familia */}  
-                        <label className={styles.label}>
+                        <label for="IdFamilia" className={styles.label}>
                             Familia
                         </label>
                         <select 
                             id="IdFamilia"
-                            //value={opFamilia}
-                            {...register("IdFamilia", {validate: (value) => {
-                                return value != "0"
-                            }})}
-
+                            value={opFamilia}
+                            // {...register("IdFamilia", {validate: (value) => {
+                            //     return value != "0"
+                            // }})}
                             className={styles.select}
-
                             onChange={async (e)=>{await Selecionar(e)}}
                         >
                         {
@@ -269,12 +255,12 @@ export default function Formulario({item, setModalOpen}){
                                             Selecione uma Familia
                                         </option>
                                         {
-                                        familiasInfo?.data?.map( (item, i) =>
+                                        familiasInfo?.data?.map( (it, i) =>
                                             <option 
                                             key={i+1} 
-                                            value={item?.value}
+                                            value={it?.value}
                                             >
-                                            {item?.label}
+                                            {it?.label}
                                             </option>
                                         )
                                         }

@@ -35,7 +35,7 @@ export default function FormEtcItens({campos}){
   useEffect(()=>{
     if(itensInfo?.data?.length !== undefined )
     {
-      const pesoTotal = itensInfo?.data[0]?.reduce(
+      const pesoTotal = itensInfo?.data?.reduce(
         function(acumulador, valorAtual) {
           if(parseFloat(valorAtual?.PesoTot) > 0){
             return acumulador + parseFloat(valorAtual?.PesoTot);
@@ -100,7 +100,7 @@ export default function FormEtcItens({campos}){
                     (
                       <>
                       {
-                        itensInfo?.data[0]?.map( (item, i) =>
+                        itensInfo?.data?.map( (item, i) =>
                           <tr key={i}>
                             <td width="5%">{item.Item}</td>
                             <td width="5%">{item.Elemento}</td>

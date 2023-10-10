@@ -202,9 +202,6 @@ export async function primeiroCadastro(body){
 }
 
 
-
-
-
 //Função para editar um elemento
 export async function edicao(body){
     let retorno = 0;
@@ -289,7 +286,7 @@ export async function retTitulo(body) {
     let tit = [];
     try {    
         tit = await query({
-            query:  "SELECT TRIM(titulo) as titulo FROM teste.desenhos WHERE desenho = ?",
+            query:  "SELECT TRIM(titulo) as titulo FROM desenhos WHERE desenho = ?",
             values: [body.desenho]
         });
   

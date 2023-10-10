@@ -275,7 +275,7 @@ export default function FormEtcDados({campos, tipo}){
                     (
                       <>
                       {
-                        itensInfo?.data[0]?.map( (item, i) =>
+                        itensInfo?.data?.map( (item, i) =>
                           <tr key={i}>
                             <td width="10%">{item?.Item}</td>
                             <td width="25%">{item?.NumeroTMSA}</td>

@@ -5,8 +5,20 @@ export async function gridETCs(body) {
   let etcs = [];
   try {    
       etcs = await query({
-          query:  "CALL GridETC(?)",
-          values: [body.idEncomenda]
+        query: "SELECT "
+		+ "A.id, A.codETC,	A.revisao as Revisao, "
+		+ "B.familia as Familia, A.idFamilia as IdFamilia, "
+		+ "DATE_FORMAT(A.data_em,'%Y-%m-%d') as DataEmi, "
+		+ "A.responsavel as Responsavel, "
+		+ "CASE WHEN A.emitida = 1 THEN 'Emitida' ELSE 'Pendente' END AS Status, "
+		+ "A.local as Local, A.observacoes as Observacoes, A.prazo as Prazo, "
+		+ "A.guiadoc as GRD "
+        + "FROM "
+		+ "tb_guiaetc A LEFT JOIN tb_familias B ON A.idFamilia = B.id "
+        + "WHERE "
+		+ "A.idEncomenda = ? "
+        + "ORDER BY A.codETC " ,
+        values: [body.idEncomenda]
       });
 
       if (!etcs){
@@ -23,7 +35,12 @@ export async function itensGRD(body) {
     let itens = [];
     try {    
         itens = await query({
-            query:  "CALL ItensGRD(?,?)",
+            query: "SELECT "
+            + "item as Item, desenho as NumeroTMSA, desclifor as NumeroCliente, "
+            + "titulo as Titulo, revdes as Rev "
+            + "FROM itens_rd "
+            + "WHERE  enc = ? and guia = ? "
+            + "ORDER BY item ",
             values: [body.codEncomenda, body.GRD]
         });
   
@@ -41,7 +58,14 @@ export async function itensETC(body) {
     let itens = [];
     try {    
         itens = await query({
-            query:  "CALL ItensETC(?)",
+            query: "SELECT B.id as idItem, A.codETC as Etc,	B.item as Item, "
+            + "B.elemento as Elemento,	B.desenho as Desenho, B.revdes as Revisao, "
+            + "B.grpos as GrPos, C.tag as TAG,	B.esp as Descricao,	B.codigo as Codigo, "
+            + "B.qtd as Qtd, B.unid as Unid, B.peso_unit as PesoUnit, B.peso_total as PesoTot, "
+            + "B.fdrtet as CWP "
+            + "FROM tb_guiaetc as A LEFT JOIN tb_itensetc as B	ON A.id = B.idEtc "
+            + "LEFT JOIN tb_tags as C ON B.idTag = C.id "
+            + "WHERE A.id = ?	ORDER BY B.item ",
             values: [body.idEtc]
         });
   

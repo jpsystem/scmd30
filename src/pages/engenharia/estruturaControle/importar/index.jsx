@@ -169,7 +169,6 @@ export default function ImportaLista({pai, setModalOpen}) {
       filhos: filhos
     };
 
-    console.log("BODY", JSON.stringify(body))
 
     const resposta = await fetch ('/api/estruturaControle/importaLista',{
       method: 'POST',
@@ -179,8 +178,6 @@ export default function ImportaLista({pai, setModalOpen}) {
       body: JSON.stringify(body)
     });
     const json = await resposta.json();
-    console.log("Resposta", resposta)
-    console.log("JSON", json)
     setModalOpen(false)
   }
 

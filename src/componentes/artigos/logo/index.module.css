@@ -1,0 +1,24 @@
+.quadro{
+  display: flex;
+  width: 200px;
+  height: 200px;
+  justify-items: center;
+  flex-direction: column;
+  margin: 50px;
+}
+.image{
+  width: 100%;
+  padding-top: 10px;
+  flex: 1;
+  background-color: rgba(253, 128, 08, 0.5);
+  text-align: center;
+}
+.texto{
+  flex: 1;
+}
+.texto p{
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  color: #000;
+  text-align: center;
+}
