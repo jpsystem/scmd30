@@ -41,7 +41,6 @@ export default function About() {
             <p><Opcao nomeAncora="equipe">Equipe de Desenvolvimento</Opcao></p>
             <p><Opcao nomeAncora="contato">Contato e Suporte</Opcao></p>
             <p><Opcao nomeAncora="historico">Histórico das versões</Opcao></p>
-            <p><Opcao nomeAncora="felipe">Dados do Felipe</Opcao></p>
           </div>
           <div className={Style.contexto}>
             <Subtitulo nomeAncora="apresentacao">Apresentação</Subtitulo>
@@ -125,11 +124,11 @@ export default function About() {
               Nós da JPSystem trabalhamos sempre ouvindo nossos clientes e parceiros pois acreditamos que assim, podemos evoluir e entregar sempre o melhor serviço.<br/><br/>
               Formas de contato<br/>
               <div className={Style.formas}>
-                <IoCallOutline className={Style.icone}/> Por WhatsApp<br/>
+                <IoCallOutline className={Style.icone}/> Por Telefone<br/>
                 <Conteudo recuo="50px">(55) 11 99999-9999</Conteudo>
               </div>
               <div className={Style.formas}>
-                <IoLogoWhatsapp className={Style.icone}/> Por Telefone<br/>
+                <IoLogoWhatsapp className={Style.icone}/> Por WhatsApp<br/>
                 <Conteudo recuo="50px">(55) 11 99999-9999</Conteudo>
               </div>
               <div className={Style.formas}>
@@ -141,12 +140,9 @@ export default function About() {
             <Conteudo espaco="50px"> 
               Versão atual
               <Conteudo recuo="50px">3.0 rev.0.1.0</Conteudo>
-              Detalhe das revisões.<br/>
-              <Conteudo recuo="50px">Rev. 0.1.0 Data 06/10/2023 18:30h</Conteudo>
-              
+              Detalhe das revisões.
+              <Conteudo recuo="50px">Rev. 0.1.0 Data 06/10/2023 18:30h</Conteudo>            
             </Conteudo>
-            <Subtitulo nomeAncora="felipe">Dados do Felipe</Subtitulo>
-            <Conteudo>Felipe é um cara legal gentes boa!</Conteudo>
           </div>
         </div>
       </LayoutPagina>
