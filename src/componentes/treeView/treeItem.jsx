@@ -48,22 +48,22 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
     }, [])
 
     const controle =(opcao)=> {
-        // Novo Elemento Irmão
+        // Alterar elemento
         if(opcao === 1){
+            setTitulo("Alterar Elemento")
+            setTipoForm("edicao")
+            setOpenModal(true)
+        }
+        // Novo Elemento Irmão
+        if(opcao === 2){
             setTitulo("Novo Elemento [irmão]")
             setTipoForm("irmao")
             setOpenModal(true)
         }
         // Novo Elemento Filho
-        if(opcao === 2){
+        if(opcao === 3){
             setTitulo("Novo Elemento [filho]")
             setTipoForm("filho")
-            setOpenModal(true)
-        }
-        // Alterar elemento
-        if(opcao === 3){
-            setTitulo("Alterar Elemento")
-            setTipoForm("edicao")
             setOpenModal(true)
         }
         // Excluir o elemento
@@ -72,7 +72,6 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
             setTipoForm("exclusao")
             setOpenModal(true)
         }
-
         // IMPORTAÇÃO
         if(opcao === 5){
             
@@ -97,31 +96,38 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
             <div className={styles.item}>
                 <div className={styles.controles} >
                     <a onClick={() =>  controle(1)} >
-                        <BiAddToQueue className={styles.iconeIrmao}/>  
+                        <div className={styles.efeito}>
+                            <FaRegEdit className={styles.iconeEdicao}  />  
+                        </div>
                     </a> 
-                    <a onClick={() =>  controle(2)}
+                    <a onClick={() =>  controle(2)} >
+                        <div className={styles.efeito}>
+                            <BiAddToQueue className={styles.iconeIrmao}/>
+                        </div>  
+                    </a> 
+                    <a onClick={() =>  controle(3)}
                         className={ETC > 0 ? styles.desabilitado: ""}
                     >
-                        <BiSubdirectoryRight className={styles.iconeFilho} />  
-                    </a> 
-                    <a onClick={() =>  controle(3)}   
-                        className={ETC > 0 ? styles.desabilitado: ""}
-                    >
-                        <FaRegEdit className={styles.iconeEdicao}  />  
+                         <div className={styles.efeito}>
+                            <BiSubdirectoryRight className={styles.iconeFilho} />  
+                         </div>
                     </a> 
                     <a onClick={() =>  controle(4)} 
                          className={ETC > 0 ? styles.desabilitado: ""}
                     >
-                        <FaRegTrashAlt className={styles.iconeExclusao}  />  
+                        <div className={styles.efeito}>
+                            <FaRegTrashAlt className={styles.iconeExclusao}  />  
+                        </div>
                     </a> 
                     <a onClick={() =>  controle(5)} 
                          className={ETC > 0 ? styles.desabilitado: ""}
                     >
-                        <BiAddToQueue className={styles.iconeIrmao}/>   
+                        <div className={styles.efeito}>
+                            <BiAddToQueue className={styles.iconeIrmao}/>   
+                        </div>
                     </a> 
                 </div>
-                <div 
-                    className={styles.listItem} 
+                <div className={styles.listItem} 
                     style={{paddingLeft: `${Recuo}px`}}
                     >
                         {
@@ -139,9 +145,7 @@ export default function TreeItem({ Recuo, reg, retornoFilho, Elemento, Descricao
                             (<FaCircle className={styles.iconeItem} style={{color: corETC}}/>)
                         }
                 </div> 
-                <div 
-                    //onClick={() =>  selecionaItem()} 
-                    className={styles.descricao}
+                <div className={styles.descricao}
                     style={{color: corETC}}
                 >
                     {Descricao}

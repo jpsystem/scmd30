@@ -56,6 +56,7 @@ export async function itensGRD(body) {
 //Função para retornar os itens da ETC
 export async function itensETC(body) {
     let itens = [];
+    let filtro = "";
     try {    
         itens = await query({
             query: "SELECT B.id as idItem, A.codETC as Etc,	B.item as Item, "
@@ -77,3 +78,56 @@ export async function itensETC(body) {
     }
     return itens
   }
+
+  //Função para retornar os itens Pendentes para incluir na ETC
+  export async function itensPendentesETC(body) {
+    let itens = [];
+    let filtro = "";
+    if(body.idTag > 0 ){
+        filtro = `and idTag = ${body.idTag}`
+    }
+    try {
+        itens = await query({
+            query: "SELECT elemento as Elemento, esp as Descricao, desenho as Desenho,  "
+            + "revdes as Rev, grpos as GrPos, qtd as Qtd, peso_total as PesoTot, "
+            + "fdrtet as CWP, idTag as TagID, idFamilia as FamiliaID, "
+            + "etc as ETC, B.familia as Familia, C.tag as TAG "
+            + "FROM tb_estcontrole A LEFT JOIN tb_familias B ON A.idFamilia = B.id "
+            + "LEFT JOIN tb_tags C ON A.idTag = C.id "
+            + "WHERE A.idEncomenda = ? and idFamilia = ? and (etc is null or etc = 0) "
+            + filtro,
+            values: [body.idEncomenda, body.idFamilia]
+        });
+        if (!itens){
+            throw new Error('Não tem elementos pedentes para a ETC!')
+        }       
+    } catch (error) {
+        throw Error(error.message);
+    }
+    return itens
+  }
+  
+  export async function selTags(body) {
+    let tags = [];
+    try {    
+        tags = await query({
+
+            query:  "  SELECT "
+                    + "     a.idTag as value, "
+                    + "     b.tag as label "
+                    + "FROM "
+                    + "     tb_estcontrole a LEFT JOIN tb_tags b   ON a.idTag = b.id  "
+                    + "WHERE a.idEncomenda = ? and a.idFamilia = ? and (etc is null or etc = 0) "
+                    + "GROUP BY a.idTag, b.tag "
+                    + "ORDER BY label",
+            values: [body.idEncomenda, body.idFamilia]
+        });
+  
+        if (!tags){
+            throw new Error('Não tem tags cadastradas!')
+        }  
+    } catch (error) {
+        throw Error(error.message);
+    }
+    return tags
+}

@@ -9,10 +9,16 @@ import Button from "@/componentes/button"
 import FormEtCDados from "./formEtcDados"
 import FormEtcItens from "./formEtcItens"
 import { FaRegSave, FaRegListAlt, FaRegFileAlt, FaRegFileExcel } from "react-icons/fa"
+import Modal from "@/componentes/modal"
+
+import SelecionarItens from "./selecionar"
 
 export default function FormETC({campos,tipo, setModalOpen}){
   //Ler os dados da Encomenda Ativo do Contexto Atual
   const {encomendaAtiva} = useContext(PerfilContext)  
+
+  const [openModal, setOpenModal] = useState(false)
+  const [titulo, setTitulo] = useState("");
 
   const [botoes, setBotoes] = useState({
     bt1: true,
@@ -66,6 +72,46 @@ export default function FormETC({campos,tipo, setModalOpen}){
       setAba2(Ativo);
     }
   },[aba])
+
+  const controle =(opcao)=> {
+    // Alterar elemento
+    if(opcao === 1){
+        // setTitulo("Alterar Elemento")
+        // setTipoForm("edicao")
+        // setOpenModal(true)
+    }
+    // Novo Elemento Irmão
+    if(opcao === 2){
+        setTitulo("Selecionar elementos para ETC")
+        // setTipoForm("irmao")
+        setOpenModal(true)
+    }
+    // Novo Elemento Filho
+    if(opcao === 3){
+        // setTitulo("Novo Elemento [filho]")
+        // setTipoForm("filho")
+        // setOpenModal(true)
+    }
+    // Excluir o elemento
+    if(opcao === 4){
+        // setTitulo("Excluir Elemento")
+        // setTipoForm("exclusao")
+        // setOpenModal(true)
+    }
+    // IMPORTAÇÃO
+    if(opcao === 5){
+      alert(`Opção: ${opcao}`)
+        // setTitulo("Excluir Elemento")
+        // setTipoForm("exclusao")
+        // setOpenModal2(true)
+    }
+
+    // alert(JSON.stringify(opcao))
+    return null
+}
+
+
+
 
 
   return(
@@ -122,29 +168,45 @@ export default function FormETC({campos,tipo, setModalOpen}){
         tipo !== "inclusao" && (
           <div className={cssBotoes.botoes}>
             <div className={cssBotoes.toolBar}>
+              {/* Botão 1 SALVAR */}
               <strong className={  botoes?.bt1 ?
                 (`${cssBotoes.botao} ${cssBotoes.bt1}`):
                 (`${cssBotoes.botao} ${cssBotoes.btDesabled}`)
               }>
-                <FaRegSave className={  botoes?.bt1 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }/>
+                <FaRegSave
+                  onClick={() =>  controle(1)} 
+                  className={  botoes?.bt1 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }
+                />
               </strong>
+              {/* Botão 2 SELECIONAR */}
               <strong className={  botoes?.bt2 ?
                 (`${cssBotoes.botao} ${cssBotoes.bt2}`):
                 (`${cssBotoes.botao} ${cssBotoes.btDesabled}`)
               }>
-                <FaRegListAlt className={  botoes?.bt2 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }/>
+                <FaRegListAlt
+                  onClick={() =>  controle(2)} 
+                  className={  botoes?.bt2 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }
+                />
               </strong>
+              {/* Botão 3 EMITIR */}
               <strong className={  botoes?.bt3 ?
                 (`${cssBotoes.botao} ${cssBotoes.bt3}`):
                 (`${cssBotoes.botao} ${cssBotoes.btDesabled}`)
               }>
-                <FaRegFileAlt className={  botoes?.bt3 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }/>
-              </strong>         
+                <FaRegFileAlt 
+                  onClick={() =>  controle(3)}
+                  className={  botoes?.bt3 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }
+                />
+              </strong>
+              {/* Botão 4 DESTRAVAR */}         
               <strong className={  botoes?.bt4 ?
                 (`${cssBotoes.botao} ${cssBotoes.bt4}`):
                 (`${cssBotoes.botao} ${cssBotoes.btDesabled}`)
               }>
-                <FaRegFileExcel className={  botoes?.bt4 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }/>
+                <FaRegFileExcel
+                  onClick={() =>  controle(4)} 
+                  className={  botoes?.bt4 ?(`${cssBotoes.icon}`):(`${cssBotoes.btIcon}`) }
+                />
               </strong>
 
                 {/* <strong className={`${cssBotoes.botao} ${cssBotoes.bt2}`}><FaRegListAlt className={cssBotoes.icon}/></strong>
@@ -161,7 +223,19 @@ export default function FormETC({campos,tipo, setModalOpen}){
           </div>
         )
       }
-
+      <Modal 
+          isOpen={openModal} 
+          setModalOpen={()=> setOpenModal(!openModal)}
+          titulo={titulo}
+          larguraMinima="1800px"
+      >
+          <SelecionarItens 
+              //campos={reg} 
+              //tipo={tipoForme}
+              setModalOpen={()=> setOpenModal(!openModal)}
+              //retornoFilho={retornoFilho}
+          />
+      </Modal>
     </div>
 
     </>

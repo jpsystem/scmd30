@@ -7,3 +7,10 @@
     padding: 0;
     cursor: pointer;
 }
+.efeito{
+    transition: 0.5s;
+}
+.efeito:hover{
+    transform: scale(1.5);
+    /* color:#F00; */
+}

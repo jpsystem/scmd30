@@ -161,18 +161,18 @@ export default function CadUsuarios() {
           )
           )
         }   
-        </Tabela>
-        <Modal 
-          isOpen={openModal} 
-          setModalOpen={()=> setOpenModal(!openModal)}
-          titulo="Novo usuário"
-        >
-          <Formulario 
-            setModalOpen={()=> setOpenModal(!openModal)} 
-            tipo={"inclusao"}
-            retornoFilho={retornoFilho}
-          />
-        </Modal>
+      </Tabela>
+      <Modal 
+        isOpen={openModal} 
+        setModalOpen={()=> setOpenModal(!openModal)}
+        titulo="Novo usuário"
+      >
+        <Formulario 
+          setModalOpen={()=> setOpenModal(!openModal)} 
+          tipo={"inclusao"}
+          retornoFilho={retornoFilho}
+        />
+      </Modal>
  
     </LayoutPagina>
     

@@ -10,8 +10,10 @@ export default function FechaForm(props){
     }
     
     return(
-        <a onClick={fechar}>
-            <FaRegWindowClose className={styles.botao} {...props} />
-        </a>
+        <div className={styles.efeito} >
+            <a onClick={fechar}>
+                <FaRegWindowClose className={styles.botao} {...props} />
+            </a>
+        </div>
     )
 }

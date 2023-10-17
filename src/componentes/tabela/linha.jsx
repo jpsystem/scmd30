@@ -61,18 +61,23 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
     
     return(
         <>
+
             <div className={styles['linha']} style={{width: `${props.tamanho}`}}  {...props}>
             {children}
                 {!cabeca && (
                         <>
-                            <Coluna width= "5%" align= "center" cursor="pointer">
-                                <a onClick={() =>  controle(1)}>
-                                    <FaRegEdit/>  
+                            <Coluna width= "5%" align="center" cursor="pointer">
+                                <a   onClick={() =>  controle(1)}>
+                                    <div className={styles.efeito}>
+                                        <FaRegEdit/>  
+                                    </div>
                                 </a>                                 
                             </Coluna>
-                            <Coluna width= "5%" align= "center" cursor="pointer">
+                            <Coluna width= "5%" align="center" cursor="pointer">
                                 <a  onClick={() =>  controle(2)}>
-                                    <FaRegTrashAlt/>
+                                    <div className={styles.efeito}>
+                                        <FaRegTrashAlt/>
+                                    </div>
                                 </a>
                             </Coluna>
                         </>
