@@ -2,11 +2,21 @@
   display: flex;
   border: 10px solid #FD8008;
   box-shadow: 15px 15px 25px rgba(253, 50, 8, 0.5);
-  max-height: 65vh;
+  /* max-height: 65vh; */
+  height: 700px;
   padding: 40px;
-  overflow-x: auto;
-  overflow-y: auto;
+  /* overflow-x: auto;
+  overflow-y: auto; */
   border-radius: 50px;
+  flex-direction: column;
+  
+
+}
+.resultado{
+  display: flex;
+  max-height: 550px;
+  overflow-x: scroll;
+  overflow-y: scroll;
 }
 
 .tabela{
@@ -47,4 +57,46 @@
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+  font-size: 1.2rem;
+}
+.selecao{
+  width: 25px;
+  height: 25px;
+  padding: 5px 5px;
+  display: block;
+  margin: 3px;
+}
+.selecaoTodos{
+  width: 30px;
+  height: 30px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.controles{
+  display: flex;
+  justify-content: space-between;
+}
+.controle{
+  display: flex;
+  font-size: 2rem;
+  margin: 0 50px 50px 0;
+}
+
+.label{
+  font-weight: bold;
+  font-size: 1.2rem;
+  height: 50px;
+  padding: 10px;
+}
+
+.select{
+  width: 300px;
+  padding: 10px;
+  font-size: 1.2rem;
+  height: 50px;
+  line-height: 1.42857143;
+  color: #000;;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }

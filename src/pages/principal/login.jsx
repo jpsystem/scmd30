@@ -138,7 +138,9 @@ export default function Login( ) {
                   value={formData.login}
                   onChange={(e) => { handleFormEdit(e, "login")}}
           />
-          <Input  type="password" 
+          <Input
+                  
+                type="password" 
                 placeholder="Sua senha" 
                 required 
                 value={formData.senha}

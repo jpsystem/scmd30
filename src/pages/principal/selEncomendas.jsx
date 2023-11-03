@@ -1,15 +1,14 @@
 
 import styles from '../../styles/login.module.css'
-// import Select from '../componentes/select/index'
 import Button from '../../componentes/button/index'
 import { useQuery } from 'react-query'
 import LayoutPagina from '../componentes/layoutPagina'
 import { useContext, useState } from 'react'
 import { PerfilContext } from '../contexts/perfilContext'
-import Select from 'react-select';
 import {useRouter} from "next/router"
 import {setCookie} from "cookies-next"
 import FechaForm from '@/componentes/fechaForm'
+import Select from '@/componentes/select'
 
 export default function SelEncomendas() {
       //Ler os dados da Encomenda Ativo do Contexto Atual
@@ -28,25 +27,28 @@ export default function SelEncomendas() {
           })
         });
       }
-      const Selecionar = (e) =>{
-        setSelectedOption(e)
-      }
+
 
       const [selectedOption, setSelectedOption] = useState(null);
 
+      const Selecionar = (e) =>{
+        setSelectedOption(e.target.value)
+      }
 
     //Função para ser executada na submissão do formulario
     //quando o mesmo estiver sido validado pelo HOOK UseForm
     const onSubmit = () => {
 
-      setCookie("encID",selectedOption.value)
-      setCookie("encCodigo",selectedOption.tag)
-      setCookie("encCliente",selectedOption.label)
+      const minhaOpcao = options.find((element) => element.value == selectedOption);
+
+      setCookie("encID",minhaOpcao?.value)
+      setCookie("encCodigo",minhaOpcao?.tag)
+      setCookie("encCliente",minhaOpcao?.label)
       setEncomendaAtiva(
         {
-          idEncomenda: selectedOption.value,
-          codEncomenda: selectedOption.tag,
-          cliente: selectedOption.label,
+          idEncomenda: minhaOpcao?.value,
+          codEncomenda: minhaOpcao?.tag,
+          cliente: minhaOpcao?.label,
         }
       )
       router.push('/')
@@ -92,13 +94,38 @@ export default function SelEncomendas() {
         </div>    
         <h2 className={styles.title}>Selecione a Encomenda</h2>
         <div className={styles.form}>
-          <div>
+          <div>     
             <Select
-            className={styles.select}
-            defaultValue={selectedOption}
-            onChange={(e)=>Selecionar(e)}
-            options={options}
-          />
+              className={styles.select}
+              style={{ width: "700px",
+                      height: "80px", 
+                      padding: "5px",
+                      fontSize: "1.2rem",
+                      backgroundColor: "rgb(255,255,255)",
+                      border: "15px solid #FD8008",
+                      marginBottom: "100px"
+                    }}
+              defaultValue={selectedOption}
+              onChange={(e)=>Selecionar(e)}
+            >
+              <>
+                <option key={0} value={0}>
+                  Selecione ...
+                </option>            
+                {
+                  options.map((item, i) => 
+                    <option 
+                      key={i+1} 
+                      value={item?.value}
+                      tag={item?.tag}
+                      label={item?.label}
+                    >
+                      {item?.label}
+                    </option>
+                  )
+                }
+              </>
+            </Select>
           </div>
             <Button  onClick={() => onSubmit()}>Selecionar</Button>
         </div>

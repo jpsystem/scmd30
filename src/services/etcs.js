@@ -1,5 +1,7 @@
 import {query} from "/db.js"
 
+import {dbCC} from "/db.js"
+
 //Função para retornar Etcs da Encomenda
 export async function gridETCs(body) {
   let etcs = [];
@@ -63,7 +65,7 @@ export async function itensETC(body) {
             + "B.elemento as Elemento,	B.desenho as Desenho, B.revdes as Revisao, "
             + "B.grpos as GrPos, C.tag as TAG,	B.esp as Descricao,	B.codigo as Codigo, "
             + "B.qtd as Qtd, B.unid as Unid, B.peso_unit as PesoUnit, B.peso_total as PesoTot, "
-            + "B.fdrtet as CWP "
+            + "B.fdrtet as CWP, (false) as selItem "
             + "FROM tb_guiaetc as A LEFT JOIN tb_itensetc as B	ON A.id = B.idEtc "
             + "LEFT JOIN tb_tags as C ON B.idTag = C.id "
             + "WHERE A.id = ?	ORDER BY B.item ",
@@ -88,10 +90,10 @@ export async function itensETC(body) {
     }
     try {
         itens = await query({
-            query: "SELECT elemento as Elemento, esp as Descricao, desenho as Desenho,  "
-            + "revdes as Rev, grpos as GrPos, qtd as Qtd, peso_total as PesoTot, "
-            + "fdrtet as CWP, idTag as TagID, idFamilia as FamiliaID, "
-            + "etc as ETC, B.familia as Familia, C.tag as TAG "
+            query: "SELECT A.id as ElementoID, A.elemento as Elemento, A.esp as Descricao, A.desenho as Desenho,  "
+            + "A.revdes as Rev, A.grpos as GrPos, A.qtd as Qtd, A.peso_total as PesoTot, "
+            + "A.fdrtet as CWP, A.idTag as TagID, A.idFamilia as FamiliaID, "
+            + "A.etc as ETC, B.familia as Familia, C.tag as Tag "
             + "FROM tb_estcontrole A LEFT JOIN tb_familias B ON A.idFamilia = B.id "
             + "LEFT JOIN tb_tags C ON A.idTag = C.id "
             + "WHERE A.idEncomenda = ? and idFamilia = ? and (etc is null or etc = 0) "
@@ -131,3 +133,72 @@ export async function itensETC(body) {
     }
     return tags
 }
+
+//Função para incluir uma nova etc na encomenda
+export async function cadastro(body){
+    console.log("BODY: ",body)
+    let novoNumero = 0;
+    let aviso = ""
+    let resposta = {menssagem: "", etc: 0};
+    let myQuery = "";
+    let valores = [];
+    let abortar = false;
+
+    try 
+    {
+        await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+        //Inicia a transação
+        await dbCC.beginTransaction();
+        //Busca o novo numero para a ETC
+        myQuery = "SELECT (IFNULL(MAX(codETC),0) + 1) as novoNumero FROM tb_guiaetc WHERE idEncomenda = ?"
+        const [rows,] = await dbCC.execute( myQuery,[body.idEncomenda]);
+        novoNumero = rows[0].novoNumero
+
+        if(novoNumero === null || novoNumero === 0){
+            abortar = true;
+        }
+        else
+        {
+            //Efetua o Insert na tabela tb_guiaetc
+            myQuery = "INSERT INTO tb_guiaetc ( "
+                    + " idEncomenda, codEtc, idFamilia, observacoes, emitida, "
+                    + " revisao, data_em, responsavel, prazo, local, enc) "
+                    + " Values (?,?,?,?,?,?,?,?,?,?,?)",
+            valores = [
+            body.idEncomenda,
+            novoNumero, 
+            body.idFamilia,
+            body.observacoes,
+            0,
+            0,
+            body.data_em,
+            body.responsavel,
+            body.prazo,
+            body.local,
+            body.enc
+            ];
+            await dbCC.execute( myQuery,valores); 
+            aviso = "Registro incluido com sucesso!";
+        }
+
+        if(!abortar)
+        {
+            await dbCC.commit();
+        }
+        else
+        {
+            dbCC.rollback();
+            aviso = "Inclusão do registro cancelada!";
+            novoNumero = 0;
+        }
+
+    } catch (error) {
+        dbCC.rollback();
+        aviso = "Erro ao incluir registro! Erro: " + error.message
+        novoNumero = 0;
+    }
+    resposta.menssagem = aviso;
+    resposta.etc = novoNumero;  
+    return resposta
+}
+

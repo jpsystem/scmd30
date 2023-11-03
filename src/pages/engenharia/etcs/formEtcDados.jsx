@@ -6,14 +6,35 @@ import { useContext, useEffect, useState } from "react";
 import { PerfilContext } from "@/pages/contexts/perfilContext";
 import useApiListas from "@/hooks/useApiListas";
 import Button from "@/componentes/button";
+import { JPConversoes } from "@/jpFuncoes/convercoes";
 
-export default function FormEtcDados({campos, tipo}){
+export default function FormEtcDados({campos, tipo, setModalOpen, retornoFilho}){
+
+  //Ler os dados da Encomenda Ativo do Contexto Atual
+  const {encomendaAtiva, usuario} = useContext(PerfilContext) 
+
+  //Se for do tipo inclusao preenche
+  // campos com valores padroes
+  if(tipo === "inclusao"){
+    campos = {
+      DataEmi:      JPConversoes.strDate(),
+      Familia:      null,
+      GRD:          null,
+      IdFamilia:    null,
+      Local:        null,
+      Observacoes:  null,
+      Prazo:        null,
+      Responsavel:  usuario.login,
+      Revisao:      null,
+      Status:       "Pendente",
+      codETC:       null,
+      id:           null
+    };
+  }
+
   //Estanciar o HOOK UseForm
   const form = useForm({defaultValues: campos})
   const { register, handleSubmit, formState: {errors} } = form; 
-
-  //Ler os dados da Encomenda Ativo do Contexto Atual
-  const {encomendaAtiva} = useContext(PerfilContext) 
 
   //carregar o HOOKs UseApiListas para buscar as Familias
   const [carregarFamlias, familiasInfo] = useApiListas({
@@ -40,8 +61,6 @@ export default function FormEtcDados({campos, tipo}){
     carregarItensGRD();
   },[]) 
 
-  
-
   //Variaveis de estado para controle das opções 
   //do combo de Familias
   const [opFamilia, setOpFamilia] = useState(campos?.IdFamilia? campos?.IdFamilia: 1);
@@ -51,6 +70,48 @@ export default function FormEtcDados({campos, tipo}){
   const Selecionar = e => {
     setOpFamilia(e.target.value)
   }
+
+  //Função para ser executada na submissão do formulario
+  //para a inclusão de uma nova etc
+  //quando o mesmo estiver sido validado pelo HOOK UseForm
+  const onSubmit = async (data) =>{
+    console.log("DATA:",data)
+    console.log("ENC:",encomendaAtiva.codEncomenda)
+    try {
+      const resposta = await fetch ('/api/etcs/cadastro', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idEncomenda: encomendaAtiva.idEncomenda,
+            idFamilia:   (opFamilia===1 ? null: opFamilia),
+            observacoes:    data?.Observacoes,
+            data_em:        data?.DataEmi,
+            responsavel:    data?.Responsavel,
+            prazo:          data?.Prazo,
+            local:          data?.Local,
+            enc:            encomendaAtiva.codEncomenda
+        })
+      });
+      const json = await resposta.json();
+      console.log("JSON: ", json) 
+      
+      if(resposta.status === 201){
+        if(json.etc > 0)
+        {
+            retornoFilho( {tipo:"sucesso", texto:`Elemento ${json.etc}, ${json.menssagem}`, id: Math.random()})
+        }else{
+            retornoFilho( {tipo:"falha", texto:"Não é possivel incluir o elemento!", id: Math.random()})
+        }
+      } else{
+          retornoFilho({tipo:"falha", texto:resposta.error, id: Math.random()})
+      }
+    } catch (error) {
+      retornoFilho({tipo:"falha", texto:error.message, id: Math.random()})
+    }
+    setModalOpen(false);
+  } 
 
   return(
     <>
@@ -99,7 +160,7 @@ export default function FormEtcDados({campos, tipo}){
                   id="DataEmi" 
                   // value={today.toLocaleDateString()}
                   className={styles.input}
-                  {...register("DataEmi")}
+                  {...register("DataEmi", {requered: true})}
               />
           </div>
           {/* Responsavel */}
@@ -111,6 +172,7 @@ export default function FormEtcDados({campos, tipo}){
               style={{width: "450px"}}
               type="text"
               id="Responsavel" 
+              disabled
               className={styles.input}
               {...register("Responsavel",{requered: true})}
             />
@@ -125,6 +187,7 @@ export default function FormEtcDados({campos, tipo}){
                 style={{width: "350px"}}
                 type="text"
                 id="Status" 
+                disabled
                 className={styles.input}
                 {...register("Status",{requered: true})}
               />
@@ -230,6 +293,7 @@ export default function FormEtcDados({campos, tipo}){
                 className={styles.input}
                 style={{width: "150px"}}
                 type="text"
+                disabled
                 id="GRD" 
                 {...register("GRD")}
               />
@@ -298,7 +362,7 @@ export default function FormEtcDados({campos, tipo}){
           tipo === "inclusao" && (
             <div className={styles.grupoR} style={{marginBottom: "50px"}}>
               <Button 
-                onClick={() => setModalOpen(false)}
+                onClick={() => handleSubmit(onSubmit)()} 
                 fontSize={"2em"}
                 width={"200px"}
               >

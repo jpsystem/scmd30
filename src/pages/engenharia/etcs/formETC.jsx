@@ -13,11 +13,12 @@ import Modal from "@/componentes/modal"
 
 import SelecionarItens from "./selecionar"
 
-export default function FormETC({campos,tipo, setModalOpen}){
+export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
   //Ler os dados da Encomenda Ativo do Contexto Atual
   const {encomendaAtiva} = useContext(PerfilContext)  
 
   const [openModal, setOpenModal] = useState(false)
+
   const [titulo, setTitulo] = useState("");
 
   const [botoes, setBotoes] = useState({
@@ -157,6 +158,8 @@ export default function FormETC({campos,tipo, setModalOpen}){
                 (<FormEtCDados
                   campos={campos}
                   tipo={tipo} 
+                  setModalOpen={setModalOpen}
+                  retornoFilho={retornoFilho} 
                 />):
                 (<FormEtcItens
                   campos={campos}
@@ -229,7 +232,7 @@ export default function FormETC({campos,tipo, setModalOpen}){
           titulo={titulo}
           larguraMinima="1800px"
       >
-          <SelecionarItens 
+          <SelecionarItens familiaID={32} encomendaID={1}
               //campos={reg} 
               //tipo={tipoForme}
               setModalOpen={()=> setOpenModal(!openModal)}

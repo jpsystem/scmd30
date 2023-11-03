@@ -14,12 +14,9 @@
 }
 .title{
     text-align: center;
-    /* margin-bottom: 100px; */
     height: 100px;
-    font-size: 2em;
+    font-size: 2rem;
     color: #FD8008;
-    /* background-color: #FD8008; */
-    /* padding: 20px 0 20px 0; */
 }
 .form{
     display: flex;
@@ -27,6 +24,7 @@
     width: 100%;
     flex-direction: column;
     align-content: space-around;
+    font-size: 1.2rem;
 }
 .error{
     color: red;
@@ -42,7 +40,7 @@
     display: block;
     width: 500px;
     padding: 6px 12px;
-    font-size: 1em;
+    font-size: 1.2rem;
     height: 40px;
     line-height: 1.42857143;
     color: #000;
@@ -154,6 +152,9 @@
     border-radius: 10px;
     width: 100%;
     margin-bottom: 320px;
+    
 }
 
-
+.select option{
+    font-size: 1.2rem;
+}

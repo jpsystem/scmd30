@@ -107,7 +107,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                 })
             });
             const json = await resposta.json();
-            console.log("json: ", json)
             if(resposta.status === 201){
                 if(json.elemento > 0)
                 {
