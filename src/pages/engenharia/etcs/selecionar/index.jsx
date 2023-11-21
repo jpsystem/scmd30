@@ -30,7 +30,7 @@ export default function SelecionarItens({encomendaID, campos, setModalOpen, reto
         },
         body: JSON.stringify({
           idEncomenda: encomendaID,
-          idFamilia: campos.IdFamilia, 
+          idFamilia: campos?.IdFamilia, 
           idTag: filTag
         })
       });
@@ -56,7 +56,7 @@ export default function SelecionarItens({encomendaID, campos, setModalOpen, reto
       },
       body: JSON.stringify({
         idEncomenda: encomendaID,
-        idFamilia: campos.IdFamilia
+        idFamilia: campos?.IdFamilia
       })
     }
   })

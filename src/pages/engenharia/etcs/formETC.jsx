@@ -68,14 +68,14 @@ export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
 
   useEffect(()=>{
     if(tipo !== "inclusao"){
-      if(campos.Status === "Emitida"){
+      if(campos?.Status === "Emitida"){
         trataBotoes(false,false,false,true,false,true);
       }
       if(aba===1){
-        if(campos.Status === "Pendente"){
+        if(campos?.Status === "Pendente"){
           trataBotoes(true,true,false,false,false,true);
         }
-        if(campos.Status === "Destravada"){
+        if(campos?.Status === "Destravada"){
           trataBotoes(true,false,true,false,false,true);
         }
   
@@ -83,10 +83,10 @@ export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
         (tipo === "inclusao"? setAba2(Desable): setAba2(Desativo));
   
       }else{
-        if(campos.Status === "Pendente"){
+        if(campos?.Status === "Pendente"){
           trataBotoes(true,true,false,false,true,true);
         }
-        if(campos.Status === "Destravada"){
+        if(campos?.Status === "Destravada"){
           trataBotoes(true,false,true,false,true,true);
         }
   

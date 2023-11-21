@@ -225,7 +225,7 @@ export default function FormEtcDados({campos, tipo, setModalOpen, retornoFilho})
           </div> 
           {/* Botão para salvar alterações */}
           {/* Só será exibido se a ETC não estiver com STATUS Emitida */}
-          {campos.Status !== "Emitida" && 
+          {campos?.Status !== "Emitida" && 
             <>
               <div className={styles.grupoCBT}>
                 <Button 
