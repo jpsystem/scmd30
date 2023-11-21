@@ -74,11 +74,21 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
                                 </a>                                 
                             </Coluna>
                             <Coluna width= "5%" align="center" cursor="pointer">
-                                <a  onClick={() =>  controle(2)}>
-                                    <div className={styles.efeito}>
-                                        <FaRegTrashAlt/>
-                                    </div>
-                                </a>
+                                {
+                                    nomeForme === "ETC"? (
+                                        <a  onClick={() =>  controle(2)} className={reg.Status ==="Pendente" ? "": styles.desabilitado} >
+                                            <div className={styles.efeito}>
+                                                <FaRegTrashAlt/>
+                                            </div>
+                                        </a>
+                                    ):(
+                                        <a  onClick={() =>  controle(2)} >
+                                            <div className={styles.efeito}>
+                                                <FaRegTrashAlt/>
+                                            </div>
+                                        </a>
+                                    )
+                                }
                             </Coluna>
                         </>
                     ) 
@@ -137,12 +147,13 @@ export default function Linha({children, reg, nomeForme, retornoFilho, ...props}
                 isOpen={openModal2} 
                 setModalOpen={()=> setOpenModal2(!openModal2)}
                 titulo="ETC - Especificações Tecnicas para Compra"
+                apagar={tipoForme==="exclusao"? true : false}
             > 
                 <FormETC 
                     campos={reg}
                     tipo={tipoForme} 
                     setModalOpen={()=> setOpenModal2(!openModal2)}
-                    //retornoFilho={retornoFilho}
+                    retornoFilho={retornoFilho}
                 />    
             </ModETC>            
         

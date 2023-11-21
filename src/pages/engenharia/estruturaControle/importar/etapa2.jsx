@@ -99,8 +99,8 @@ export default function Etapa2(){
     //que houver alteração nos dadosCSV
     useEffect( () => {
         const fetchData = async () => {
-        const novosDados = await verificaLotes()
-        setAuteracaoLote(va => va = novosDados)
+            const novosDados = await verificaLotes()
+            setAuteracaoLote(va => va = novosDados)
         }
         fetchData();
 

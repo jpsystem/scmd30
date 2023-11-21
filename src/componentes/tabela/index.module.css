@@ -35,6 +35,10 @@
     display: flex;
     align-items: center;
 }
+.desabilitado{
+    pointer-events: none;
+    opacity: 0.3;
+}
 .efeito{
     cursor: pointer;
     padding-left: 10px;

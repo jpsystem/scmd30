@@ -13,6 +13,7 @@ import Formulario from './formulario';
 import FechaForm from '@/componentes/fechaForm';
 import Alerta from "../../../../componentes/alerta/alerta";
 import {PerfilContext} from "../../../contexts/perfilContext"
+import { useRouter } from 'next/router';
 
 //Coleção de dados para cabecalho da tabela
 const dados={
@@ -51,6 +52,8 @@ const dados={
 }
 
 export default function CadFamilias() {
+  const router = useRouter()
+
   //Carrega dados da Encomenda do Contexto
   const {encomendaAtiva} = useContext(PerfilContext)
 
@@ -60,8 +63,8 @@ export default function CadFamilias() {
 
   //Função para buscar as familias da encomenda
   //ativa da api '/api/familia/listaFamilias'
-  async function retFamilias(codEncomenda) {
-    
+  async function retFamilias(codEncomenda2) {
+    let codEncomenda = `${encomendaAtiva?.idEncomenda}`
     let json = [{}]
     
     try {
@@ -85,10 +88,15 @@ export default function CadFamilias() {
   }
 
   //Execução da consulta através do HOOK UseQuery
-  const { data, isLoading } = useQuery( "tb_familias", async () => {
+  const { data, isLoading } = useQuery( "tb_familias", 
+    async () => {
     const response = await retFamilias(`${encomendaAtiva?.idEncomenda}`);
+     
     return response;
-  })
+    },{
+      refetchIntervalInBackground: false,
+    }
+  )
 
   //Variavel para controle do Modal
   const [openModal, setOpenModal] = useState(false)
@@ -127,25 +135,25 @@ export default function CadFamilias() {
         <Alerta tipo={dadosAviso.tipo} texto={dadosAviso.texto} id={dadosAviso.id}/>
         <Button onClick={() => setOpenModal(true)} width="300px" height="30px" padding="5px">Novo Registro</Button>
       </div>
-      <Tabela defTable={dados}>
-        {   
-          data?.map( (item) => 
-          (
-            // corpoForm={<Formulario dados={dados}/>}
-            <Linha key={item.id} 
-                    nomeForme="Familia" 
-                    reg={item}
-                    retornoFilho={retornoFilho}
-            >
-              <Coluna width="100px">{item.id}</Coluna>
-              <Coluna width="200px">{item.codEncomenda}</Coluna>
-              <Coluna width="250px">{item.familia}</Coluna>
-              <Coluna width="450px">{item.especificacao}</Coluna>
-              <Coluna width="200px">{item.cod_Erp}</Coluna>
-            </Linha>
-          )
-          )
-        }   
+        <Tabela defTable={dados}>
+          {   
+            data?.map( (item) => 
+              (
+                // corpoForm={<Formulario dados={dados}/>}
+                <Linha key={item.id} 
+                        nomeForme="Familia" 
+                        reg={item}
+                        retornoFilho={retornoFilho}
+                >
+                  <Coluna width="100px">{item.id}</Coluna>
+                  <Coluna width="200px">{item.codEncomenda}</Coluna>
+                  <Coluna width="250px">{item.familia}</Coluna>
+                  <Coluna width="450px">{item.especificacao}</Coluna>
+                  <Coluna width="200px">{item.cod_Erp}</Coluna>
+                </Linha>
+              )
+            )
+          }  
         </Tabela>
         <Modal 
           isOpen={openModal} 

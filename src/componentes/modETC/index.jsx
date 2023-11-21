@@ -2,13 +2,14 @@ import styles2 from './index.module.css'
 import styles from "../../styles/login.module.css"
 import { FaRegWindowClose } from 'react-icons/fa'
 
-export default function ModETC({isOpen, setModalOpen, titulo, children}){
+export default function ModETC({isOpen, setModalOpen, titulo, children, 
+                                apagar}){
 
 
   if(isOpen){
     return (
       <div className={styles2.fundo}>
-        <div className={styles2.modal}>
+        <div className={apagar ? styles2.modal2 : styles2.modal}>
           <div className={styles2.cabeca}>
             <h1 className={styles.tituloCadastro}>{titulo}</h1>
             <a onClick={(setModalOpen)}>

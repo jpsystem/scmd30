@@ -2,28 +2,26 @@ import Navbar from '../../../../componentes/navbar/index.jsx'
 import Link from "next/link";
 import Image from "next/image";
 import Style from './index.module.css'
-import Perfil from '../../../../componentes/perfil/index';
-
+// import Perfil from '../../../../componentes/perfil/index';
 import {PerfilContext} from "../../../contexts/perfilContext"
 import { useContext, useEffect, useState } from 'react';
-
 import { FaUserAlt, FaProjectDiagram } from 'react-icons/fa'
 
 
 export default function Header(){
     const {usuario, encomendaAtiva} = useContext(PerfilContext)
 
-    const [dadosAviso, setDadosAviso ] = useState({
-        nome: "Desconectado",
-        encomenda: "Selecione uma encomenda!"
-    })
+    // const [dadosAviso, setDadosAviso ] = useState({
+    //     nome: "Desconectado",
+    //     encomenda: "Selecione uma encomenda!"
+    // })
 
-    useEffect(()=>{
-        setDadosAviso({
-            nome: usuario.nome,
-            encomenda: encomendaAtiva.cliente
-        })
-    },[PerfilContext])
+    // useEffect(()=>{
+    //     setDadosAviso({
+    //         nome: usuario.nome,
+    //         encomenda: encomendaAtiva.cliente
+    //     })
+    // },[PerfilContext])
 
 
     return(

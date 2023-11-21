@@ -3,15 +3,24 @@
 import useApiListas from "@/hooks/useApiListas"
 import styles from "./formETC.module.css"
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import Button from "@/componentes/button";
+import Alerta from "@/componentes/alerta/alerta";
+import {FaRegFileAlt} from "react-icons/fa"
+import Modal from "@/componentes/modal";
+import SelecionarItens from "./selecionar";
 
+export default function FormEtcItens({campos, encomendaID}){
 
-
-export default function FormEtcItens({campos}){
+    //HOOK para atualizar e redenrizar os
+  //dados da ETC na página
+  const queryClient = useQueryClient();
 
   // variavel de estado para os itens da ETC
   const [itensETC, setItensETC] = useState([])
+
+  //variavel de estado para controle do Modal
+  const [openModal, setOpenModal] = useState(false)
 
    //Função para retornar os dados dos
   //itens da etc pela api "/api/etcs/itenspendentes"
@@ -39,12 +48,26 @@ export default function FormEtcItens({campos}){
   } 
   
   //Execução da consulta através do HOOK UseQuery
-  const { data, isLoading } = useQuery( ["dadosItensETC"], async () => { 
+  const { data, isLoading } = useQuery( "dadosItensETC", async () => { 
     const response = await retItensETC(); 
     const retorno = await parseItens(response)
     setItensETC(va => va = retorno)
     return response;
   })
+
+  //Variavel de estado para exibição do aviso de execução
+  const [dadosAviso, setDadosAviso] = useState({
+    tipo: "",
+    texto: "",
+    id: 0
+  })  
+
+  //Função para receber o retorno do componente filho
+  //e atualizar os dados na Tela
+  const retornoExecucao = (dadosExecucao) => {
+    setDadosAviso(dadosExecucao)
+    queryClient.invalidateQueries("dadosItensETC")
+  }
 
   //Função que preenche os Array de Itens Pendentes
   //com os dados vindo da consulta do BD
@@ -90,6 +113,7 @@ export default function FormEtcItens({campos}){
   //Variavel de estado para controle do botão excluir itens da ETC
   const [opBotao, setOpBotao] = useState(false);  
 
+  //Função para atualizar o botão de excluir e a opção SelTodos
   function selTodos(event){
     setOpBotao( va => va =  event.target.checked)
     setSelTodos( va => va =  event.target.checked)
@@ -124,6 +148,7 @@ export default function FormEtcItens({campos}){
         ligados++;
       }
     })
+
     if(ligados > 0){
       if(ligados === total){
         setSelTodos(va => va = true)
@@ -155,6 +180,44 @@ export default function FormEtcItens({campos}){
     }
   },[itensETC])
 
+  //Excluir itens da ETC
+  const excluirItens = async () => {
+    const itensExcluir = [];
+    itensETC.forEach((item)=>{
+      if(item.SelItem){
+        const dado = {
+          ID_Encomenda: encomendaID,
+          ID_ItemETC: item.IdItem,
+          Elemento: item.Elemento
+        }
+        itensExcluir.push(dado);
+      }
+    })
+
+    try {
+      const resposta = await fetch ('/api/etcs/excluirItens', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(itensExcluir)
+      });
+      const json = await resposta.json(); 
+      console.log("JSON: ",JSON.stringify(json)) 
+      if(resposta.status === 201){
+        if(json.itens > 0)
+        {
+            retornoExecucao( {tipo:"sucesso", texto:"Itens excluidos com sucesso!", id: Math.random()})
+        }else{
+            retornoExecucao( {tipo:"falha", texto:"Não é possivel excluir os itens!", id: Math.random()})
+        }
+    } else{
+        retornoExecucao({tipo:"falha", texto:resposta.error, id: Math.random()})
+    }
+    } catch (error) {
+      retornoExecucao( {tipo:"falha", texto: error.message, id: Math.random()})
+    }
+  }
 
   //Função para atualizar o array itensETC quando
   //for alterado os chekbox dos itens
@@ -208,102 +271,124 @@ export default function FormEtcItens({campos}){
         ):
         ( <> 
           <div className={styles.form}>
-          <div className={styles.grupoR}>
+
+            <div className={styles.grupoR}>
               {/* Itens da GRD */}
               <div className={styles.grupoC}>
-              <div className={styles.grupoR}>
-                <div className={styles.controles}>
-                  <label className={styles.controle}>
-                      Lista dos elementos
-                  </label>
-                  <div className={styles.controle}>
-                    <input
-                      type="checkbox" 
-                      name="SelTodos" 
-                      id="SelTodos" 
-                      checked={opSelTodos}
-                      className={styles.selecaoTodos}
-                      onChange={(event)=>selTodos(event)}          
-                    />
-                    <label for="SelTodos" className={styles.label}>Selecionar todos.</label> 
+                <div className={styles.grupoC}>
+                  <div className={styles.controles}>
+                    {/* Nome da Tabela */}
+                    <div className={styles.controle}>
+                          Lista dos elementos
+                    </div>
+                    {/* Botão buscar itens */}
+                    <div className={styles.controle}>
+                      <Button 
+                        onClick={() => setOpenModal(true)}
+                        fontSize={"1em"}
+                        width={"250px"}
+                      >
+                        <FaRegFileAlt/>Buscar elementos
+                      </Button>
+                    </div>
+                    {/* ALERTA */}
+                    <div className={styles.controle}>
+                      <Alerta tipo={dadosAviso.tipo} texto={dadosAviso.texto} id={dadosAviso.id}/>
+                    </div>
+                     {/* Check para selecionar todos */}
+                    <div className={styles.controle}>
+                      <input
+                        type="checkbox" 
+                        name="SelTodos" 
+                        id="SelTodos" 
+                        disabled={campos.Status==="Emitida"? true: false}
+                        checked={opSelTodos}
+                        className={styles.selecaoTodos}
+                        onChange={(event)=>selTodos(event)}          
+                      />
+                      <label for="SelTodos" className={styles.label}>Selecionar todos.</label> 
+                    </div>
+                    {/* Botão para excluir os itens da ETC */}
+                    <div className={styles.controle}>
+                      <Button 
+                        onClick={() => excluirItens()}
+                        fontSize={"1.5rem"}
+                        width={"500px"}
+                        height={"50px"}
+                        disabled= {opBotao ? false: true}
+                      >
+                          Excluir itens selecionados...
+                      </Button>
+                    </div>                  
                   </div>
-                  {/* Botão para excluir os itens da ETC */}
-                  <div className={styles.controle}>
-                    <Button 
-                      fontSize={"1.2rem"}
-                      width={"300px"}
-                      height={"50px"}
-                      disabled= {opBotao ? false: true}
-                    >
-                        Excluir itens selecionados...
-                    </Button>
-                  </div>                  
                 </div>
-              </div>
-                <table className={styles.tabela}>
-                  <thead>
-                    <tr>
-                      <th width="5%">Item</th>
-                      <th width="5%">Elem.</th>
-                      <th width="10%">Desenho</th>
-                      <th width="5%">Rev.</th>
-                      <th  width="5%">Gr/Pos</th>
-                      <th  width="10%">Tag</th>
-                      <th width="10%">Descrição</th>
-                      <th width="10%">Codigo.</th>
-                      <th width="5%">Qtd</th>
-                      <th width="5%">Unid.</th>
-                      <th  width="10%">PsUnit.</th>
-                      <th  width="10%">PsTotal</th>
-                      <th  width="5%">CWP</th>
-                      <th  width="5%">E</th>                 
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {
-                    itensETC?.length === undefined ? 
-                    (
-                      <>
-                        <tr>
-                          <td colSpan={5}>Nenhum item encontrado...</td>
-                        </tr>
-                      </>
-                    ):
-                    (
-                      <>
-                      {
-                        itensETC?.map( (item, i) =>
-                          <tr key={i}>
-                            <td width="5%">{item.Item}</td>
-                            <td width="5%">{item.Elemento}</td>
-                            <td width="10%">{item.Desenho}</td>
-                            <td width="5%">{item.Revisao}</td>
-                            <td  width="5%">{item.GrPos}</td>
-                            <td  width="10%">{item.TAG}</td>
-                            <td width="10%">{item.Descricao}</td>
-                            <td width="10%">{item.Codigo}</td>
-                            <td width="5%">{item.Qtd}</td>
-                            <td width="5%">{item.Unid}</td>
-                            <td  width="10%">{item.PesoUnit}</td>
-                            <td  width="10%">{item.PesoTot}</td>
-                            <td  width="5%">{item.CWP}</td>
-                            <td  width="5%">
-                              <input 
-                                type="checkbox" 
-                                name="SelItem"
-                                checked={item?.SelItem}
-                                className={styles.selecao}
-                                onChange={(event)=>handleChange(item.id, event)}
-                              />                           
-                            </td>                        
-                          </tr> 
-                        )
-                      }                 
-                      </>
-                    )
-                  }
-                  </tbody>
-                </table>
+                <div className={styles.conteudoTB}>
+                  <table className={styles.tabela}>
+                    <thead>
+                      <tr>
+                        <th width="5%">Item</th>
+                        <th width="5%">Elem.</th>
+                        <th width="10%">Desenho</th>
+                        <th width="5%">Rev.</th>
+                        <th  width="5%">Gr/Pos</th>
+                        <th  width="10%">Tag</th>
+                        <th width="10%">Descrição</th>
+                        <th width="10%">Codigo.</th>
+                        <th width="5%">Qtd</th>
+                        <th width="5%">Unid.</th>
+                        <th  width="10%">PsUnit.</th>
+                        <th  width="10%">PsTotal</th>
+                        <th  width="5%">CWP</th>
+                        <th  width="5%">E</th>                 
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      itensETC?.length === undefined ? 
+                      (
+                        <>
+                          <tr>
+                            <td colSpan={5}>Nenhum item encontrado...</td>
+                          </tr>
+                        </>
+                      ):
+                      (
+                        <>
+                        {
+                          itensETC?.map( (item, i) =>
+                            <tr key={i}>
+                              <td width="5%">{item.Item}</td>
+                              <td width="5%">{item.Elemento}</td>
+                              <td width="10%">{item.Desenho}</td>
+                              <td width="5%">{item.Revisao}</td>
+                              <td  width="5%">{item.GrPos}</td>
+                              <td  width="10%">{item.TAG}</td>
+                              <td width="10%">{item.Descricao}</td>
+                              <td width="10%">{item.Codigo}</td>
+                              <td width="5%">{item.Qtd}</td>
+                              <td width="5%">{item.Unid}</td>
+                              <td  width="10%">{item.PesoUnit}</td>
+                              <td  width="10%">{item.PesoTot}</td>
+                              <td  width="5%">{item.CWP}</td>
+                              <td  width="5%">
+                                <input 
+                                  type="checkbox" 
+                                  name="SelItem"
+                                  disabled={campos.Status==="Emitida"? true: false}
+                                  checked={item?.SelItem}
+                                  className={styles.selecao}
+                                  onChange={(event)=>handleChange(item.id, event)}
+                                />                           
+                              </td>                        
+                            </tr> 
+                          )
+                        }                 
+                        </>
+                      )
+                    }
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -327,6 +412,19 @@ export default function FormEtcItens({campos}){
               className={styles.input}
             />
           </div>
+          <Modal 
+                isOpen={openModal} 
+                setModalOpen={()=> setOpenModal(!openModal)}
+                titulo={"Selecionar elementos para ETC"}
+                larguraMinima="1800px"
+            >
+                <SelecionarItens 
+                    encomendaID={encomendaID}
+                    campos={campos} 
+                    setModalOpen={()=> setOpenModal(!openModal)}
+                    retornoFilho={retornoExecucao}
+                />
+            </Modal>
           </>
         )
       }  

@@ -1,6 +1,7 @@
 .button {
     padding: 5px 30px 5px 5px;
     border: 0;
+    /* border-color:#ffffff; */
     /* background-color:#FD8008;
     color: #000; */
     background-color:#FD8008;
@@ -18,6 +19,9 @@
 .button:hover {
     background-color:#f7b577;
     color: #000;
+    /* border: 1  solid  #FD8008;
+    background-color:#ffffff;
+    color: #FD8008; */
 }
 
 .button:disabled {

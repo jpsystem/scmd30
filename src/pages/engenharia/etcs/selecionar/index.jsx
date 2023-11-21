@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import useApiListas from "@/hooks/useApiListas";
 import Button from "@/componentes/button";
 
-export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
+export default function SelecionarItens({encomendaID, campos, setModalOpen, retornoFilho}){
 
   const [itensPendentes, setItensPendentes] = useState([])
 
@@ -30,7 +30,7 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
         },
         body: JSON.stringify({
           idEncomenda: encomendaID,
-          idFamilia: familiaID,
+          idFamilia: campos.IdFamilia, 
           idTag: filTag
         })
       });
@@ -56,7 +56,7 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
       },
       body: JSON.stringify({
         idEncomenda: encomendaID,
-        idFamilia: familiaID
+        idFamilia: campos.IdFamilia
       })
     }
   })
@@ -97,6 +97,8 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
         key ++;
         const dado = {
           id: key,
+          IdEtc: campos.id,
+          CodEtc: campos.codETC,
           ElementoID: linha.ElementoID,
           Elemento: linha.Elemento,
           Descricao: linha.Descricao,
@@ -104,8 +106,11 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
           Rev: linha.Rev,
           GrPos: linha.GrPos,
           Qtd: linha.Qtd,
+          Unid: linha.Unid,
+          PesoUnit: linha.PesoUnit,
           PesoTot: linha.PesoTot,
           CWP: linha.CWP,
+          Codigo: linha.Codigo,
           FamiliaID: linha.FamiliaID,
           Familia: linha.Familia,
           TagID: linha.TagID,
@@ -193,6 +198,34 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
 
   }
 
+  const adcionarElementos = async () => {
+    const result = itensPendentes.filter((iten)=>iten.SelItem)
+    try{
+        const resposta = await fetch ('/api/etcs/incluirItens', {
+          method: 'POST',
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(result)
+        });
+        const json = await resposta.json();  
+        if(resposta.status === 201){
+          if(json.itens > 0)
+          {
+              retornoFilho( {tipo:"sucesso", texto:"Itens incluidos com sucesso!", id: Math.random()})
+          }else{
+              retornoFilho( {tipo:"falha", texto:"Não é possivel incluir os itens!", id: Math.random()})
+          }
+      } else{
+          retornoFilho({tipo:"falha", texto:resposta.error, id: Math.random()})
+      }
+
+    }catch(error){
+      retornoFilho({tipo:"falha", texto:error.message, id: Math.random()})
+    }
+    setModalOpen(false)
+  }
+
   //Tratamento para exibição de menssagem de espera
   //enquanto estiver processando a consulta do UseQuery
   if( isLoading) {
@@ -269,6 +302,7 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
             width={"300px"}
             height={"50px"}
             disabled= {opBotao ? false: true}
+            onClick={() => adcionarElementos()}
           >
               Adicionar os elementos
           </Button>
@@ -279,14 +313,14 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
           <thead>
             <tr>
               <th width="5%">Sel.</th>
-              <th width="5%">Elem.</th>
+              <th width="10%">Elem.</th>
               <th width="15%">Descrição</th>
               <th width="15%">Desenho</th>
               <th  width="5%">Rev.</th>
               <th  width="10%">Gr/Pos</th>
               <th  width="5%">Qtd.</th>
               <th  width="10%">Peso Tot.</th>
-              <th  width="15%">CWP</th>
+              <th  width="10%">CWP</th>
               <th  width="15%">TAG</th>
             </tr>
           </thead>
@@ -304,14 +338,14 @@ export default function SelecionarItens({familiaID, encomendaID, setModalOpen}){
                             onChange={(event)=>handleChange(item.id, event)}
                         />
                     </td>
-                    <td width="5%">{item?.Elemento}</td>
+                    <td width="10%">{item?.Elemento}</td>
                     <td width="15%">{item?.Descricao}</td>
                     <td width="15%">{item?.Desenho}</td>
                     <td width="5%">{item?.Rev}</td>
                     <td width="10%">{item?.GrPos}</td>
                     <td width="5%">{item?.Qtd}</td>
                     <td width="10%">{item?.PesoTot}</td>   
-                    <td width="15%">{item?.CWP}</td>
+                    <td width="10%">{item?.CWP}</td>
                     <td width="15%">{item?.Tag}</td>                        
                 </tr>  
               ))  

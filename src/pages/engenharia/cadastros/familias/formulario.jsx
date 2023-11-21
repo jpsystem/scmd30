@@ -54,8 +54,6 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                 })
             });
             const json = await resposta.json();
-            console.log("RESPOSTA", resposta)
-            console.log("JSON",json)
 
             if(resposta.status === 201){
                 if(json.familiaID > 0)

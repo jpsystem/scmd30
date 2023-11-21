@@ -43,7 +43,6 @@ export async function importaLista(body){
           codigo: ""           
         }
       )
-      console.log("novoPAI", novoElementoPai)
       //Se não gravou o novo elemento pai aborta a trasação
       if(novoElementoPai === 0){
         abortar = true;
@@ -79,7 +78,6 @@ export async function importaLista(body){
             abortar = true;
             break;
           }
-          console.log("novoFILHO", novoElementoFilho)
         }
       }
       if(!abortar)

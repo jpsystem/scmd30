@@ -71,12 +71,42 @@ export default function FormEtcDados({campos, tipo, setModalOpen, retornoFilho})
     setOpFamilia(e.target.value)
   }
 
+  const alteracao = async (data) =>{
+    // console.log("DATA:",data)
+    // console.log("Usuario:",usuario.login)
+    // alert("ALTERAÇÃO");
+    try {
+      const resposta = await fetch ('/api/etcs/edicao', {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            observacoes: data?.Observacoes,
+            responsavel: usuario.login,
+            prazo: data?.Prazo,
+            local: data?.Local,
+            data_em: data?.DataEmi,
+            IDguiaETC: data?.id
+        })
+      }); 
+      const json = await resposta.json();
+      retornoFilho({tipo: "",texto: ""});
+      if(resposta.status === 201){
+          retornoFilho( {tipo:"sucesso", texto:"Os dados da ETC foram alterados com sucesso!", id: Math.random()})
+      } else{
+          retornoFilho( {tipo:"falha", texto: resposta.error, id: Math.random()})
+      }
+    } catch (error) {
+        retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
+    }
+    setModalOpen(false);
+  }
   //Função para ser executada na submissão do formulario
   //para a inclusão de uma nova etc
   //quando o mesmo estiver sido validado pelo HOOK UseForm
   const onSubmit = async (data) =>{
-    console.log("DATA:",data)
-    console.log("ENC:",encomendaAtiva.codEncomenda)
+
     try {
       const resposta = await fetch ('/api/etcs/cadastro', {
         method: 'POST',
@@ -193,6 +223,23 @@ export default function FormEtcDados({campos, tipo, setModalOpen, retornoFilho})
               />
             </div>
           </div> 
+          {/* Botão para salvar alterações */}
+          {/* Só será exibido se a ETC não estiver com STATUS Emitida */}
+          {campos.Status !== "Emitida" && 
+            <>
+              <div className={styles.grupoCBT}>
+                <Button 
+                    onClick={() => handleSubmit(alteracao)()} 
+                    fontSize={"1.5em"}
+                    heigth={"50px"}
+                    width={"200px"}
+                  >
+                    Salvar
+                  </Button>
+              </div>
+            </>
+          }
+          {/* =================================== */}
         </div> 
         {/* GRUPO 02 */}
         <div className={styles.grupoR}>
