@@ -104,8 +104,8 @@ export default function Navbar() {
 
                 {
                     title: "Relatórios",
-                    page: "/#",
-                    disabled: false,
+                    page: "/engenharia/relatorio",
+                    disabled: ( tipoLink > 0  ? false: true ),
                 },
             ],
         },
@@ -117,11 +117,11 @@ export default function Navbar() {
         {
             title: "Ajuda",
             submenu: [
-                {
-                    title: "Manual",
-                    page: "/#",
-                    disabled: false,
-                },
+                // {
+                //     title: "Manual",
+                //     page: "/#",
+                //     disabled: false,
+                // },
                 {
                     title: "Sobre",
                     page: "/ajuda/about",

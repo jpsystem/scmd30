@@ -231,7 +231,7 @@ export default function FormEtcDados({campos, tipo, setModalOpen, retornoFilho})
                 <Button 
                     onClick={() => handleSubmit(alteracao)()} 
                     fontSize={"1.5em"}
-                    heigth={"50px"}
+                    heigth={"40px"}
                     width={"200px"}
                   >
                     Salvar

@@ -15,35 +15,30 @@ import {  FaRegSave,
           FaThumbsUp,
           FaRegFileExcel } from "react-icons/fa"
 import Modal from "@/componentes/modal"
-
 import SelecionarItens from "./selecionar"
+import { JPConversoes } from "@/jpFuncoes/convercoes";
+import TravarETC from "./travar";
 
 export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
   //Ler os dados da Encomenda Ativo do Contexto Atual
-  const {encomendaAtiva} = useContext(PerfilContext)  
+  const {encomendaAtiva, usuario} = useContext(PerfilContext)  
 
   const [openModal, setOpenModal] = useState(false)
 
-  const [titulo, setTitulo] = useState("");
-
   const [botoes, setBotoes] = useState({
-    bt1: false,
-    bt2: true,
-    bt3: true,
-    bt4: true,
-    bt5: true,
-    bt6: false,
+    bt1: false,   //Emitir
+    bt2: false,   //Travar
+    bt3: false,   //Destravar
+    bt4: true,    //Fechar
   })
 
-  function trataBotoes(b1,b2,b3,b4,b5,b6){
+  function trataBotoes(b1,b2,b3,b4,){
     setBotoes(
       va => va = {
         bt1: !b1, 
         bt2: !b2, 
         bt3: !b3, 
         bt4: !b4,
-        bt5: !b5,
-        bt6: !b6,
       }
     )
   }
@@ -66,38 +61,32 @@ export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
     }
   }
 
+  //Efetuar o controle da liberação dos botões
+  //Emitir - Travar - Destravar - Fechar
   useEffect(()=>{
     if(tipo !== "inclusao"){
-      if(campos?.Status === "Emitida"){
-        trataBotoes(false,false,false,true,false,true);
-      }
       if(aba===1){
-        if(campos?.Status === "Pendente"){
-          trataBotoes(true,true,false,false,false,true);
-        }
-        if(campos?.Status === "Destravada"){
-          trataBotoes(true,false,true,false,false,true);
-        }
-  
         setAba1(Ativo);
         (tipo === "inclusao"? setAba2(Desable): setAba2(Desativo));
-  
       }else{
-        if(campos?.Status === "Pendente"){
-          trataBotoes(true,true,false,false,true,true);
-        }
-        if(campos?.Status === "Destravada"){
-          trataBotoes(true,false,true,false,true,true);
-        }
-  
         setAba1(Desativo);
         setAba2(Ativo);
-  
       }
     }
+    if(campos?.Status === "Pendente"){
+      trataBotoes(true,false,false,true);
+    }
+    if(campos?.Status === "Emitida"){
+      trataBotoes(false,false,true,true);
+    }
+    if(campos?.Status === "Destravada"){
+      trataBotoes(false,true,false,true);
+    }
+
 
   },[aba])
 
+  //Rotina para a exclusão da ETC
   const excluirETC = async () => {
       try {
         const resposta = await fetch ('/api/etcs/exclusao', {
@@ -124,52 +113,157 @@ export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
     setModalOpen(false);  
   }
 
-  const controle =(opcao)=> {
-    // Slavar dados
-    if(opcao === 1){
-      alert(`Opção: ${opcao} - Salvar`)
-
-      // {
-      //   "observacoes":"TESTE DA EDIÇÃO DA ETC",
-      //   "responsavel":"FERNANDO",
-      //   "prazo":"TESTE PRAZO",
-      //   "local":"TESTE LOCAL",
-      //   "data_em": "2023-11-20",
-      //   "IDguiaETC": 1931
-      // }
-        // setTitulo("Alterar Elemento")
-        // setTipoForm("edicao")
-        // setOpenModal(true)
+  //Rotina para a emissão da ETC
+  const emicaoETC = async () => {
+    try {
+      const resposta = await fetch ('/api/etcs/emitirEtc', {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idEncomenda:    encomendaAtiva.idEncomenda,
+            idEtc:          campos.id,
+            responsavel:    usuario.login,
+            data_rev:       JPConversoes.strDate(),
+            codEtc:         campos.codETC,
+            etc_rev:        0
+        })
+      });
+      const json = await resposta.json();
+      retornoFilho({tipo: "",texto: ""});
+      if(resposta.status === 201){
+        retornoFilho( {tipo:"sucesso", texto: JSON.stringify(json), id: Math.random()})
+      } else{
+        retornoFilho( {tipo:"falha", texto: JSON.stringify(json), id: Math.random()})
+      }              
+    } catch (error) {
+      retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
     }
+  }
 
+  //Rotina para destravar uma ETC
+  const destravarETC = async () =>{
+    try {
+      const resposta = await fetch ('/api/etcs/destravarEtc', {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          idEtc:          campos.id,
+          codEtc:         campos.codETC,
+          idEncomenda:    encomendaAtiva.idEncomenda
+        })
+      }); 
+      const json = await resposta.json();
+      retornoFilho({tipo: "",texto: ""});
+      if(resposta.status === 201){
+        retornoFilho( {tipo:"sucesso", texto: JSON.stringify(json), id: Math.random()})
+      } else{
+        retornoFilho( {tipo:"falha", texto: JSON.stringify(json), id: Math.random()})
+      }              
+    } catch (error) {
+      retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
+    }
+}
+  //Função para retornar quantidade
+  // de itens da ETC
+  const totItens = async () => {
+    let quantidade = 0;
+    let json = [{}]
+    try {
+      const response = await fetch('/api/etcs/qtdItens', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          idEtc: campos?.id
+        })
+      });
+      json = await response.json()
+      if (response.status !== 200) {
+        quantidade = 0;
+      }
+      else{
+        quantidade =  json[0].qtdItens;
+      } 
+    } catch (error) {
+      quantidade = 0;
+    }
+    return quantidade
+  }
+
+    //Função para receber o retorno do componente filho
+  //e atualizar os dados na Tela
+  const retornoTrava = async (childdata) => {
+    let revisao = campos?.Revisao;
+    if(childdata?.novaRevisao){
+      revisao ++
+    }  
+    const bodyTrava = {
+      idEncomenda: encomendaAtiva.idEncomenda,
+      idEtc: campos?.id,
+      codEtc: campos?.codETC,
+      Revisao: revisao,
+      Data_rev: JPConversoes.strDate(),
+      Data_emi: campos?.DataEmi,
+      Motivo: childdata.Motivo,
+      DescMotivo: childdata.Descricao,
+      Responsavel: usuario.login,
+      novaRevisao: childdata?.novaRevisao,
+    }
+    await travarETC(bodyTrava);
+    setModalOpen(false);
+  }
+
+  const travarETC = async (body) =>{
+    try {
+      const resposta = await fetch ('/api/etcs/travarEtc', {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      }); 
+      const json = await resposta.json();
+      retornoFilho({tipo: "",texto: ""});
+      if(resposta.status === 201){
+        retornoFilho( {tipo:"sucesso", texto: JSON.stringify(json), id: Math.random()})
+      } else{
+        retornoFilho( {tipo:"falha", texto: JSON.stringify(json), id: Math.random()})
+      }       
+    } catch (error) {
+      retornoFilho( {tipo:"falha", texto: error.message, id: Math.random()})
+    }
+  }
+
+  const controle = async (opcao)=> {
     // Emitir ETC
-    if(opcao === 2){
-      alert(`Opção: ${opcao} - Emitir`)
-        // setTitulo("Novo Elemento [filho]")
-        // setTipoForm("filho")
-        // setOpenModal(true)
+    if(opcao === 1){
+      //Passo 1 Verificar se tem itens selecionados
+      const qtdItens = await totItens();
+
+      if(qtdItens > 0){
+        await emicaoETC();
+        setModalOpen(false);
+      }
+      else{
+        alert("É nececario ter itens para emitir a ETC!");
+      }
     }
     // Travar ETC
-    if(opcao === 3){
-      alert(`Opção: ${opcao} - Travar`)
-        // setTitulo("Excluir Elemento")
-        // setTipoForm("exclusao")
-        // setOpenModal(true)
+    if(opcao === 2){
+      setOpenModal(true);
+      // alert(`Opção: ${opcao} - Travar`)
     }
     // Destravar ETC
-    if(opcao === 4){
-      alert(`Opção: ${opcao} - Destravar`)
-        // setTitulo("Excluir Elemento")
-        // setTipoForm("exclusao")
-        // setOpenModal2(true)
+    if(opcao === 3){
+      await destravarETC();
+      setModalOpen(false);
+      // alert(`Opção: ${opcao} - Destravar`)
     }
-    // if(opcao === 5){
-    //   setTitulo("Selecionar elementos para ETC")
-    //   // setTipoForm("irmao")
-    //   setOpenModal(true)
-    //}
-
-    // alert(JSON.stringify(opcao))
     return null
 }
 
@@ -265,52 +359,34 @@ export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
             {
               tipo !== "inclusao" && (
                 <div className={cssBotoes.botoes}>
-                  {/* Botão Salvar bt1 */}
-                  {/* <Button 
+                  {/* Botão Emitir bt1 */}
+                  <Button 
                     onClick={() => controle(1)}
                     fontSize={"1.5em"}
                     width={"250px"}
                     disabled={botoes.bt1}
                   >
-                    <FaRegFileAlt className={cssBotoes.bt}/>Salvar
-                  </Button>  */}
-                  {/* Botão Emitir bt2 */}
+                    <FaRegFileAlt className={cssBotoes.bt}/>Emitir ETC
+                  </Button> 
+                  {/* Botão Travar bt2 */}
                   <Button 
                     onClick={() => controle(2)}
                     fontSize={"1.5em"}
                     width={"250px"}
                     disabled={botoes.bt2}
                   >
-                    <FaRegFileAlt className={cssBotoes.bt}/>Emitir ETC
+                    <FaRegFileAlt className={cssBotoes.bt}/>Travar
                   </Button> 
-                  {/* Botão Travar bt3 */}
+                  {/* Botão Destravar bt3 */}
                   <Button 
                     onClick={() => controle(3)}
                     fontSize={"1.5em"}
                     width={"250px"}
                     disabled={botoes.bt3}
                   >
-                    <FaRegFileAlt className={cssBotoes.bt}/>Travar
-                  </Button> 
-                  {/* Botão Destravar bt4 */}
-                  <Button 
-                    onClick={() => controle(4)}
-                    fontSize={"1.5em"}
-                    width={"250px"}
-                    disabled={botoes.bt4}
-                  >
                     <FaRegFileAlt className={cssBotoes.bt}/>Destravar
                   </Button> 
-                  {/* Botão Buscar bt5 */}
-                  {/* <Button 
-                    onClick={() => controle(5)}
-                    fontSize={"1.5em"}
-                    width={"300px"}
-                    disabled={botoes.bt5}
-                  >
-                    <FaRegFileAlt className={cssBotoes.bt}/>Buscar elementos
-                  </Button>  */}
-                  {/* Botão Fachar bt6 */}
+                  {/* Botão Fachar bt4 */}
                   <Button 
                     onClick={() => setModalOpen(false)}
                     fontSize={"1.5em"}
@@ -325,14 +401,13 @@ export default function FormETC({campos,tipo, setModalOpen, retornoFilho}){
             <Modal 
                 isOpen={openModal} 
                 setModalOpen={()=> setOpenModal(!openModal)}
-                titulo={titulo}
-                larguraMinima="1800px"
+                titulo={"[TRAVAR] - Gerar uma nova revisão"}
+                larguraMinima="1200px"
             >
-                <SelecionarItens 
+                <TravarETC 
                     encomendaID={encomendaAtiva.idEncomenda}
-                    campos={campos} 
                     setModalOpen={()=> setOpenModal(!openModal)}
-                    retornoFilho={retornoFilho}
+                    retornoTrava={retornoTrava}
                 />
             </Modal>
           </div>

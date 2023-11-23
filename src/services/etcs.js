@@ -12,7 +12,9 @@ export async function gridETCs(body) {
 		+ "B.familia as Familia, A.idFamilia as IdFamilia, "
 		+ "DATE_FORMAT(A.data_em,'%Y-%m-%d') as DataEmi, "
 		+ "A.responsavel as Responsavel, "
-		+ "CASE WHEN A.emitida = 1 THEN 'Emitida' ELSE 'Pendente' END AS Status, "
+		+ "CASE WHEN A.emitida = 2 THEN 'Destravada' "
+        + "WHEN A.emitida = 1 THEN 'Emitida' "
+        + "ELSE 'Pendente' END AS Status, "
 		+ "A.local as Local, A.observacoes as Observacoes, A.prazo as Prazo, "
 		+ "A.guiadoc as GRD "
         + "FROM "
@@ -30,6 +32,7 @@ export async function gridETCs(body) {
       throw Error(error.message);
   }
   return etcs
+
 }
 
 //Função para retornar os itens da GRD
@@ -53,7 +56,7 @@ export async function itensGRD(body) {
         throw Error(error.message);
     }
     return itens
-  }
+}
 
 //Função para retornar os itens da ETC
 export async function itensETC(body) {
@@ -79,10 +82,28 @@ export async function itensETC(body) {
         throw Error(error.message);
     }
     return itens
-  }
+}
 
-  //Função para retornar os itens Pendentes para incluir na ETC
-  export async function itensPendentesETC(body) {
+//Função para verificar se tem itens na ETC
+export async function qtdItens(body){
+    let qtd = [];
+    try {
+        qtd = await query({
+            query: "SELECT count(*) as qtdItens "
+            + "FROM tb_itensetc WHERE idEtc = ? ",
+            values: [body.idEtc]
+        }); 
+        if (!qtd){
+            throw new Error('Não tem itens cadastrados na ETC!')
+        }       
+    } catch (error) {
+        throw Error(error.message);
+    }
+    return qtd;
+}
+
+//Função para retornar os itens Pendentes para incluir na ETC
+export async function itensPendentesETC(body) {
     let itens = [];
     let filtro = "";
     if(body.idTag > 0 ){
@@ -107,9 +128,11 @@ export async function itensETC(body) {
         throw Error(error.message);
     }
     return itens
-  }
-  
-  export async function selTags(body) {
+}
+
+// Funnção para retornar lista de tags para filtro
+// dos elementos pendentes para a etc
+export async function selTags(body) {
     let tags = [];
     try {    
         tags = await query({
@@ -136,7 +159,6 @@ export async function itensETC(body) {
 
 //Função para incluir uma nova etc na encomenda
 export async function cadastro(body){
-    console.log("BODY: ",body)
     let novoNumero = 0;
     let aviso = ""
     let resposta = {menssagem: "", etc: 0};
@@ -465,5 +487,201 @@ export async function edicao(body){
         throw Error(error.message);
     }
     return retorno;    
+
+}
+
+//função emitir ETC
+//RECEBE ARRAY COM OS DADOS DA ETC PARA EMISSÃO
+//Primeiro Passo Gravar a revisão 0 na tabela de tb_revisoesetc
+//Segundo Passo Editar todos os elementos da estrutura de 
+//controle que estão com o campo etcSelecionada.
+//Terceiro Passo Atualiza o Status da Etc para 1-Emitida
+//Quarto passo gerar uma GRD com os desenhos dos itens da ETC
+export async function emitirEtc(body){
+    let myQuery = "";
+    let valores = [];
+    let msgExecucao = "";
+    try {
+        await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+        //Inicia a transação
+        await dbCC.beginTransaction();
+            //Passo 1 Gravar Revisão 0
+            //Efetua o Insert na tabela tb_guiaetc
+            myQuery = "INSERT INTO tb_revisoesetc ( "
+                + " idEncomenda, idEtc, revisao, responsavel, "
+                + " data_rev, motivo, modific) "
+                + " Values (?,?,?,?,?,?,?)";
+            valores = [
+                body.idEncomenda,
+                body.idEtc, 
+                0,
+                body.responsavel,
+                body.data_rev,
+                "ENGENHARIA",
+                "EMISSÃO INICIAL",
+            ];
+            await dbCC.execute( myQuery,valores);
+
+            //Passo 2 Editar todos os elementos da estrutura de controle
+            //com campo etcSelecionada = a body.codEtc
+            myQuery = "UPDATE tb_estcontrole SET "
+                + "etc = ?, "
+                + "etc_data = ?, "
+                + "etc_rev = ? "
+                + "WHERE etcSelecionada = ? and idEncomenda = ? ";
+            valores = [
+                body.codEtc,
+                body.data_rev,
+                body.etc_rev,
+                body.codEtc,
+                body.idEncomenda, 
+            ];
+            await dbCC.execute( myQuery,valores);
+            
+            //Passo 3 Editar o campo Emitida da ETC para 1-Emitida
+            myQuery = "UPDATE tb_guiaetc SET "
+                + "emitida = 1, revisao = 0 "
+                + "WHERE id = ? ";
+            valores = [
+                body.idEtc, 
+            ];
+            await dbCC.execute( myQuery,valores);
+            
+            await dbCC.commit();
+
+            msgExecucao = "Emissão realizada com sucesso!";                
+    } catch (error) {
+        dbCC.rollback();
+        msgExecucao = "Erro ao emitir a ETC! ERROR: " + error;
+    }
+
+    return msgExecucao;
+}
+
+//Função para destravar uma etc
+//Primeiro Passo alterar o valor do campo emitida
+//para 2-Destravada
+//Segundo passo atualizar todos os elementos vinculados a ETC
+//colocando o codigo da ETC no campo etcSelecionada e
+//limpando os campos etc, etc_data e etc_rev
+export async function destravarEtc(body){
+    let myQuery = "";
+    let valores = [];
+    let msgExecucao = "";
+    try {
+        await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+        //Inicia a transação
+        await dbCC.beginTransaction();
+
+        //Passo 1 alterar o valor do campo emitida para 2-Destravada
+        myQuery = "UPDATE tb_guiaetc SET "
+            + "emitida = 2 "
+            + "WHERE id = ? ";
+        valores = [
+            body.idEtc, 
+        ];
+        await dbCC.execute( myQuery,valores);   
+        
+        //Passo 2 atualizar todos os elementos vinculados a ETC
+        //colocando o codigo da ETC no campo etcSelecionada e
+        //limpando os campos etc, etc_data e etc_rev
+        myQuery = "UPDATE tb_estcontrole SET "
+            + "etcSelecionada = etc, "
+            + "etc = null, "
+            + "etc_data = null, "
+            + "etc_rev = null "
+            + "WHERE etc = ? and idEncomenda = ? ";
+        valores = [
+            body.codEtc,
+            body.idEncomenda, 
+        ];
+        await dbCC.execute( myQuery,valores);
+        
+        await dbCC.commit();
+
+        msgExecucao = "ETC destravada com sucesso!"; 
+
+    } catch (error) {
+        dbCC.rollback();
+        msgExecucao = "Erro ao destravar a ETC! ERROR: " + error;        
+    }
+
+    return msgExecucao;
+    
+}
+
+//Função para travar uma ETC
+//Primeiro Passo verificar se é uma novaRevisão e se sim
+//gravar um novo registro na tabela tb_revisoesetc
+//Segundo Passo atualizar todos os elementos da tb_estcontrole
+//que estão vinculados na ETC com os campo etc_rev
+//Terceiro Passo alterar o campo emitida da tabela tb_guiasetc para 1-Emitida
+export async function travarEtc(body){
+    let myQuery = "";
+    let valores = [];
+    let msgExecucao = "";
+    try {
+        await dbCC.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+        //Inicia a transação
+        await dbCC.beginTransaction();
+
+        //Passo 1 verificar se é uma nova revisão e se sim
+        //gravar um novo registro na tabela tb_revisoesetc
+        if(body.novaRevisao){
+            myQuery = "INSERT INTO tb_revisoesetc ( "
+            + " idEncomenda, idEtc, revisao, responsavel, "
+            + " data_rev, motivo, modific) "
+            + " Values (?,?,?,?,?,?,?)";
+            valores = [
+                body.idEncomenda,
+                body.idEtc, 
+                body.Revisao,
+                body.Responsavel,
+                body.Data_rev,
+                body.Motivo,
+                body.DescMotivo,
+            ];
+            await dbCC.execute( myQuery,valores);        
+        }
+
+        //Passo 2 atualizar todos os elementos da tb_estcontrole
+        //que estão vinculados na ETC com o campo etc_rev
+        myQuery = "UPDATE tb_estcontrole SET "
+            + "etc = ?, "
+            + "etc_data = ?, "
+            + "etc_rev = ?, "
+            + "etcSelecionada = null "
+            + "WHERE (etc = ? or etcSelecionada = ? ) and idEncomenda = ? ";
+        valores = [
+            body.codEtc,
+            body.Data_emi,
+            body.Revisao,
+            body.codEtc,
+            body.codEtc,
+            body.idEncomenda, 
+        ];
+        await dbCC.execute( myQuery,valores);
+
+        //Passo 3 alterar o campo emitida da tabela tb_guiasetc 
+        //para 1-Emitida e revisao = body.Revisao
+        myQuery = "UPDATE tb_guiaetc SET "
+            + "emitida = 1, revisao = ? "
+            + "WHERE id = ? ";
+        valores = [
+            body.Revisao,
+            body.idEtc, 
+        ];
+        await dbCC.execute( myQuery,valores);
+
+        await dbCC.commit();
+
+        msgExecucao = "ETC travada com sucesso!";        
+
+    } catch (error) {
+        dbCC.rollback();
+        msgExecucao = "Erro ao travar a ETC! ERROR: " + error;        
+    }
+
+    return msgExecucao;
 
 }

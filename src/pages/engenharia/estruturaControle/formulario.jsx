@@ -13,7 +13,6 @@ import { PerfilContext } from '../../contexts/perfilContext'
 import useApiListas from "@/hooks/useApiListas";
 
 export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
-    console.log("CAMPOS", campos)
 
     //Estanciar o HOOK UseForm
     const form = useForm({defaultValues: campos})

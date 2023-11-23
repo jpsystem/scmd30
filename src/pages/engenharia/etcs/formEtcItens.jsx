@@ -285,8 +285,10 @@ export default function FormEtcItens({campos, encomendaID}){
                     <div className={styles.controle}>
                       <Button 
                         onClick={() => setOpenModal(true)}
-                        fontSize={"1em"}
-                        width={"250px"}
+                        fontSize={"1.5rem"}
+                        heigth={"50px"}
+                        width={"400px"}
+                        disabled={campos.Status==="Emitida"? true: false}
                       >
                         <FaRegFileAlt/>Buscar elementos
                       </Button>
