@@ -3,6 +3,12 @@
 
 import { relPadrao } from "../../../services/relatorios"
 
+export const config = {
+    api: {
+      responseLimit: '100mb',
+    },
+  }
+
 export  default async function handler(req, res) {
     try {
         const rel = await relPadrao(req.body)

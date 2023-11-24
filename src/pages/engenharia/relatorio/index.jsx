@@ -253,6 +253,7 @@ export default function Relatorios(){
         <RelPadrao 
           setModalOpen={()=> setOpenModal(!openModal)}
           config={{
+            idEncomenda: encomendaAtiva.idEncomenda,
             tag: opTag,
             familia: opFamilia,
             pai: pai,

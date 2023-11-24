@@ -1,7 +1,6 @@
 import myStyle from "./index.module.css"
 import { useQuery , useQueryClient} from "react-query";
 import Table from "@/componentes/table/table";
-
 export default function RelPadrao({setModalOpen, config}){
 
 
@@ -21,11 +20,11 @@ export default function RelPadrao({setModalOpen, config}){
             "Content-Type": "application/json"
         },
         body: JSON.stringify({      
-            idEncomenda: 1,
-            idTag: 0,
-            idFamilia: 0,
-            pai: 0,
-            ordem: "Ordem1"
+            idEncomenda: config.idEncomenda,
+            idTag: config.tag,
+            idFamilia: config.familia,
+            pai: config.pai,
+            ordem: config.ordens
         })
       });
       json = await response.json()
@@ -58,9 +57,9 @@ export default function RelPadrao({setModalOpen, config}){
   return(
     <>
      <div className={myStyle.corpo}>
-        <div className={myStyle.controles}>
+        <div className={myStyle.wrapper}>
           <Table data={data} rowsPerPage={40} />
-        </div> 
+        </div>
       </div>
     </>
   )

@@ -1,16 +1,18 @@
 .tableFooter {
-  background-color: #f1f1f1;
-  padding: 8px 0px;
+  background-color: #fff;
   width: 100%;
-  font-weight: 500;
-  text-align: left;
-  font-size: 16px;
-  color: #2c3e50;
+  /* font-weight: 500; */
+  /* text-align: left; */
+  /* font-size: 16px; */
+  /* color: #2c3e50; */
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px 10px 10px 10px;
+
+
 }
 
 .button {
@@ -30,4 +32,36 @@
 .inactiveButton {
   color: #2c3e50;
   background: #f9f9f9;
+}
+
+.grupoR{
+  display: flex;
+  gap: 10px;
+  width: 200px;
+  flex-direction: row;
+  align-content: space-around;
+  justify-content: center;
+  padding-left: 10px;
+}
+.grupoR input{
+  margin-top: 5px;
+  height: 35px;
+  width:60px;
+  vertical-align: middle;
+  padding: 5px;
+  font-size: 1.5rem;
+  text-align: right;
+  background-color: bisque;
+  border: 0;
+}
+
+.grupoR input:disabled{
+
+  color: #2c3e50;
+  text-align: left;
+}
+
+.grupoR span{
+  font-size: 2rem;
+  color: #FD8008;
 }

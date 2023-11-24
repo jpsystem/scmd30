@@ -2,10 +2,13 @@
   display: flex;
   border: 10px solid #FD8008;
   box-shadow: 15px 15px 25px rgba(253, 50, 8, 0.5);
-  height: 700px;
+  height: 750px;
   padding: 40px;
   border-radius: 50px;
   flex-direction: column;
+
+  /* overflow-x: scroll;
+  overflow-y: scroll; */
 }
 
 .grupoC{
@@ -120,4 +123,8 @@
   box-sizing: border-box;
   border: 10px solid #FD8008;
   padding: 3px;
+}
+
+.wrapper{
+  width: 80vw;
 }
