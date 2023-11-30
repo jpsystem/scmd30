@@ -28,6 +28,7 @@ export async function treeView(body) {
             Elemento: item.Elemento,
             Descricao: item.Descricao,
             ETC: item.ETC,
+            Dt_Etc: item.Dt_Etc,
             Pai: item.Pai,
             id: item.id,
             Tipo: item.tipo,
@@ -77,6 +78,7 @@ async function retDados(encomenda) {
             + " Trim(CONCAT(E.elemento, ' - ', E.esp)) as Descricao,   "  
             + " E.pai as Pai, "
             + " E.etc as ETC, "
+            + " DATE_FORMAT(E.etc_data, '%d/%m/%Y') as Dt_Etc, "
             + " E.id, "
             + " E.tipo, "
             + " E.idTag, "

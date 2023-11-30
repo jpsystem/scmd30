@@ -201,13 +201,27 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                         <div className={styles.corpoCadastro}>
                             {/* GRUPO 01 */}
                             <div className={styles.grupoR}>
+                                {/* ID do Elemento na Estrutura de Controle */}
+                                <div className={styles.grupoC}>
+                                    <label for="id" className={styles.label}>
+                                        ID
+                                    </label>
+                                    <input
+                                        style={{width: "150px"}}
+                                        type="text"
+                                        id="id"
+                                        disabled
+                                        className={styles.input}
+                                        {...register("id")}
+                                    />
+                                </div>
                                 <div className={styles.grupoC}>
                                     <label for="Elemento" className={styles.label}>
                                         Elemento
                                     </label>
                                     { tipo === "edicao" ?  
                                         (<input
-                                            style={{width: "400px"}}
+                                            style={{width: "150px"}}
                                             type="text"
                                             id="Elemento" 
                                             disabled={true}
@@ -215,7 +229,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                             {...register("Elemento")}
                                         />):
                                         (<input
-                                            style={{width: "400px"}}
+                                            style={{width: "150px"}}
                                             type="text"
                                             id="Elemento"
                                             disabled={true}
@@ -233,7 +247,7 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         Elemento Pai
                                     </label>
                                     <input
-                                        style={{width: "400px"}}
+                                        style={{width: "150px"}}
                                         type="text"
                                         id="Pai"
                                         value={ tipo ==="filho" ? campos?.Elemento : campos?.Pai }
@@ -247,11 +261,39 @@ export default function Formulario({campos, tipo, setModalOpen, retornoFilho}){
                                         Tipo
                                     </label>
                                     <input
-                                        style={{width: "400px"}}
+                                        style={{width: "150px"}}
                                         type="text"
                                         id="Tipo" 
                                         className={styles.input}
                                         {...register("Tipo")}
+                                    />
+                                </div>
+                                {/* ETC */}
+                                <div className={styles.grupoC}>
+                                    <label for="Etc" className={styles.label}>
+                                        Nº ETC
+                                    </label>
+                                    <input
+                                        style={{width: "150px"}}
+                                        type="text"
+                                        id="ETC"
+                                        disabled
+                                        className={styles.input}
+                                        {...register("ETC")}
+                                    />
+                                </div>
+                                {/* Data_ETC */}
+                                <div className={styles.grupoC}>
+                                    <label for="Dt_Etc" className={styles.label}>
+                                        Data Etc
+                                    </label>
+                                    <input
+                                        style={{width: "200px"}}
+                                        type="text"
+                                        id="Dt_Etc"
+                                        disabled
+                                        className={styles.input}
+                                        {...register("Dt_Etc")}
                                     />
                                 </div>
                             </div>

@@ -3,22 +3,28 @@
     height: 100%;
     padding: 10px;
 }
-.resultado{
+
+.itensLista{
     height: 440px;
     overflow-x: scroll;
     overflow-y: none;
 }
-.itensLista{
-    height: 500px;
-    overflow-x: scroll;
-    overflow-y: none;
-}
+/* LINHA ABAIXO DA GRID ETAPA 1 */
 .arquivo{
     display:flex;
     position: row;
     height: 50px;
     padding: 5px;
 }
+/* LINHA ACIMA DA GRID ETAPA 2 */
+.linhaTopo{
+    display: flex;
+    direction: row;
+    justify-content: space-between;
+    height: 50px;
+    margin-bottom: 5px;
+}
+
 .tabela{
     margin: 0;
     padding: 0;
@@ -138,3 +144,24 @@
 .gray:hover{
     background-color: #FAFAFA;
 }
+
+
+
+.label{
+    font-weight: bold;
+    font-size: 1.2rem;
+    height: 50px;
+    padding: 10px;
+  }
+
+  .selecaoTodos{
+    width: 30px;
+    height: 30px;
+    padding: 10px;
+    margin: 5px;
+  }
+  .controle{
+    display: flex;
+    font-size: 1rem;
+    margin: 0 50px 5px 0;
+  }

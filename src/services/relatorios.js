@@ -18,6 +18,9 @@ export async function relPadrao(body) {
     if(body.pai > 0){
       filtros += " and ec.pai = " + body.pai
     }
+    if(body.etc){
+      filtros += " and (ec.etc = null or ec.etc = 0) "
+    }
 
 
     //Passo 2 Ordenação

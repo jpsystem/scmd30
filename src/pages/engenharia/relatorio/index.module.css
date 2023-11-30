@@ -128,3 +128,20 @@
 .wrapper{
   width: 80vw;
 }
+
+.customCheck{
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  align-content: space-around;
+}
+.customCheck label{
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.customCheck input{
+  width: 1.2rem;
+  height: 1.2rem;
+}

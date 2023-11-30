@@ -8,8 +8,20 @@ import Conteudo from "@/componentes/artigos/conteudo";
 import { FaCircle, FaSquare } from 'react-icons/fa'
 import { IoMailUnreadOutline,  IoLogoWhatsapp, IoCallOutline} from "react-icons/io5";
 import Logo from "@/componentes/artigos/logo";
+import { use, useEffect, useState } from "react";
 
 export default function About() {
+  const [mostra, setMostra] = useState(false)
+  const [mostra2, setMostra2] = useState(false)
+  // const [display, setDisplay] = useState("none;")
+
+// useEffect(() => {
+//   if(mostra){
+//     setDisplay("block;")
+//   }else{
+//     setDisplay("block;")
+//   }
+// },[mostra])
     return (
       <LayoutPagina largura="75%">
         {/* Linha superior para o botão fechar */}
@@ -139,10 +151,83 @@ export default function About() {
             <Subtitulo nomeAncora="historico">Histórico das versões</Subtitulo>
             <Conteudo espaco="50px"> 
               Versão atual
-              <Conteudo recuo="50px">3.0 rev.0.1.0</Conteudo>
-              Detalhe das revisões.
-              <Conteudo recuo="50px">Rev. 0.1.0 Data 06/10/2023 18:30h</Conteudo>            
+              <Conteudo recuo="50px">3.0 rev.{"00.10.10"}</Conteudo>
             </Conteudo>
+            <Conteudo nomeAncora="historico">
+              Ultimas revisões.
+            </Conteudo>
+            {/* LISTA DE REVISÕES */}
+
+            <div className={Style.revisao}>
+              <div 
+                className={Style.revDescricao}
+                onClick={() => setMostra(!mostra)}
+              >
+                Rev. {"00.10.10"} Data {"2023-11-30 18:00:00"}
+                <div 
+                  className={Style.revItem}
+                  style={{display: (mostra ? "block": "none")}}
+                >
+                  <div>
+                    <p className={Style.revDescricao}>
+                      Alterações nas páginas de Estrutura de Controle, Relatorios e ETCs.
+                    </p>
+                    <Conteudo>
+                      <p className={Style.revDetalhes}>
+                        Detalhes da revisão
+                      </p>
+                      <Conteudo recuo="50px">
+                        {"01 - " + "Foi acrescentado os campos ETC e Data da Etc no formulário dos elementos da Estrutura de controle, apenas para visualização."}
+                      </Conteudo>
+                      <Conteudo recuo="50px">
+                        {"02 - " + "Foi acrescentado o campo para a edição do desenho CWP na edição do item e edição em lote na Etapa 2 da importação."}
+                      </Conteudo>
+                      <Conteudo recuo="50px">
+                        {"03 - " + "Foi acrescentado o botão [Selecionar todos] na Etapa 2 da importação."}
+                      </Conteudo>
+                      <Conteudo recuo="50px">
+                        {"04 - " + "Foi feita as seguintes alterações nas regras para gerar o elemento pai dos itens importados: A descrição será o número do desenho seguido do título. A quantidade dos itens será multiplicada conforme a quantidade informada no campo [Mult.Lista X]."}
+                      </Conteudo>
+                      <Conteudo recuo="50px">
+                        {"05 - " + "Feita a programação para carregar o formulário de configuração do relatório quando clicar no botão [Relatórios] do formulário da Estrutura de Controle."}
+                      </Conteudo>
+                      <Conteudo recuo="50px">
+                        {"06 - " + "No formulário de relatórios foi incluído a opção para filtrar apenas elementos sem ETC."}
+                      </Conteudo>
+                      <Conteudo recuo="50px">
+                        {"07 - " + "O nome do arquivo gerado automaticamente quando for feita a exportação para o Excel será único sendo formado com a seguinte máscara: 'EstruturaControle AAAAMMDD HHmmss.xlsx'"}
+                      </Conteudo>
+                    </Conteudo>
+                  </div>
+                </div>
+              </div>  
+            </div> 
+
+            <div className={Style.revisao}>
+              <div 
+                className={Style.revDescricao}
+                onClick={() => setMostra2(!mostra2)}
+              >
+                Rev. {"00.10.00"} Data {"2023-11-23 18:30:00"}
+                <div 
+                  className={Style.revItem}
+                  style={{display: (mostra2 ? "block": "none")}}
+                >
+                  <div>
+                    <p className={Style.revDescricao}>Revisão inicial</p>
+                    <Conteudo>
+                      <p className={Style.revDetalhes}>
+                        Detalhes da revisão
+                      </p>
+                      <Conteudo recuo="50px">
+                        {"01 - " + "Builder da versão final para testes dos usuários."}
+                      </Conteudo>
+                    </Conteudo>
+                  </div>
+                </div>
+              </div>  
+            </div>            
+
           </div>
         </div>
       </LayoutPagina>

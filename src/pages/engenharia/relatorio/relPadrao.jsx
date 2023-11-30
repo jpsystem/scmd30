@@ -24,7 +24,8 @@ export default function RelPadrao({setModalOpen, config}){
             idTag: config.tag,
             idFamilia: config.familia,
             pai: config.pai,
-            ordem: config.ordens
+            ordem: config.ordens,
+            etc: config.etc
         })
       });
       json = await response.json()

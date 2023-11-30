@@ -25,6 +25,58 @@ export default function Etapa2(){
     //Variavel de estado para os dados do item em edição
     const [itemEdit, setItemEdit] = useState(0)
 
+//=================================================================
+    //Variavel de estado para controle do check SelTodos
+    const [opSelTodos, setSelTodos] = useState(false);
+
+    //Variavel de estado para controle do botão EditarLote
+    const [opBotao, setOpBotao] = useState(false);
+
+    function selTodos(event){
+        setOpBotao( va => va =  event.target.checked)
+        setSelTodos( va => va =  event.target.checked)
+    
+        setDadosCSV(
+          //prevState contem os dados atuais de itensPendentes
+          prevState => {
+            //Criu um novo estado para atualizar os itens
+            //com o valor atual do campo "SelItem"
+            const newState = prevState.map((item) => {
+              return { 
+                  ...item,
+                  SelGrupo: event.target.checked 
+              }
+            }) 
+            //Retorna o novo estado atual com as alterações
+            //para atualizar.
+            return newState    
+          }      
+        )
+      }
+
+    //função que verifica e atualiza o Estado SelTodos
+    //verificando os campos SelGrupo da lista de dadosCSV
+    function testaLista(){
+        let total = 0;
+        let ligados = 0;
+
+        dadosCSV.forEach((item)=>{
+        total ++;
+        if(item.SelGrupo){
+            ligados++;
+        }
+        })
+        if(ligados > 0){
+        if(ligados === total){
+            setSelTodos(va => va = true)
+        }
+        return true
+        }
+        setSelTodos(va => va = false)
+        return false  
+    }
+//==================================================================
+
     //função para para setar os dados do item na variavel
     //que será passada por parametro para o formulario
     function formEdit(item){
@@ -35,6 +87,11 @@ export default function Etapa2(){
     //Função para atualizar o array dadosCSV quando
     //for alterado os chekbox dos itens
     function handleChange(id, event){
+
+        if(!event.target.checked){
+            setSelTodos( va => va =  event.target.checked)
+        }
+
         setDadosCSV(
             //prevState contem os dados atuais de dadosCSV
             prevState => {
@@ -84,7 +141,7 @@ export default function Etapa2(){
         await dadosCSV?.map( (i) => {
             if(i.SelGrupo){
                 qtdSel ++;
-                if(qtdSel === 2){
+                if(qtdSel === 1){
                     retorno.status = true;
                     retorno.idFamilia = i.IdFamilia;
                     retorno.unidade = i.Unidade;
@@ -104,10 +161,39 @@ export default function Etapa2(){
         }
         fetchData();
 
+        setOpBotao( va => va = testaLista())
+
     },[dadosCSV])   
 
     return(
         <>
+        
+        {/* LINHA ACIMA DA TABELA */}
+        <div className={myStyle.linhaTopo}>
+            <div className={myStyle.controle}>
+                <input
+                    type="checkbox" 
+                    name="SelTodos" 
+                    id="SelTodos" 
+                    checked={opSelTodos}
+                    className={myStyle.selecaoTodos}
+                    onChange={(event)=>selTodos(event)}          
+                />
+                <label for="SelTodos" className={myStyle.label}>Selecionar todos.</label>
+            </div>                
+            <div className={myStyle.controle}>
+                <Button
+                    fontSize={"1.2rem"} 
+                    onClick={()=> setOpenModal2(!openModal2)}
+                    width={"300px"}      
+                    height={"40px"}
+                    disabled= {opBotao ? false: true}
+                >
+                    Editar Selecionados<FaPaperPlane className={LocalStyle.iconeBotao} />
+                </Button>
+            </div>
+        </div>
+
         <div className={myStyle.Etapas}>
             <div className={myStyle.itensLista}>
                 <table className={myStyle.tabela}>
@@ -170,7 +256,8 @@ export default function Etapa2(){
                 </table>
             </div>
         </div>
-        {
+
+        {/* {
             altercaoLote.status &&
             <div>
                 <Button 
@@ -180,7 +267,8 @@ export default function Etapa2(){
                     Editar Selecionados<FaPaperPlane className={LocalStyle.iconeBotao} />
                 </Button>
             </div>
-        }
+        } */}
+
         {/* MODAL PARA O FORMLÁRIO  width="80%"*/}
         <Modal 
             isOpen={openModal} 

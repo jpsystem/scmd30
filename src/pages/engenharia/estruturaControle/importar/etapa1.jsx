@@ -159,6 +159,7 @@ export default function Etapa1(){
             dado.Material = dadoLinha[5];
             dado.Peso = parseFloat(dadoLinha[6]);
             dado.PesoTot = parseFloat(dadoLinha[6]);
+            dado.CWP = "";
             dado.Desenho = pDesenho;
             id ++;
             //Tem Grupo
@@ -226,7 +227,7 @@ export default function Etapa1(){
     return(
     <>
         <div className={myStyle.Etapas}>
-            <div className={myStyle.resultado}>
+            <div className={myStyle.itensLista}>
                 <table className={myStyle.tabela}>
                     <thead>
                         <tr>

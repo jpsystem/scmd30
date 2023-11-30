@@ -23,9 +23,10 @@ export async function importaLista(body){
     //Inicia a transação
     await dbCC.beginTransaction();
     console.log("Inicio da transação!")
-
+    let mutiplica = body.pai.multLista;
     if(body.pai.status === 0)
     {
+      let paiEsp = body.pai.desenho + " - " + body.pai.titulo;
       novoElementoPai = await cadastro(
         {
           idEncomenda: body.pai.idEncomenda, 
@@ -34,13 +35,14 @@ export async function importaLista(body){
           desenho: body.pai.desenho,
           grpos: "",
           idFamilia: null,
-          esp: body.pai.titulo,
+          esp: paiEsp, //body.pai.titulo,
           qtd: 1,
           unid: "",
           peso_unit: body.pai.pesoTot,
           peso_total: body.pai.pesoTot,
           tipo: "",
-          codigo: ""           
+          codigo: "",
+          cwp: ""           
         }
       )
       //Se não gravou o novo elemento pai aborta a trasação
@@ -64,12 +66,13 @@ export async function importaLista(body){
                 grpos: (ele.Grupo + ele.Posicao),
                 idFamilia: ele.IdFamilia,
                 esp: ele.Descricao,
-                qtd: ele.Qtd,
+                qtd: (ele.Qtd * mutiplica),
                 unid: ele.Unidade,
                 peso_unit: ele.Peso,
-                peso_total: ele.PesoTot,
+                peso_total: (ele.PesoTot * mutiplica),
                 tipo: ele.TipoEle,
-                codigo: ele.Material           
+                codigo: ele.Material,
+                cwp: ele.CWP           
               }
             )
           }
@@ -119,8 +122,8 @@ async function cadastro(body){
     console.log("NovoNumero", rows[0].novoNumero )
     //Efetua o Insert na tabela tb_estcontrole
     myQuery = "INSERT INTO tb_estcontrole (idEncomenda, elemento, idTag, pai, desenho, "
-            + " grpos, idFamilia, esp, qtd, unid, peso_unit, peso_total, tipo, codigo )"
-            + " Values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            + " grpos, idFamilia, esp, qtd, unid, peso_unit, peso_total, tipo, codigo, fdrtet )"
+            + " Values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     valores = [
       body.idEncomenda,
       rows[0].novoNumero, 
@@ -135,7 +138,8 @@ async function cadastro(body){
       body.peso_unit,
       body.peso_total,
       body.tipo,
-      body.codigo
+      body.codigo,
+      body.cwp
     ];
     await dbCC.execute( myQuery,valores); 
     resposta = rows[0].novoNumero

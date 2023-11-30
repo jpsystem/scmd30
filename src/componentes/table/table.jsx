@@ -5,6 +5,7 @@ import styles from "./index.module.css";
 import TableFooter from "./TableFooter/index"; 
 import BotonExcelDefault from "../excel";
 
+
 const Table = ({ data, rowsPerPage }) => {
 
   const [page, setPage] = useState(1);
@@ -30,6 +31,7 @@ const Table = ({ data, rowsPerPage }) => {
                 <th width="200px" className={styles.tableHeader}>Tag</th>
                 <th width="200px" className={styles.tableHeader}>Familia</th>
                 <th width="100px" className={styles.tableHeader}>Pai</th>
+                <th width="150px" className={styles.tableHeader}>Elemento</th>
                 <th width="100px" className={styles.tableHeader}>Tipo</th>
                 <th width="100px" className={styles.tableHeader}>QTD</th>
                 <th width="100px" className={styles.tableHeader}>Uni</th>
@@ -47,6 +49,7 @@ const Table = ({ data, rowsPerPage }) => {
                   <td width="200px" className={styles.tableCell}>{el.Tag}</td>
                   <td width="200px" className={styles.tableCell}>{el.Familia}</td>
                   <td width="100px" className={styles.tableCell}>{el.Pai}</td>
+                  <td width="150px" className={styles.tableCell}>{el.Elem}</td>
                   <td width="100px" className={styles.tableCell}>{el.Tipo}</td>
                   <td width="100px" className={styles.tableCell}>{el.QTD}</td>
                   <td width="100px" className={styles.tableCell}>{el.Unid}</td>

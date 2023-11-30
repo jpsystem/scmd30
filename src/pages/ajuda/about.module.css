@@ -98,3 +98,23 @@
   font-size: 2rem;
   color: #FD8008;
 }
+
+.revisao{
+  padding: 10px;
+  border: 5px solid #FD8008;
+  margin-bottom: 10px;
+}
+.revDescricao{
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #00F;
+}
+.revDetalhes{
+  font-size: 1.5rem;
+  color: #F00;
+}
+.revItem{
+  display: block;
+  padding: 10px;
+  color: #000;
+}

@@ -15,9 +15,17 @@ import FormPrimeiro from './formPrimeiroElemento.jsx';
 import Alerta from "@/componentes/alerta/alerta";
 import {PerfilContext} from "../../contexts/perfilContext"
 import { BiSitemap } from "react-icons/bi";
+import { useRouter } from 'next/router'
 
 
 export default function EstControle() {
+    //Instacia o Hook useRouter
+    const router = useRouter()
+    //Função para carregar o formulário Relatorios
+    function relatorio(){
+        router.push('/engenharia/relatorio')
+        return null
+    }
 
     //Carrega dados da Encomenda do Contexto
     const {encomendaAtiva} = useContext(PerfilContext)
@@ -142,7 +150,14 @@ export default function EstControle() {
                       <BiSitemap className={styles.icone}/>Item inicial
                     </Button>
                     {/* <Button heigth={"50px"} fontSize={"1.2em"} disabled={inicio}>Importar Lista</Button> */}
-                    <Button heigth={"50px"} fontSize={"1.2em"} disabled={inicio}>Relatórios</Button>
+                    <Button 
+                        heigth={"50px"} 
+                        fontSize={"1.2em"} 
+                        disabled={inicio}
+                        onClick={() => relatorio()}
+                    >
+                        Relatórios
+                    </Button>
                 </div>
             </div>
             <Modal 

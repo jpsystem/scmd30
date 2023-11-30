@@ -53,6 +53,7 @@ export default function FormEdicaoGrupo({item, setModalOpen}){
     IdFamilia: item?.IdFamilia,
     TipoEle: item?.TipoEle,
     Unidade: item?.Unidade,
+    CWP: item?.CWP
   }})
   const { register, handleSubmit, formState: {errors} } = form;
 
@@ -79,7 +80,8 @@ export default function FormEdicaoGrupo({item, setModalOpen}){
               TipoEle: data?.TipoEle,
               Unidade: data?.Unidade,
               StatusItem: 0,
-              SelGrupo: false                      
+              SelGrupo: false,
+              CWP: data?.CWP                      
             }
           }else{
             return i
@@ -173,6 +175,21 @@ export default function FormEdicaoGrupo({item, setModalOpen}){
                   id="Unidade" 
                   className={styles.input}
                   {...register("Unidade")}
+              /> 
+            </div>                
+          </div>
+          {/*Desenho CWP */}
+          <div className={styles.grupoR}>
+            <div className={styles.grupoC}>
+              <label className={styles.label}>
+                Desenho CWP
+              </label>
+              <input
+                  style={{height: "50px", width:"600px"}}
+                  type="text"
+                  id="CWP" 
+                  className={styles.input}
+                  {...register("CWP")}
               /> 
             </div>                
           </div>

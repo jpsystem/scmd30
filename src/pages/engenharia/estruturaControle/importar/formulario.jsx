@@ -59,6 +59,7 @@ export default function Formulario({item, setModalOpen}){
         Unidade: item?.Unidade,
         Material: item?.Material,
         Esp: espElemento,
+        CWP: item?.CWP,
     }})
     const { register, handleSubmit, formState: {errors} } = form;
 
@@ -117,6 +118,7 @@ export default function Formulario({item, setModalOpen}){
                         return { 
                             ...i,
                             Obs: data?.Obs,
+                            CWP: data?.CWP,
                             IdFamilia: opFamilia,
                             Familia: familia?.label,
                             TipoEle: data?.TipoEle,
@@ -298,7 +300,25 @@ export default function Formulario({item, setModalOpen}){
                     {errors?.TipoEle?.type === "validate" && 
                         <p className={styles.error}>O necessário selecionar o Tipo do elemento</p>
                     }
-                </div>                   
+                </div> 
+
+
+                {/* GRUPO INCLUSÃO DO CWP */}
+                <div className={styles.grupoR}>
+                    <div className={styles.grupoC}>
+                        <label className={styles.label}>
+                            Desenho CWP
+                        </label>
+                        <input
+                            style={{width: "600px"}}
+                            type="text"
+                            id="CWP" 
+                            className={styles.input}
+                            {...register("CWP")}
+                        />
+                    </div>                        
+                </div>             
+
                 {/* GRUPO 05 */}
                 <div className={styles.grupoR}>
                     <div className={styles.grupoC}>
