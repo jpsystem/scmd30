@@ -10,6 +10,8 @@ import Button from '../../componentes/button/index'
 import LayoutPagina from "../componentes/layoutPagina"
 import { PerfilContext } from "../contexts/perfilContext"
 import FechaForm from "@/componentes/fechaForm"
+import { JPConversoes } from "@/jpFuncoes/convercoes"
+
 
 //import { get } from "react-hook-form"
 
@@ -65,36 +67,58 @@ export default function Login( ) {
                 id: json[0].dadosUser.id,
                 administrador: (json[0].dadosUser.administrador === 1 ? true: false)
               })
+              const dataAcesso =  JPConversoes.dataAcesso();
+              await eniarNovoEmail(json[0].dadosUser.nome, dataAcesso);
               setPageReload(true)
               router.push('/')
          
             } else{
               setError(resposta.error)
             }
-            // const resposta = await signIn('credentials', { 
-            //     redirect: false, 
-            //     login: formData.login, 
-            //     senha: formData.senha 
-            // });
-            // if(resposta.ok){
-            //     console.log("RESPOSTA",resposta)
-            //     //const dados = await buscaUsuario(formData.login,formData.senha )
-            //     // setUsuario({ 
-            //     //     nome: dados.Nome,
-            //     //     administrador: dados.Administrador,
-            //     //     id: dados.Id,
-            //     //     login: dados.Login
-            //     // })
-            //     router.push('/')
-            // } else{
-            //     setError(resposta.error)
-            // }
         } catch (error) {
             setError(error.message)
         }
     }
 
+    //MONTAR O EMAIL APARTIR DO MODELO HTML
+    async function  montaHtml  (usuario, dataAcesso){
 
+      let arquivo = await fetch('/../email.html')
+      .then((r) => r.text())
+      .then((text) => {
+        return text
+      } )
+    
+      arquivo = arquivo.replace('${parUsuario}',usuario);
+      arquivo = arquivo.replace('${parData}',dataAcesso);
+  
+      return arquivo
+    }
+
+  async function eniarNovoEmail(usuario, dataAcesso){
+
+    const corpoTexto = `Acesso do usuario ${usuario} em ${dataAcesso}.`
+    const corpoHtml = await montaHtml(usuario, dataAcesso)
+    
+    const response = await fetch('/api/contact/sendEmail',{
+      cache: 'no-cache',      
+      method: 'POST',
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        para: "jpsystem@gmail.com",
+        assunto: "Acesso [ATUALIZADO] ao sistema SCMD 3.0",
+        corpoTexto: corpoTexto,
+        corpoHtml: corpoHtml,
+      })
+    });
+
+
+    const json = await response.json();
+    console.log("JSON ", json.menssage)
+
+  }
 
   //Função para retornar os dados do
   //usuário para salvar no contexto"
