@@ -116,7 +116,7 @@ export default function Login( ) {
 
 
     const json = await response.json();
-    console.log("JSON ", json.menssage)
+    console.log("JSON ", json)
 
   }
 

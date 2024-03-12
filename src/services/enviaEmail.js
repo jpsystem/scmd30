@@ -19,8 +19,8 @@ export async function enviarEmail(body){
     //console.log("Message sent: %s", info.messageId);
     enviado = true;
   } catch (error) {
-    enviado = false;
+    throw Error(error.message);
+    //enviado = false;
   }
-  console.log("Retorno: ", enviado)
   return enviado;
 }
