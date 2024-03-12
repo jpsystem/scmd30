@@ -11,7 +11,7 @@ export async function enviarEmail(body){
     const info = await transporter.sendMail({
       from: '"SCMD 3.0 ✉" <jpsystem@gmail.com>',
       to: body.para, 
-      subject: `☞ ${body.assunto}`, 
+      subject: `☞ ${body.assunto} 🔯`, 
       text: body.corpoTexto, 
       html: body.corpoHtml 
     });
