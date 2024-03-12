@@ -108,7 +108,7 @@ export default function Login( ) {
       },
       body: JSON.stringify({
         para: "jpsystem@gmail.com",
-        assunto: "Acesso [ATUALIZADO] ao sistema SCMD 3.0",
+        assunto: "Acesso ao sistema SCMD 3.0",
         corpoTexto: corpoTexto,
         corpoHtml: corpoHtml,
       })
