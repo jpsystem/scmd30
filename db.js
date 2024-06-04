@@ -1,4 +1,4 @@
-//ATUALIZAçÂO
+//ATUALIZAçÂO EM 04-06-2024
 import mysql from "mysql2/promise";
 
 
